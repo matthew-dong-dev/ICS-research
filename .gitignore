@@ -1,6 +1,5 @@
 # ignore data
 input_data/
-vocab/
 outputted_keywords/
 
 # Byte-compiled / optimized / DLL files
