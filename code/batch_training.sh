@@ -1,7 +1,11 @@
-tf_bias_list=($(seq 0 .5 2))
+set -e # exit if keyboard interrupt
 
-# RUNS THE TRAINING SCRIPT FOR MULTIPLE TF_BIAS VALUES AND RETURNS THE PREDICTED KEYWORDS
+export tf_bias_limit=$1 # no spaces
+echo "tf-bias limit: $tf_bias_limit"
 
+tf_bias_list=($(seq 0 .5 $tf_bias_limit))
+
+# Python script for range of tf bias values
 for i in ${tf_bias_list[@]}; do
 
     printf "=========================== Training with tf-bias: %s\n" "${i}"

@@ -24,7 +24,7 @@ cluster_eval = []
 
 vocabsize = 0
 num_top_words = 10 # hardcode for now
-use_idf = True
+use_idf = False
 num_clusters = 5
 tf_bias = -999
 num_epochs = 5
@@ -152,19 +152,17 @@ def get_vocab(dataframe, column):
     from nltk.tokenize import word_tokenize
 
     dataframe[column] = dataframe[column].fillna('')
-    
-    max_df_param = 1.0
 
     print('[INFO] Taking at most 2000 (most frequent) unigrams')
-    vectorizer = TfidfVectorizer(max_df = max_df_param, stop_words='english', ngram_range=(1,1), max_features=2000, use_idf=use_idf)
+    vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1,1), max_features=2000, use_idf=use_idf)
     X = vectorizer.fit_transform(dataframe[column])
     unigrams = vectorizer.get_feature_names()
 
-    vectorizer = TfidfVectorizer(max_df = max_df_param, stop_words='english', ngram_range=(2,2), max_features=max(1, int(len(unigrams)/10)), use_idf=use_idf)
+    vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(2,2), max_features=max(1, int(len(unigrams)/10)), use_idf=use_idf)
     X = vectorizer.fit_transform(dataframe[column])
     bigrams = vectorizer.get_feature_names()
 
-    vectorizer = TfidfVectorizer(max_df = max_df_param, stop_words='english', ngram_range=(3,3), max_features=max(1, int(len(unigrams)/10)), use_idf=use_idf)
+    vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(3,3), max_features=max(1, int(len(unigrams)/10)), use_idf=use_idf)
     X = vectorizer.fit_transform(dataframe[column])
     trigrams = vectorizer.get_feature_names()
 
