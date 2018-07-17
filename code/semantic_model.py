@@ -153,7 +153,7 @@ def get_vocab(dataframe, column):
 
     dataframe[column] = dataframe[column].fillna('')
     
-    max_df_param = 1.0
+    max_df_param = 0.0036544883
 
     print('[INFO] Taking at most 2000 (most frequent) unigrams')
     vectorizer = TfidfVectorizer(max_df = max_df_param, stop_words='english', ngram_range=(1,1), max_features=2000, use_idf=use_idf)

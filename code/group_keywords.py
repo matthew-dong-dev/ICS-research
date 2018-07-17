@@ -1,7 +1,8 @@
 import pandas as pd
+import numpy as np
+import sys
 import os
 import string
-import numpy as np
 
 KEYWORDS_DIRECTORY = '../outputted_keywords' # os.getcwd()
 KEYWORDS_PATH = '../outputted_keywords/keywords_descrip_title.tsv'
@@ -12,9 +13,11 @@ df_list = []
     
 '''
 After outputting the trained keywords and grouping them together, get the unique ones not in the description
+@param
+@return
 '''
 def get_unique_keywords():
-    print('GETTING UNIQUE KEYWORDS...')
+    print('[INFO] Getting unique keywords...')
     keywords_df = pd.read_csv(KEYWORDS_PATH, sep = '\t')
     keywords_df['keywords_set'] = keywords_df['keywords'].apply(lambda keywords: (set([word.strip() for word in keywords.split(',')])))
     keywords_df['descrip_title'] = keywords_df['course_title'] + ' ' + keywords_df['description']
@@ -24,14 +27,16 @@ def get_unique_keywords():
     print('average number of unique keywords per course %f' % np.mean(keywords_df['num_uniq_keywords']))
     
     keywords_df.to_csv(KEYWORDS_DIRECTORY + '/unique_keywords_df.tsv', sep = '\t', index = False)
-    print('Getting unique keywords done, output file AT unique_keywords_df.tsv')
+    print('[INFO] Getting unique keywords done, output file at unique_keywords_df.tsv')
     
 '''
 Pandas manipulation to be able to collect the keywords for each bias level and aggregate them into a single group
+@param
+@return
 '''
 def group_keywords(df_list):
     read_files_to_df()
-    print('GROUPING KEYWORDS.....')
+    print('[INFO] Grouping keywords...')
 #     print(pd.concat(df_list).shape)
     joined_df = pd.concat(df_list)
     keyword_df = joined_df.groupby(list(joined_df.columns)).count().reset_index()
@@ -51,16 +56,16 @@ def group_keywords(df_list):
     df_with_titles = df_with_titles.fillna('')
 #     print(df_with_titles.head(5))
     df_with_titles.to_csv(KEYWORDS_DIRECTORY + '/keywords_descrip_title.tsv', sep = '\t', index = False)
-    print('Grouping keywords done, all keywords at keywords_descrip_title.tsv')
+    print('[INFO] Grouping keywords done, all keywords at keywords_descrip_title.tsv')
     
 
 '''
-Read each file in the directory to a pandas dataframe, extract the bias value, 
+Helper function Read each file in the directory to a pandas dataframe, extract the bias value, 
 and add a column with that value for all the courses
-@helperfunction
+@return
 '''
 def read_files_to_df():
-    print('Converting files to pandas dataframes...')
+    print('[INFO] Converting files to pandas dataframes...')
     for file in os.listdir(KEYWORDS_DIRECTORY):
         if file.endswith(".txt"):
             file_path = os.path.join(KEYWORDS_DIRECTORY, os.path.basename(file))
@@ -73,11 +78,12 @@ def read_files_to_df():
             df_with_keywords.insert(loc = 3, column= 'tf_bias', value = [tf_bias_value] * num_rows) 
             df_list.append(df_with_keywords)
         # print(df_list)
-    print('Files converted to pandas dataframes...')
+    print('[INFO] Files converted to pandas dataframes...')
     
 '''
-Create a set for each course description by removing punctuation, converting to lower case, and splitting on space
-@helperfunction
+Helper function that creates a set for each course description by removing punctuation, converting to lower case, and splitting on space
+@param
+@return
 '''
 def clean_descrip_title(row):
     punc_remover = str.maketrans('', '', string.punctuation)
@@ -87,21 +93,22 @@ def clean_descrip_title(row):
     return cleaned_set
   
 '''
-returns the set difference between the keywords and the description 
+Helper function returns the set difference between the keywords and the description 
 (the words in keywords but not in the description)
-@helperfunction
+@param
+@return
 '''
 def find_unique_keywords(row):
     return row['keywords_set'] - row['description_set']
 
-import sys
+
 
 def main():
     try:
         group_keywords(df_list)
         get_unique_keywords()
     except:
-        sys.exit('failed to get keywords')
+        sys.exit('ERROR: failed to get keywords')
 
 if __name__ == "__main__": main()
 

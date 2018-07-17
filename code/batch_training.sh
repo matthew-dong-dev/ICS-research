@@ -1,15 +1,41 @@
-set -e # exit if keyboard interrupt
+#!/bin/bash
 
-export tf_bias_limit=$1 # no spaces
-echo "tf-bias limit: $tf_bias_limit"
+set -e 
+# exit if keyboard interrupt
 
-tf_bias_list=($(seq 0 .5 $tf_bias_limit))
+while getopts ":b:f:" opt; do
+  case $opt in
+    b) 
+		export tfbias=$OPTARG
+		echo "tfbias: $tfbias"
+      ;;
+    f) 
+		export vectorfile=$OPTARG
+		echo "vectorfile: $vectorfile"
+      ;;
+    \?) 
+		echo "Usage: cmd [-b] (tf-bias) [-f] (vector file)"
+		echo "Invalid option: -$OPTARG" 
+		exit 1
+      ;;
+     :)
+	    echo "Option -$OPTARG requires an argument." 
+	    exit 1
+      ;;
+  esac
+done
 
-# Python script for range of tf bias values
+if [ $OPTIND -eq 1 ]; then echo "No options were passed"; exit 1; fi
+
+# ==================================================================
+
+tf_bias_list=($(seq 0 .5 $tfbias))
+
+# run Python script on range of tf-bias values
 for i in ${tf_bias_list[@]}; do
 
     printf "=========================== Training with tf-bias: %s\n" "${i}"
-    python semantic_model.py -v ../input_data/raw_vectors.tsv -r ../input_data/vector_text.tsv -t description -b ${i} 
+    python semantic_model.py -v ../input_data/analogy_vecs.tsv -r ../input_data/vector_text.tsv -t description -b ${i} 
 
 done
 
