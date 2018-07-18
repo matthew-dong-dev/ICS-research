@@ -1,17 +1,16 @@
 #!/bin/bash
 
 set -e 
-# exit if keyboard interrupt
 
 while getopts ":b:f:" opt; do
   case $opt in
     b) 
 		export tfbias=$OPTARG
-		echo "tfbias: $tfbias"
+		echo "[INFO] setting -b tfbias: $tfbias"
       ;;
     f) 
 		export vectorfile=$OPTARG
-		echo "vectorfile: $vectorfile"
+		echo "[INFO] setting -v vectorfile: $vectorfile"
       ;;
     \?) 
 		echo "Usage: cmd [-b] (tf-bias) [-f] (vector file)"
@@ -25,7 +24,7 @@ while getopts ":b:f:" opt; do
   esac
 done
 
-if [ $OPTIND -eq 1 ]; then echo "No options were passed"; exit 1; fi
+if [ $OPTIND -eq 1 ]; then echo "Exiting: No options were passed"; exit 1; fi
 
 # ==================================================================
 
@@ -35,8 +34,10 @@ tf_bias_list=($(seq 0 .5 $tfbias))
 for i in ${tf_bias_list[@]}; do
 
     printf "=========================== Training with tf-bias: %s\n" "${i}"
-    python semantic_model.py -v ../input_data/analogy_vecs.tsv -r ../input_data/vector_text.tsv -t description -b ${i} 
+    python semantic_model.py -v $vectorfile -r ../input_data/vector_text.tsv -t description -b ${i} 
 
 done
+
+echo "[INFO] Finished training keywords, proceed to group and get unique keywords"
 
 python group_keywords.py

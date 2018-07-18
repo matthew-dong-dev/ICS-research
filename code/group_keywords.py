@@ -24,7 +24,7 @@ def get_unique_keywords():
     keywords_df['description_set'] = keywords_df.apply(clean_descrip_title, axis = 1)
     keywords_df['unique_keywords'] = keywords_df.apply(find_unique_keywords, axis = 1)
     keywords_df['num_uniq_keywords'] = keywords_df['unique_keywords'].apply(lambda keyword_set: len(list(keyword_set)))
-    print('average number of unique keywords per course %f' % np.mean(keywords_df['num_uniq_keywords']))
+    print('[INFO] average number of unique keywords per course %f' % np.mean(keywords_df['num_uniq_keywords']))
     
     keywords_df.to_csv(KEYWORDS_DIRECTORY + '/unique_keywords_df.tsv', sep = '\t', index = False)
     print('[INFO] Getting unique keywords done, output file at unique_keywords_df.tsv')
@@ -100,8 +100,6 @@ Helper function returns the set difference between the keywords and the descript
 '''
 def find_unique_keywords(row):
     return row['keywords_set'] - row['description_set']
-
-
 
 def main():
     try:
