@@ -77,6 +77,7 @@ def read_files_to_df():
             # print(num_rows)
             df_with_keywords.insert(loc = 3, column= 'tf_bias', value = [tf_bias_value] * num_rows) 
             df_list.append(df_with_keywords)
+            os.remove(os.path.join(KEYWORDS_DIRECTORY, os.path.basename(file)))
         # print(df_list)
     print('[INFO] Files converted to pandas dataframes...')
     

@@ -153,7 +153,7 @@ def get_vocab(dataframe, column):
 
     dataframe[column] = dataframe[column].fillna('')
     
-    max_df_param = 0.002 # 0.0036544883
+    max_df_param =  0.0028 # 0.0036544883
 
     print('[INFO] Taking at most 2000 (most frequent) unigrams')
     vectorizer = TfidfVectorizer(max_df = max_df_param, stop_words='english', ngram_range=(1,1), max_features=2000, use_idf=use_idf)
@@ -187,8 +187,24 @@ def logistic_regression(X, Y):
     print('[INFO] Performing logistic regression...')
     from keras.layers import Input, Dense
     from keras.models import Model
+# This creates a model that includes
+# the Input layer and three Dense layers
+# inputs = Input(shape=(784,))
+# # a layer instance is callable on a tensor, and returns a tensor
+# x = Dense(64, activation='relu')(inputs)
+# x = Dense(64, activation='relu')(x)
+# predictions = Dense(10, activation='softmax')(x)
+#     model = Model(inputs=inputs, outputs=predictions)
+#     model.compile(optimizer='rmsprop',
+#                   loss='categorical_crossentropy',
+#                   metrics=['accuracy'])
+
     inputs = Input(shape=(X.shape[1],))
-    predictions = Dense(vocabsize, activation='softmax')(inputs)
+#     print('input shape: ', X.shape[1])  # 300 = number of cols in the feature matrix?
+#     print('vocab size: ', vocabsize) # 2400 = len(get_vocab(raw_frame, textcolumn)) = num words parsed from description corpus
+    x = Dense(10, activation='relu')(inputs)
+    predictions = Dense(vocabsize, activation='softmax')(x)
+#     predictions = Dense(vocabsize, activation='softmax')(inputs)
     model = Model(inputs=inputs, outputs=predictions)
     model.compile(optimizer='rmsprop',
               loss='categorical_crossentropy',
