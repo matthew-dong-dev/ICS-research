@@ -2,18 +2,18 @@
 
 set -e 
 
-while getopts ":b:f:" opt; do
+while getopts ":b:v:" opt; do
   case $opt in
     b) 
 		export tfbias=$OPTARG
 		echo "[INFO] setting -b tfbias: $tfbias"
       ;;
-    f) 
+    v) 
 		export vectorfile=$OPTARG
 		echo "[INFO] setting -v vectorfile: $vectorfile"
       ;;
     \?) 
-		echo "Usage: cmd [-b] (tf-bias) [-f] (vector file)"
+		echo "Usage: cmd [-b] (tf-bias) [-v] (vector file)"
 		echo "Invalid option: -$OPTARG" 
 		exit 1
       ;;
@@ -28,7 +28,7 @@ if [ $OPTIND -eq 1 ]; then echo "Exiting: No options were passed"; exit 1; fi
 
 # ==================================================================
 
-tf_bias_list=($(seq 0 .5 $tfbias))
+tf_bias_list=($(seq .5 .5 $tfbias))
 
 # run Python script on range of tf-bias values
 for i in ${tf_bias_list[@]}; do

@@ -153,7 +153,8 @@ def get_vocab(dataframe, column):
 
     dataframe[column] = dataframe[column].fillna('')
     
-    max_df_param =  0.0028 # 0.0036544883
+    max_df_param = 0.0028 # 0.0036544883
+    re_remove_numbers = u'(?u)\b\w*[a-zA-Z]\w*\b'
 
     print('[INFO] Taking at most 2000 (most frequent) unigrams')
     vectorizer = TfidfVectorizer(max_df = max_df_param, stop_words='english', ngram_range=(1,1), max_features=2000, use_idf=use_idf)
@@ -165,10 +166,14 @@ def get_vocab(dataframe, column):
     bigrams = vectorizer.get_feature_names()
 
     vectorizer = TfidfVectorizer(max_df = max_df_param, stop_words='english', ngram_range=(3,3), max_features=max(1, int(len(unigrams)/10)), use_idf=use_idf)
+    
     X = vectorizer.fit_transform(dataframe[column])
     trigrams = vectorizer.get_feature_names()
 
     vocab = np.concatenate((unigrams, bigrams, trigrams))
+    vocab_list = list(vocab)
+    removed_numbers_list = [word for word in vocab_list if not any(char.isdigit() for char in word)]
+    vocab = np.array(removed_numbers_list)
     pd.DataFrame(vocab).to_csv(outputfile+'_vocab.tsv', sep = '\t', encoding='utf-8', index = False)
     return vocab
 
@@ -202,9 +207,9 @@ def logistic_regression(X, Y):
     inputs = Input(shape=(X.shape[1],))
 #     print('input shape: ', X.shape[1])  # 300 = number of cols in the feature matrix?
 #     print('vocab size: ', vocabsize) # 2400 = len(get_vocab(raw_frame, textcolumn)) = num words parsed from description corpus
-    x = Dense(10, activation='relu')(inputs)
-    predictions = Dense(vocabsize, activation='softmax')(x)
-#     predictions = Dense(vocabsize, activation='softmax')(inputs)
+#     x = Dense(30, activation='sigmoid')(inputs)
+#     predictions = Dense(vocabsize, activation='softmax')(x)
+    predictions = Dense(vocabsize, activation='softmax')(inputs)
     model = Model(inputs=inputs, outputs=predictions)
     model.compile(optimizer='rmsprop',
               loss='categorical_crossentropy',
@@ -268,6 +273,9 @@ if (textcolumn != ''):
     time_get_vocab_and_bow_bf = time.time()
     vocab = get_vocab(raw_frame, textcolumn)
     vocab_frame = pd.DataFrame(vocab)
+    
+    vocab_frame.to_csv(vocab_dir + '/complete-vocab.tsv', sep = '\t', index = False)
+    
     vocabsize = len(vocab)
     # Convert the textcolumn of the raw dataframe into bag of words representation
     bow_spmatrix = to_bag_of_words(raw_frame, textcolumn, vocab)

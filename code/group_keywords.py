@@ -22,10 +22,11 @@ def get_unique_keywords():
     keywords_df['keywords_set'] = keywords_df['keywords'].apply(lambda keywords: (set([word.strip() for word in keywords.split(',')])))
     keywords_df['descrip_title'] = keywords_df['course_title'] + ' ' + keywords_df['description']
     keywords_df['description_set'] = keywords_df.apply(clean_descrip_title, axis = 1)
+    keywords_df['unique_keywords_set'] = keywords_df.apply(find_unique_keywords_set, axis = 1)
+    keywords_df['num_uniq_keywords'] = keywords_df['unique_keywords_set'].apply(lambda keyword_set: len(list(keyword_set)))
     keywords_df['unique_keywords'] = keywords_df.apply(find_unique_keywords, axis = 1)
-    keywords_df['num_uniq_keywords'] = keywords_df['unique_keywords'].apply(lambda keyword_set: len(list(keyword_set)))
-    print('[INFO] average number of unique keywords per course %f' % np.mean(keywords_df['num_uniq_keywords']))
     
+    print('[INFO] average number of unique keywords per course %f' % np.mean(keywords_df['num_uniq_keywords'])) 
     keywords_df.to_csv(KEYWORDS_DIRECTORY + '/unique_keywords_df.tsv', sep = '\t', index = False)
     print('[INFO] Getting unique keywords done, output file at unique_keywords_df.tsv')
     
@@ -39,23 +40,26 @@ def group_keywords(df_list):
     print('[INFO] Grouping keywords...')
 #     print(pd.concat(df_list).shape)
     joined_df = pd.concat(df_list)
+    joined_df.to_csv(KEYWORDS_DIRECTORY + '/joined_df.tsv', sep = '\t', index = False)
     keyword_df = joined_df.groupby(list(joined_df.columns)).count().reset_index()
-   # print(keyword_df.iloc[:,:3].head(5))
+#     print(keyword_df.iloc[:,:3].head(5))
 #     print(keyword_df.columns)
-    keyword_df['keywords'] = keyword_df.iloc[:,4:13].apply(lambda x: ', '.join(x), axis=1)
-    keyword_df = keyword_df[['course_number', 'description', 'keywords']]
-    descript_keywords = keyword_df.groupby(['course_number', 'description'])['keywords'].apply(', '.join).reset_index()
+    predicted_keywords = keyword_df[keyword_df.columns.difference(['course_number', 'course_title', 'description', 'tf_bias'])]
+    keyword_df['keywords'] = predicted_keywords.iloc[:,:].apply(lambda x: ', '.join(x), axis=1)
+    keyword_df = keyword_df[['course_number', 'course_title', 'description', 'keywords']]
+    descript_keywords = keyword_df.groupby(['course_number', 'course_title', 'description'])['keywords'].apply(', '.join).reset_index()
 #     print(descript_keywords['keywords'])
     descript_keywords['keywords'] = descript_keywords['keywords'].apply(lambda keywords: ', '.join(sorted(set([word.strip() for word in keywords.split(',')]))))
+    descript_keywords.to_csv(KEYWORDS_DIRECTORY + '/descript_keywords.tsv', sep = '\t', index = False)
 #     print(descript_keywords['keywords'])
 #     print(titles_file_path)
-    course_titles = pd.read_csv(titles_file_path, sep = '\t')
-    df_with_titles = pd.merge(descript_keywords, course_titles, how = 'left', on = 'course_number')
-    df_with_titles = df_with_titles[['course_number', 'course_title', 'description_x', 'keywords']]
-    df_with_titles.rename(columns = {'description_x': 'description'}, inplace = True)
-    df_with_titles = df_with_titles.fillna('')
+#     course_titles = pd.read_csv(titles_file_path, sep = '\t')
+#     df_with_titles = pd.merge(descript_keywords, course_titles, how = 'right', on = 'course_number')
+#     df_with_titles = df_with_titles[['course_number', 'course_title', 'description_x', 'keywords']]
+#     df_with_titles.rename(columns = {'description_x': 'description'}, inplace = True)
+#     df_with_titles = df_with_titles.fillna('')
 #     print(df_with_titles.head(5))
-    df_with_titles.to_csv(KEYWORDS_DIRECTORY + '/keywords_descrip_title.tsv', sep = '\t', index = False)
+    descript_keywords.to_csv(KEYWORDS_DIRECTORY + '/keywords_descrip_title.tsv', sep = '\t', index = False)
     print('[INFO] Grouping keywords done, all keywords at keywords_descrip_title.tsv')
     
 
@@ -99,8 +103,19 @@ Helper function returns the set difference between the keywords and the descript
 @param
 @return
 '''
-def find_unique_keywords(row):
+def find_unique_keywords_set(row):
     return row['keywords_set'] - row['description_set']
+
+'''
+Helper function returns the string version of the set difference between the keywords and the description 
+(the words in keywords but not in the description)
+@param
+@return
+'''
+def find_unique_keywords(row):
+    set_diff = row['keywords_set'] - row['description_set']
+    return ', '.join(sorted(list(set_diff)))
+
 
 def main():
     try:
