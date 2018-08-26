@@ -86,7 +86,7 @@ if rawfile == '':
 print('[INFO] Vector input: ' + vectorfile)
 print('[INFO] Raw input: ' + rawfile)
 print('[INFO] Text column: ' + textcolumn)
-outputfile = re.split("\.t[a-z]{2}$", rawfile)[0]+'_semantic__'+str(num_epochs)+'epochs'+'clusters'+str(use_idf)
+outputfile = re.split("\.t[a-z]{2}$", rawfile)[0]+'_semantic__'+str(num_epochs)+'epochs'+str(use_idf)
 if tf_bias != -999:
     print('[INFO] Term-frequency bias: ' + str(tf_bias))
     outputfile = outputfile + str(tf_bias)
