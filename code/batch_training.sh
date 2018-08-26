@@ -28,7 +28,7 @@ if [ $OPTIND -eq 1 ]; then echo "Exiting: No options were passed"; exit 1; fi
 
 # ==================================================================
 
-tf_bias_list=($(seq .5 .5 $tfbias))
+tf_bias_list=($(seq 0 .5 $tfbias))
 
 # run Python script on range of tf-bias values
 for i in ${tf_bias_list[@]}; do

@@ -12,8 +12,6 @@ import nltk
 import re
 import string
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.cluster import SpectralClustering
-from sklearn.metrics import silhouette_score
 
 vectorfile = ''
 rawfile = ''
@@ -25,7 +23,6 @@ cluster_eval = []
 vocabsize = 0
 num_top_words = 10 # hardcode for now
 use_idf = True
-num_clusters = 5
 tf_bias = -999
 num_epochs = 5
 write_directory = '../outputted_keywords'
@@ -35,25 +32,22 @@ vocab_dir = '../vocab'
 # finishedfile = './finishedfile.txt'
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'hv:r:t:d:s:f:k:b:e:i:n:l:')
+    opts, args = getopt.getopt(sys.argv[1:], 'hv:r:t:d:s:f:b:e:i:')
 except getopt.GetoptError:
-    print('\npython3 semantic_model.py -v <vectorfile> -r <rawfile> -t <textcolumn> [-d <write_directory> (if not current directory) -s <scorefile_location> (if not ./scorefile.txt) -f <finishedfile_location> (if not ./finishedfile.txt) -k <num_clusters> -b <tf_bias> -e <num_epochs> -i <use_idf> -n <cluster_input> -l <cluster_eval>]')
+    print('\npython3 semantic_model.py -v <vectorfile> -r <rawfile> -t <textcolumn> [-d <write_directory> (if not current directory) -s <scorefile_location> (if not ./scorefile.txt) -f <finishedfile_location> (if not ./finishedfile.txt) -b <tf_bias> -e <num_epochs> -i <use_idf>]')
     sys.exit(2)
 
 for opt, arg in opts:
     if opt == '-h':
-        print('\npython3 semantic_model.py -v <vectorfile> -r <rawfile> -t <textcolumn> [-d <write_directory> (if not current directory) -s <scorefile_location> (if not ./scorefile.txt) -f <finishedfile_location> (if not ./finishedfile.txt) -k <num_clusters> -b <tf_bias> -e <num_epochs> -i <use_idf> -n <cluster_input> -l <cluster_eval>]')
+        print('\npython3 semantic_model.py -v <vectorfile> -r <rawfile> -t <textcolumn> [-d <write_directory> (if not current directory) -s <scorefile_location> (if not ./scorefile.txt) -f <finishedfile_location> (if not ./finishedfile.txt) -b <tf_bias> -e <num_epochs> -i <use_idf>]')
         print('<vectorfile> is the high dimensional vector\n<rawfile> is the original input data')
         print('<textcolumn> is a column in raw file that needs nltk processing')
         print('<write_directory> is where you would like to save the output files')
         print('<scorefile_location> is where you would like the scores to be saved')
         print('<finishedfile_location> is where you would like the scores to be saved')
-        print('<num_clusters> is the number of clusters to bin the data into (default 5)')
         print('<tf_bias> is the bias constant for term-frequency')
         print('<num_epochs> is the number of epochs to train the logistic regression model for (default 5)')
         print('<use_idf> is either True or False (default) for using idf')
-        print('<cluster_input> is a '+'-separated (no spaces) list like softmax+bow (default)')
-        print('<cluster_eval> is a '+'-separated (no spaces) list like vector+2d (default)')
         sys.exit()
     if opt in ("-v"):
         print('[INFO] setting -v')
@@ -73,9 +67,6 @@ for opt, arg in opts:
     if opt in ("-f"):
         print('[INFO] setting -f')
         finishedfile = arg
-    if opt in ("-k"):
-        print('[INFO] setting -k')
-        num_clusters = int(arg)
     if opt in ("-b"):
         print('[INFO] setting -b')
         tf_bias = float(arg)
@@ -85,20 +76,6 @@ for opt, arg in opts:
     if opt in ("-i"):
         print('[INFO] setting -i')
         use_idf = arg
-    if opt in ("-n"):
-        print('[INFO] setting -n')
-        print(arg)
-        print(len(arg.split("+")))
-        cluster_input = arg.lower()
-        cluster_input = cluster_input.split("+")
-        print('[DEBUG] cluster inputs: ')
-        print(cluster_input)
-    if opt in ("-l"):
-        print('[INFO] setting -l')
-        cluster_eval = arg.lower()
-        cluster_eval = cluster_eval.split("+")
-        print('[DEBUG] cluster evals: ')
-        print(cluster_eval)
 if vectorfile == '':
     print('[DEBUG] option [-v] must be set\n')
     sys.exit()
@@ -109,7 +86,7 @@ if rawfile == '':
 print('[INFO] Vector input: ' + vectorfile)
 print('[INFO] Raw input: ' + rawfile)
 print('[INFO] Text column: ' + textcolumn)
-outputfile = re.split("\.t[a-z]{2}$", rawfile)[0]+'_semantic__'+str(num_epochs)+'epochs'+str(num_clusters)+'clusters'+str(use_idf)
+outputfile = re.split("\.t[a-z]{2}$", rawfile)[0]+'_semantic__'+str(num_epochs)+'epochs'+'clusters'+str(use_idf)
 if tf_bias != -999:
     print('[INFO] Term-frequency bias: ' + str(tf_bias))
     outputfile = outputfile + str(tf_bias)
@@ -157,10 +134,12 @@ def get_vocab(dataframe, column):
     re_remove_numbers = u'(?u)\b\w*[a-zA-Z]\w*\b'
 
     print('[INFO] Taking at most 2000 (most frequent) unigrams')
-    vectorizer = TfidfVectorizer(max_df = max_df_param, stop_words='english', ngram_range=(1,1), max_features=2000, use_idf=use_idf)
+    vectorizer = TfidfVectorizer(max_df = max_df_param, stop_words='english', ngram_range=(1,1), use_idf=use_idf)
     X = vectorizer.fit_transform(dataframe[column])
     unigrams = vectorizer.get_feature_names()
+    print('[UNIGRAMS] number unigrams: %d' % (len(unigrams)))
 
+    
     vectorizer = TfidfVectorizer(max_df = max_df_param, stop_words='english', ngram_range=(2,2), max_features=max(1, int(len(unigrams)/10)), use_idf=use_idf)
     X = vectorizer.fit_transform(dataframe[column])
     bigrams = vectorizer.get_feature_names()
@@ -192,17 +171,6 @@ def logistic_regression(X, Y):
     print('[INFO] Performing logistic regression...')
     from keras.layers import Input, Dense
     from keras.models import Model
-# This creates a model that includes
-# the Input layer and three Dense layers
-# inputs = Input(shape=(784,))
-# # a layer instance is callable on a tensor, and returns a tensor
-# x = Dense(64, activation='relu')(inputs)
-# x = Dense(64, activation='relu')(x)
-# predictions = Dense(10, activation='softmax')(x)
-#     model = Model(inputs=inputs, outputs=predictions)
-#     model.compile(optimizer='rmsprop',
-#                   loss='categorical_crossentropy',
-#                   metrics=['accuracy'])
 
     inputs = Input(shape=(X.shape[1],))
 #     print('input shape: ', X.shape[1])  # 300 = number of cols in the feature matrix?
@@ -223,28 +191,6 @@ def logistic_regression(X, Y):
 #     biases_frame.to_csv(outputfile+'_biases.tsv', sep = '\t', index = False)
     return(weights_frame, biases)
 
-@timeout_decorator.timeout(3600, exception_message='timeout occured at cluster')
-def cluster(X):
-    print('[INFO] Clustering vectors...')
-    # Take a decreasing function of the gradient: we take it weakly
-    # dependent from the gradient the segmentation is close to a voronoi.
-    # Add small number to denom to prevent nan.
-    # ?? Can this be improved?
-    # X = np.exp(-X / (X.std() + 1e-6))
-    X = np.exp(- X**2 / (2. * 1 ** 2))
-    clusters = None
-    attempts = 0
-    while clusters is None and attempts < 15:
-        try:
-            attempts += 1
-            sc = SpectralClustering(n_clusters=num_clusters, eigen_solver="arpack")
-            clusters = sc.fit_predict(X)
-        except:
-            print('[INFO] Clustering attempt # ' + str(attempts) + ' failed. ' + str(time.time()))
-            pass
-    if clusters is None:
-        sys.exit('[ERROR] Unable to cluster in 15 attempts.')
-    return clusters
 
 # MAIN
 timebf = time.time()
@@ -308,48 +254,7 @@ if (textcolumn != ''):
     time_get_top_predictions_af = time.time()
     print('[INFO] Getting top predictions for each point took ' + str(time_get_top_predictions_af - time_get_top_predictions_bf))
 
-    ### Cluster points based on various metrics and evaluating each clustering ###
-#     sf = open(scorefile,'a+')
-    time_clusters_bf = time.time()
-    for elem in cluster_input:
-        print('[INFO] Clustering using ' + elem)
-        if elem == 'softmax':
-            clusters = cluster(softmax_frame) + 1
-        elif elem == 'bow':
-            # Do not cluster those without any words
-            clusters = np.zeros(len(raw_frame[textcolumn]), dtype=np.int)
-            clusters[nonempty_indices] = cluster(filtered_bow_ndarray) + 1
-        else:
-            if (np.issubdtype(df['A'].dtype, np.number)):
-                clusters = raw_frame[[elem]] + 1
-            else:
-                print('[ERROR] feature ' + elem + ' is not numeric')
-        print('[DEBUG] Got clusters: ')
-        print(clusters)
-        # Save cluster assignments to dataframe
-        raw_frame[elem + '_cluster'] = clusters
-        # Evaluate the clustering's cosine proximity
-        for el in cluster_eval:
-            print('[INFO] Evaluating clustering using ' + el)
-            if el == 'vector':
-                eval_by = vec_frame.iloc[:,1:]
-            elif el == '2d':
-                eval_by = raw_frame[['x', 'y']]
-            else:
-                if (np.issubdtype(df['A'].dtype, np.number)):
-                    eval_by = raw_frame[[el]]
-                else:
-                    print('[ERROR] feature ' + elem + ' is not numeric')
-            if (elem == 'bow'):
-                silhouette_avg = silhouette_score(eval_by.iloc[nonempty_indices,:], clusters[nonempty_indices], metric='cosine')
-            else:
-                silhouette_avg = silhouette_score(eval_by, clusters, metric='cosine')
-            print('Score--' + outputfilename + '\t'+elem+'\t'+el+'\t' + str(silhouette_avg))
-#             sf.write('\n' + outputfilename + '\t'+elem+'\t'+el+'\t' + str(silhouette_avg))
-    time_clusters_af = time.time()
-    print('[INFO] Assigning and evaluating clusters took ' + str(time_clusters_af - time_clusters_bf))
-#     print('[INFO] Scores available through logs or in ' + scorefile)
-#     sf.close()
+
 
 print('[INFO] Writing results to file...')
 time_writing_files_bf = time.time()
@@ -384,3 +289,9 @@ timeaf = time.time()
 # ff.close()
 print('[INFO] End time: ' + str(timeaf))
 print('[INFO] TOTAL time:', timeaf-timebf)
+
+def main():
+    None
+
+if __name__ == "__main__": main()
+
