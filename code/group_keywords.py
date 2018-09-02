@@ -18,14 +18,14 @@ unique_keywords_path = '../outputted_keywords/unique_keywords_df.tsv'
 Inferred keywords data to be used for production
 '''
 def get_production_keywords():
-    print('[INFO] Writing keywords to production...')
+    print('[INFO] Pickling keywords...')
     unique_keywords_df = pd.read_csv(unique_keywords_path, sep = '\t')
     production_keywords = unique_keywords_df[['course_number', 'course_title', 'description', 'keywords']]
-    output_pkl_path = os.path.join(KEYWORDS_OUTPUT_DIR, 'production_keywords.p') # cannot have leading backslash
+    output_pkl_path = os.path.join(KEYWORDS_OUTPUT_DIR, 'new_version_keywords.p') # cannot have leading backslash
     pickle_out = open(output_pkl_path,"wb")
     pickle.dump(production_keywords, pickle_out)
     pickle_out.close()
-    print('[INFO] Write complete, output file at production_keywords.p')
+    print('[INFO] Pickle file at new_version_keywords.p')
     
 '''
 After outputting the trained keywords and grouping them together, get the unique ones not in the description
