@@ -34,10 +34,10 @@ tf_bias_list=($(seq 0 .5 $tfbias))
 for i in ${tf_bias_list[@]}; do
 
     printf "=========================== Training with tf-bias: %s\n" "${i}"
-    python semantic_model.py -v $vectorfile -r ../input_data/vector_text.tsv -t description -b ${i} 
+    python semantic_model.py -v $vectorfile -r ../input_data/course_info.tsv -t description -b ${i} 
 
 done
 
-echo "[INFO] Finished training keywords, proceed to group and get unique keywords"
+echo "[INFO] Finished training keywords, proceed to group and get unique keywords for each course"
 
 python group_keywords.py
