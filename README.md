@@ -1,29 +1,34 @@
 # SEARCH MACHINE LEARNING
 
 What are the keywords:
-	- What makes this search “intelligent” is that a query will not only be matched against course titles and descriptions, but also to an additional search metric known as “inferred keywords.” Inferred keywords are a generalized course description produced through machine learning that potentially capture a semantic portrayal of courses beyond surface level descriptions.  
-	- produced from an embedded space of courses learned through historic enrollments, gaining a semantic portrayal of courses capturing details beyond surface level course descriptions. 
+
+- What makes this search “intelligent” is that a query will not only be matched against course titles and descriptions, but also to an additional search metric known as “inferred keywords.” Inferred keywords are a generalized course description produced through machine learning that potentially capture a semantic portrayal of courses beyond surface level descriptions.  
+- produced from an embedded space of courses learned through historic enrollments, gaining a semantic portrayal of courses capturing details beyond surface level course descriptions. 
 
 Why keywords?
-	- Access to enrollment data is what distingiushes it from other information systems
-	- obtain a level of abstraction beyond pure keyword match
-	- use case is not knowing what the user would search to look up a specific course, possibly translate discipline specific jargon (e.g. course about money but has money nowhere in the dsescription)
+
+- Access to enrollment data is what distingiushes it from other information systems
+- obtain a level of abstraction beyond pure keyword match
+- use case is not knowing what the user would search to look up a specific course, possibly translate discipline specific jargon (e.g. course about money but has money nowhere in the dsescription)
 
 Where do the keywords come from?
-	- ANALOGY: 
-		- courses that are similar e.g. from the same department would be clustered together and have similar descriptions 
-		- if a course was interdisciplinary, then it might have predicted words that reflect the two departments depending on the enrollment behaviors of the students 
-	- Basic response: Model takes historic enrollments and course descriptions and infers what each course is about based on that information
-	- Intermediate: Model takes in behaviorally informed course vectors and produces keywords that can be used as another search metric.  Inferred keywords are a ML model's guess as to what the essence of a course is in terms of the collective descriptions.  Hopefully captures semantic meaning not explicitly found in the course descriptions through the course vectors which capture behavioral data through enrollment networks. 
-	- Advanced: Keywords are a mapping from behaviorally informed course vector space to literal description BOW vector space. Fit a multinomial logistic regression model from each course vector to its description vector (BOW) and then for each course tell it to predict the top k words that describe it. The model is regularized to prevent overfitting, allowing it to pull words from other course descriptions in its attempt to generalize. 
-	- tooltip v1: Keywords are produced through topic modeling of a course and offer both abstract and specific characterizations. 
-	- tooltip v2: Keywords are inferred using historic enrollment data and course descriptions. 
-	- tooltip v3: Inferred keywords are predicted from course descriptions and student enrollment patterns.  Words may characterize a course beyond the course description
-	- Disclaimer: May be inaccurate / not representative of the actual course or are not sponsored by faculty... 
+
+ANALOGY: 
+- courses that are similar e.g. from the same department would be clustered together and have similar descriptions 
+- if a course was interdisciplinary, then it might have predicted words that reflect the two departments depending on the enrollment behaviors of the students 
+
+- Basic response: Model takes historic enrollments and course descriptions and infers what each course is about based on that information
+- Intermediate: Model takes in behaviorally informed course vectors and produces keywords that can be used as another search metric.  Inferred keywords are a ML model's guess as to what the essence of a course is in terms of the collective descriptions.  Hopefully captures semantic meaning not explicitly found in the course descriptions through the course vectors which capture behavioral data through enrollment networks. 
+- Advanced: Keywords are a mapping from behaviorally informed course vector space to literal description BOW vector space. Fit a multinomial logistic regression model from each course vector to its description vector (BOW) and then for each course tell it to predict the top k words that describe it. The model is regularized to prevent overfitting, allowing it to pull words from other course descriptions in its attempt to generalize. 
+- tooltip v1: Keywords are produced through topic modeling of a course and offer both abstract and specific characterizations. 
+- tooltip v2: Keywords are inferred using historic enrollment data and course descriptions. 
+- tooltip v3: Inferred keywords are predicted from course descriptions and student enrollment patterns.  Words may characterize a course beyond the course description
+- Disclaimer: May be inaccurate / not representative of the actual course or are not sponsored by faculty... 
 
 How to make recommendations?
-	- similar course sequences "courses students similar to you have taken"
-	- enrolling in a course is considered implicit feedback
+
+- similar course sequences "courses students similar to you have taken"
+- enrolling in a course is considered implicit feedback
 
 ## ML: Improving the intelligence of the intelligent search
 1. `Tune the model`:
@@ -121,7 +126,7 @@ COMMAND TO RUN SCRIPT: `time bash batch_training.sh -b 2 -v ../input_data/analog
 
 # SEARCH WEB DEVELOPMENT
 
-# Remark: Why the autograder was useful
+## Remark: Why the autograder was useful
 - **Pseudo-coding**:changing random things and hoping they'll work 
 - Pseudo-coding will give you headaches later when debugging you must be systematic in your approach, diagramming things out by hand will give you a clearer pictures of where things might be going wrong
 - sometimes slow internet connection is good - don't be in such a rush to test things, make sure everything is implemented as close to correctly as possible first 
@@ -234,7 +239,6 @@ Zachary
 
 Versioning number is arbitrary but good guidelines: [major release].[minor release].[hotfix]
 
-
 **How to use devTools**
 1. Network tab:
 	- hit preserve log to record the time it takes for processes to work
@@ -260,10 +264,11 @@ netstat -tlnpe | awk '{print $7 " " $4}' | sed s/:/\ /g | grep -E '0.0.0.0|169.2
 ```
 
 stackblitzes:
-	- Course table: https://stackblitz.com/edit/angular-course-filter-pipe-gm2vhu?file=src%2Fapp%2Fapp.component.html 
-	- without pipes: https://stackblitz.com/edit/angular-course-filter-pipe-bszsae?file=src%2Fapp%2Fapp.component.ts (yours)
-	- without pipes: https://stackblitz.com/edit/angular-course-filter-pipe-vnjhq9 (monty)
-	- using debounce: https://stackblitz.com/edit/angular-course-filter-pipe-jqok8a 
+
+	- [Course table](https://stackblitz.com/edit/angular-course-filter-pipe-gm2vhu?file=src%2Fapp%2Fapp.component.html)
+	- [without pipes](https://stackblitz.com/edit/angular-course-filter-pipe-bszsae?file=src%2Fapp%2Fapp.component.ts) (yours)
+	- [without pipes](https://stackblitz.com/edit/angular-course-filter-pipe-vnjhq9) (monty)
+	- [using debounce](https://stackblitz.com/edit/angular-course-filter-pipe-jqok8a)
 ----
 
 ## Miscelleanous
@@ -275,12 +280,13 @@ PRESENTATION NOTES:
 - I think the use of that figure was good for the purposes of your talk. Technically, however, the figure was generated from the embedding in an RNN, not a word2vec model. We have another paper where the depiction of courses was generated from word2vec, which you could use.
 
 Technical vocab: 
-	- proof of concept, MVP, technical debt, ship to production, push for production, QA (quality assurance), bells & whistles, parity with master, ground truth, upkeep, contract
-	- flat file: A flat file database is a database that stores data in a plain text file. Each line of the text file holds one record, with fields separated by delimiters, such as commas or tabs. While it uses a simple structure, a flat file database cannot contain multiple tables like a relational database can.
-	- Code hygiene, maintenance, cleanliness, pruning
-	- upshot, value proposition, grok
-	- Priority 0 (P0)
-	- cost, quality, speed
+
+- proof of concept, MVP, technical debt, ship to production, push for production, QA (quality assurance), bells & whistles, parity with master, ground truth, upkeep, contract
+- flat file: A flat file database is a database that stores data in a plain text file. Each line of the text file holds one record, with fields separated by delimiters, such as commas or tabs. While it uses a simple structure, a flat file database cannot contain multiple tables like a relational database can.
+- Code hygiene, maintenance, cleanliness, pruning
+- upshot, value proposition, grok
+- Priority 0 (P0)
+- cost, quality, speed
 
 How to describe CAHL
-	- a lot of data is generated from MOOCs (online courses) such as clickthrough rate, student participation, engagement... and using methodologies from other fields can you infer anything about student motivations, student engagement, and can you use your models to better personalize learning or improve a course experience... 
+- a lot of data is generated from MOOCs (online courses) such as clickthrough rate, student participation, engagement... and using methodologies from other fields can you infer anything about student motivations, student engagement, and can you use your models to better personalize learning or improve a course experience... 
