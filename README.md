@@ -265,10 +265,11 @@ netstat -tlnpe | awk '{print $7 " " $4}' | sed s/:/\ /g | grep -E '0.0.0.0|169.2
 
 stackblitzes:
 
-	- [Course table](https://stackblitz.com/edit/angular-course-filter-pipe-gm2vhu?file=src%2Fapp%2Fapp.component.html)
-	- [without pipes](https://stackblitz.com/edit/angular-course-filter-pipe-bszsae?file=src%2Fapp%2Fapp.component.ts) (yours)
-	- [without pipes](https://stackblitz.com/edit/angular-course-filter-pipe-vnjhq9) (monty)
-	- [using debounce](https://stackblitz.com/edit/angular-course-filter-pipe-jqok8a)
+- [Course table](https://stackblitz.com/edit/angular-course-filter-pipe-gm2vhu?file=src%2Fapp%2Fapp.component.html)
+- [without pipes](https://stackblitz.com/edit/angular-course-filter-pipe-bszsae?file=src%2Fapp%2Fapp.component.ts) (yours)
+- [without pipes](https://stackblitz.com/edit/angular-course-filter-pipe-vnjhq9) (monty)
+- [using debounce](https://stackblitz.com/edit/angular-course-filter-pipe-jqok8a)
+
 ----
 
 ## Miscelleanous
