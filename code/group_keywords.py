@@ -6,16 +6,16 @@ import string
 import pickle
 
 KEYWORDS_OUTPUT_DIR = '../outputted_keywords' # os.getcwd()
-VEC_TEXT_DIR = '../input_data/'
 df_list = []
 grouped_keywords_path = '../outputted_keywords/keywords_descrip_title.tsv'
 unique_keywords_path = '../outputted_keywords/unique_keywords_df.tsv'
 # grouped_keywords_df = pd.DataFrame()
 # unique_keywords_df = pd.DataFrame()
+# VEC_TEXT_DIR = '../input_data/'
 # titles_file_path = os.path.join(VEC_TEXT_DIR, 'vector_text.tsv') 
 
 '''
-Inferred keywords data to be used for production
+Pickle inferred keywords data 
 '''
 def get_production_keywords():
     print('[INFO] Pickling keywords...')

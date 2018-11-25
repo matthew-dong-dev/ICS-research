@@ -38,6 +38,6 @@ for i in ${tf_bias_list[@]}; do
 
 done
 
-echo "[INFO] Finished training keywords, proceed to group and get unique keywords"
+echo "[INFO] Finished training keywords, proceed to group and get unique keywords for each course"
 
 python group_keywords.py
