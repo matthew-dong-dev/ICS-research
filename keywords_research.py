@@ -6,7 +6,6 @@ from collections import Counter
 from itertools import chain
 import re
 import string
-# import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from scipy.spatial.distance import cosine
@@ -22,17 +21,10 @@ sess = tf.Session(config=config)
 K.set_session(sess)
 pd.options.mode.chained_assignment = None 
 
-
 TRAINING_DIR = os.getcwd()
 vectorfile = os.path.join(TRAINING_DIR, 'course_vecs.tsv')
 infofile = os.path.join(TRAINING_DIR, 'course_info.tsv')
 textcolumn = 'course_description'
-use_idf = True
-tf_bias = .5
-num_epochs = 5
-num_top_words = 10
-max_df = 0.0028
-
 
 # @timeout_decorator.timeout(600, exception_message='timeout occured at get_vocab')
 def get_vocab(dataframe, column):
@@ -183,7 +175,14 @@ filtered_descript_df = info_frame.iloc[nonempty_indices,:].reset_index(drop = Tr
 
 max_descript_len = max(filtered_descript_df.course_description.str.split().str.len())
 
-kf = KFold(n_splits = 5, random_state = 42)
+hyperparams_cols = ['tf-bias', 'max_df', 'num_epochs', 'recall', 'precision', 'distribution_diff']
+grid_search_df = pd.DataFrame(columns=hyperparams_cols)
+
+num_top_words = 10
+use_idf = True
+tf_bias = .5
+num_epochs = 5
+max_df = 0.0028
 
 print('[INFO] Running cross validation...')
 
@@ -192,6 +191,7 @@ precision_validation_scores = []
 distribution_validation_scores = []
 fold_num = 1
 # X = vectors, Y = descriptions
+kf = KFold(n_splits = 5, random_state = 42)
 for train_idx, valid_idx in kf.split(filtered_vec_df):
     print('[INFO] ****** Fold %d ******' % (fold_num))
     
@@ -232,13 +232,11 @@ recall_i = np.mean(recall_validation_scores)
 precision_i = np.mean(precision_validation_scores)
 distribution_diff_i = np.mean(distribution_validation_scores)
 
-hyperparams_cols = ['tf-bias', 'max_df', 'num_epochs', 'num_top_words', 'recall', 'precision', 'distribution_diff']
-hyperparams_df = pd.DataFrame(columns=hyperparams_cols)
-model_i_info_list = [tf_bias, max_df, num_epochs, num_top_words, recall_i, precision_i, distribution_diff_i]
-model_i_info = pd.DataFrame([model_i_info_list], columns=hyperparams_cols)
-hyperparams_df = hyperparams_df.append(model_i_info, sort= False)
+model_i_params = [tf_bias, max_df, num_epochs, recall_i, precision_i, distribution_diff_i]
+model_i_params = pd.DataFrame([model_i_params], columns=hyperparams_cols)
+hyperparams_df = hyperparams_df.append(model_i_params, sort = False)
 
-print('recall scores:', recall_validation_scores)
-print('precision scores:', precision_validation_scores)
-print('distribution scores:', distribution_validation_scores)
+# print('recall scores:', recall_validation_scores)
+# print('precision scores:', precision_validation_scores)
+# print('distribution scores:', distribution_validation_scores)
 print(hyperparams_df)
