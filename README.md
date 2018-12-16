@@ -74,6 +74,8 @@ How to make recommendations?
 
 COMMAND TO RUN SCRIPT: `time bash batch_training.sh -b 2 -v ../input_data/analogy_vecs.tsv`
 
+1. If encounter `ResourceExhaustedError` run gpu_who and kill your existing jobs
+
 1. `screen`
 	- run `screen -S name` 
 	- run the script / start up the backend / open jupyter notebook
@@ -84,7 +86,7 @@ COMMAND TO RUN SCRIPT: `time bash batch_training.sh -b 2 -v ../input_data/analog
 		- `screen -ls` will list all current screens (ls = list)
 		- `screen -d` will detach you from the screen and back into original session
 		- screen must be detached for you to go back into original terminal session
-		- run `echo $STY` to check if you are in a screen
+		- run `echo $STY` to check if you are in a screen which is a variable set by the screen command
 		- `control + d` just terminates screen
 	- `lsof -i :1371`, `kill PID` if necessary
 
