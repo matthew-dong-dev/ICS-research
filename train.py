@@ -29,13 +29,19 @@ vectorfile = os.path.join(TRAINING_DIR, 'course_vecs.tsv')
 infofile = os.path.join(TRAINING_DIR, 'course_info.tsv')
 textcolumn = 'course_description'
 
-def get_vocab(dataframe, column, max_df=0.0028, use_idf=True):
+def get_vocab(dataframe, column, max_df=0.057611, use_idf=True):
+    """Gets the vocab labels to be used as inferred keywords. 
+    Args:
+        Dataframe with column name (string) to parse vocab from.
+        Max_df (float): max document frequency for sklearn's vectorizer
+        Use_idf (boolean): does this make a difference here? 
+    Returns:
+        Array of vocabulary labels.
+    """
+    
     print("[INFO] Getting vocab...")
-
     dataframe[column] = dataframe[column].fillna('')
     
-    # max_df_param = 0.0028  # 1.0 # 0.0036544883
-
     vectorizer = TfidfVectorizer(max_df = max_df, stop_words='english', ngram_range=(1,1), use_idf=use_idf)
     X = vectorizer.fit_transform(dataframe[column])
     unigrams = vectorizer.get_feature_names()
@@ -55,13 +61,16 @@ def get_vocab(dataframe, column, max_df=0.0028, use_idf=True):
     vocab_list = list(vocab)
     removed_numbers_list = [word for word in vocab_list if not any(char.isdigit() for char in word)]
     vocab = np.array(removed_numbers_list)
-#     pd.DataFrame(vocab).to_csv(outputfile+'_vocab.tsv', sep = '\t', encoding='utf-8', index = False)
     return vocab
 
 # @timeout_decorator.timeout(600, exception_message='timeout occured at to_bag_of_words')
 def to_bag_of_words(dataframe, column, vocab, tf_bias=.5, use_idf=True):
-    """Input: raw dataframe, text column, and vocabulary.
-    Returns a sparse matrix of the bag of words representation of the column."""
+    """Converts text corpus into its BOW representation using predefined vocab.
+    Args:
+        raw dataframe, text column, and vocabulary.
+    Returns:
+        A sparse matrix of the bag of words representation of the column.
+    """
     vectorizer = TfidfVectorizer(stop_words='english', vocabulary=vocab, use_idf=use_idf)
     X = vectorizer.fit_transform(dataframe[column].values.astype('U'))
     if tf_bias == -999:
@@ -70,6 +79,12 @@ def to_bag_of_words(dataframe, column, vocab, tf_bias=.5, use_idf=True):
 
 # @timeout_decorator.timeout(3600, exception_message='timeout occured at logistic_regression')
 def logistic_regression(X, Y, num_epochs=1):
+    """Perform multinomial logistic regression from BOW vector space (Y) onto course vector space (X). 
+    Args: 
+        Matrix of course vectors and corresponding BOW descriptions and number of epochs. 
+    Returns:
+        Tuple of weights and bias dataframes to use in prediction.
+    """
     print('[INFO] Performing logistic regression...')
 
     inputs = Input(shape=(X.shape[1],))
@@ -89,12 +104,15 @@ def logistic_regression(X, Y, num_epochs=1):
     biases_frame = pd.DataFrame(biases)
     return(weights_frame, biases)
 
-def predict(course_vecs, course_descipts, trained_weights, trained_biases, num_words_per_course):
+def predict(course_vecs, course_descripts, trained_weights, trained_biases, num_words_per_course):
+    """Predict inferred keywords for each course using train the vectorspace coeffs to predict the BOW of a point.
+    Args:
+        Course vectors, course description, weights and biases
+        num_words_per_course (int): Number of words to predict per course
+    Returns:
+        Course description dataframe with a new column for every predicted word 
     """
-    lalalal
-    
-    """
-    df_with_keywords = course_descipts.copy()
+    df_with_keywords = course_descripts.copy()
     softmax_frame = course_vecs.iloc[:,1:].dot(trained_weights.values) + trained_biases # make predictions
 
     # From the softmax predictions, save the top 10 predicted words for each data point
