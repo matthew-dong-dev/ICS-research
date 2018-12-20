@@ -94,7 +94,7 @@ def logistic_regression(X, Y, use_hidden_layer=False, hidden_layer_size=200, num
     model.compile(optimizer='rmsprop',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
-    model.fit(X, Y, epochs=num_epochs)
+    model.fit(X, Y, epochs=num_epochs, batch_size=16)
     weights = model.layers[1].get_weights()[0]
     biases = model.layers[1].get_weights()[1]
     weights_frame = pd.DataFrame(weights)
@@ -227,7 +227,7 @@ param_grid = {'use_idf': [True, False],
               'max_df': np.arange(.02, .06, .01),
               'tf_bias': np.append(np.arange(0, 2.5, .5), -999),
               'num_epochs': [5, 10], 
-              'use_hidden_layer': [True, False]} 
+              'use_hidden_layer': [False]} 
 
 grid = ParameterGrid(param_grid)
 
