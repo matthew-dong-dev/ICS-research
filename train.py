@@ -1,10 +1,9 @@
 #!/usr/bin/python 
-
 import time
 import os
 import pandas as pd
 import numpy as np
-from collections import Counter
+from collections import Counter, defaultdict
 from itertools import chain
 import re
 import string
@@ -25,8 +24,9 @@ K.set_session(sess)
 pd.options.mode.chained_assignment = None 
 
 TRAINING_DIR = os.getcwd()
-vectorfile = os.path.join(TRAINING_DIR, 'course_vecs.tsv')
-infofile = os.path.join(TRAINING_DIR, 'course_info.tsv')
+DATA_DIR = './data'
+vectorfile = os.path.join(DATA_DIR, 'course_vecs.tsv')
+infofile = os.path.join(DATA_DIR, 'course_info.tsv')
 textcolumn = 'course_description'
 
 def get_vocab(dataframe, column, max_df=0.057611, use_idf=True):
@@ -34,37 +34,31 @@ def get_vocab(dataframe, column, max_df=0.057611, use_idf=True):
     Args:
         Dataframe with column name (string) to parse vocab from.
         Max_df (float): max document frequency for sklearn's vectorizer
-        Use_idf (boolean): does this make a difference here? 
+        Use_idf (boolean): Use tf-idf to get top feature labels vs just using tf
     Returns:
-        Array of vocabulary labels.
+        Array of vocab labels.
     """
-    
     print("[INFO] Getting vocab...")
+    
     dataframe[column] = dataframe[column].fillna('')
-    
-    vectorizer = TfidfVectorizer(max_df = max_df, stop_words='english', ngram_range=(1,1), use_idf=use_idf)
-    X = vectorizer.fit_transform(dataframe[column])
+    test_corpus = dataframe.course_title.fillna('') + ' ' + dataframe.course_title.fillna('') + ' ' + dataframe.course_description.fillna('')
+    vectorizer = TfidfVectorizer(max_df=max_df, stop_words='english', ngram_range=(1,1), use_idf=use_idf) 
+    X = vectorizer.fit_transform(test_corpus)   # vectorizer.fit_transform(dataframe[column])
     unigrams = vectorizer.get_feature_names()
-    print('[INFO] Number of unigrams: %d' % (len(unigrams)))
-    
-    vectorizer = TfidfVectorizer(max_df = max_df, stop_words='english', ngram_range=(2,2), max_features=max(1, int(len(unigrams)/10)), use_idf=use_idf)
-    X = vectorizer.fit_transform(dataframe[column])
+    print('[INFO] number unigrams: %d' % (len(unigrams)))
+
+    vectorizer = TfidfVectorizer(max_df=max_df, stop_words='english', ngram_range=(2,2), use_idf=use_idf, max_features=max(1, int(len(unigrams)/2)))
+    X = vectorizer.fit_transform(test_corpus)  #  vectorizer.fit_transform(dataframe[column])
     bigrams = vectorizer.get_feature_names()
     print('[INFO] Number of bigrams: %d' % (len(bigrams)))
 
-    vectorizer = TfidfVectorizer(max_df = max_df, stop_words='english', ngram_range=(3,3), max_features=max(1, int(len(bigrams)/10)), use_idf=use_idf)
-    X = vectorizer.fit_transform(dataframe[column])
-    trigrams = vectorizer.get_feature_names()
-    print('[INFO] Number of trigrams: %d' % (len(trigrams)))
-
-    vocab = np.concatenate((unigrams, bigrams, trigrams))
+    vocab = np.concatenate((unigrams, bigrams)) # , trigrams))
     vocab_list = list(vocab)
     removed_numbers_list = [word for word in vocab_list if not any(char.isdigit() for char in word)]
     vocab = np.array(removed_numbers_list)
     return vocab
 
-# @timeout_decorator.timeout(600, exception_message='timeout occured at to_bag_of_words')
-def to_bag_of_words(dataframe, column, vocab, tf_bias=.5, use_idf=True):
+def to_bag_of_words(dataframe, column, vocab, use_idf=True, tf_bias=.5):
     """Converts text corpus into its BOW representation using predefined vocab.
     Args:
         raw dataframe, text column, and vocabulary.
@@ -74,25 +68,26 @@ def to_bag_of_words(dataframe, column, vocab, tf_bias=.5, use_idf=True):
     vectorizer = TfidfVectorizer(stop_words='english', vocabulary=vocab, use_idf=use_idf)
     X = vectorizer.fit_transform(dataframe[column].values.astype('U'))
     if tf_bias == -999:
+        print('[INFO] Not using tf-bias')
         return X
     return (X.multiply(1/X.count_nonzero())).power(-tf_bias)
 
-# @timeout_decorator.timeout(3600, exception_message='timeout occured at logistic_regression')
-def logistic_regression(X, Y, num_epochs=1):
+def logistic_regression(X, Y, use_hidden_layer=False, hidden_layer_size=200, num_epochs=5):
     """Perform multinomial logistic regression from BOW vector space (Y) onto course vector space (X). 
     Args: 
-        Matrix of course vectors and corresponding BOW descriptions and number of epochs. 
+        Matrix of course vectors and corresponding BOW description encodings and number of epochs. 
+        Hidden_layer_size must be greater than the max_description_len trying to predict (181)
     Returns:
         Tuple of weights and bias dataframes to use in prediction.
     """
     print('[INFO] Performing logistic regression...')
 
-    inputs = Input(shape=(X.shape[1],))
-#     print('input shape: ', X.shape[1])  # 300 = number of cols in the feature matrix?
-#     print('vocab size: ', vocabsize) # 2400 = len(get_vocab(raw_frame, textcolumn)) = num words parsed from description corpus
-#     x = Dense(30, activation='sigmoid')(inputs)
-#     predictions = Dense(vocabsize, activation='softmax')(x)
-    predictions = Dense(vocabsize, activation='softmax')(inputs)
+    inputs = Input(shape=(X.shape[1],)) # course vec
+    if use_hidden_layer:
+        hidden_layer = Dense(hidden_layer_size, activation='sigmoid')(inputs)
+        predictions = Dense(vocabsize, activation='softmax')(hidden_layer)
+    else:
+        predictions = Dense(vocabsize, activation='softmax')(inputs)
     model = Model(inputs=inputs, outputs=predictions)
     model.compile(optimizer='rmsprop',
               loss='categorical_crossentropy',
@@ -104,7 +99,7 @@ def logistic_regression(X, Y, num_epochs=1):
     biases_frame = pd.DataFrame(biases)
     return(weights_frame, biases)
 
-def predict(course_vecs, course_descripts, trained_weights, trained_biases, num_words_per_course):
+def predict(course_vecs, course_descripts, trained_weights, trained_biases, vocab_frame, num_words_per_course=10):
     """Predict inferred keywords for each course using train the vectorspace coeffs to predict the BOW of a point.
     Args:
         Course vectors, course description, weights and biases
@@ -113,7 +108,8 @@ def predict(course_vecs, course_descripts, trained_weights, trained_biases, num_
         Course description dataframe with a new column for every predicted word 
     """
     df_with_keywords = course_descripts.copy()
-    softmax_frame = course_vecs.iloc[:,1:].dot(trained_weights.values) + trained_biases # make predictions
+    # Obtain the softmax predictions for all instances
+    softmax_frame = course_vecs.iloc[:,1:].dot(trained_weights.values) + trained_biases 
 
     # From the softmax predictions, save the top 10 predicted words for each data point
     print('[INFO] Sorting classification results...')
@@ -121,6 +117,7 @@ def predict(course_vecs, course_descripts, trained_weights, trained_biases, num_
 
     print('[INFO] Predicting top k inferred keywords for each course...')
     for i in range(num_words_per_course):
+        print(i)
         new_col = vocab_frame.iloc[sorted_frame.iloc[:,i],0] # get the ith top vocab word for each entry
         df_with_keywords['predicted_word_' + str(num_words_per_course-i)] = new_col.values
         
@@ -168,7 +165,7 @@ def calculate_metric(df_with_keywords, metric):
         predicted_keyword_list = only_predicted_keywords_df.values.tolist()
         predicted_keyword_list = list(chain.from_iterable(predicted_keyword_list))
         keyword_counter = Counter(predicted_keyword_list)
-        print('[DEBUG] most common keywords: ', keyword_counter.most_common(10))
+        print('[INFO] Most common keywords by count: ', keyword_counter.most_common(10))
         
         num_possible_keywords = df_with_keywords.shape[0] * num_top_words
         num_predicted_keywords = len(keyword_counter.keys())
@@ -179,9 +176,33 @@ def calculate_metric(df_with_keywords, metric):
         assert unif_keyword_vector.shape == predicted_keyword_vector.shape,\
         'Uniform keyword frequency vector should have same dimension as predicted keywords frequency vector.'
     
-        cos_sim = cosine_similarity(predicted_keyword_vector, unif_keyword_vector)
+        cos_sim = cosine(predicted_keyword_vector, unif_keyword_vector)
         return cos_sim
+    if metric == 'df':
+        print('[INFO] Calculating Document Frequency of Predicted Keywords across Course Subjects...')
+        document_df_cols = df_with_keywords.columns.difference(['course_title', 'course_description', 'course_name', 'course_alternative_names'])
+        document_df = df_with_keywords.loc[:,document_df_cols]
+        document_df.set_index('course_subject', inplace=True)
+        
+        document_dict = defaultdict(list)
+        terms = set()
+        for index, row in document_df.iterrows():
+            document_dict[index].extend(row.values)
+            terms.update(row.values)
 
+        doc_freq_dict = defaultdict()
+        num_docs = len(document_dict.keys())
+        for term in terms:
+            doc_freq_i = 0
+            for key in document_dict.keys():
+                if term in document_dict.get(key):
+                    doc_freq_i += 1
+            doc_freq_dict[term] = doc_freq_i / (num_docs)
+            
+        print('[INFO] Most common keywords by document frequencies: ', Counter(doc_freq_dict).most_common(10)) 
+        average_document_frequency_score = np.mean(list(doc_freq_dict.values()))
+        return average_document_frequency_score
+        
 def cosine_similarity(x, y):
     return 1 - cosine(x,y)
 
@@ -194,12 +215,11 @@ filtered_descript_df = info_frame.iloc[nonempty_indices,:].reset_index(drop = Tr
 max_descript_len = max(filtered_descript_df.course_description.str.split().str.len())
 num_top_words = 10
 
-hyperparams_cols = ['use_idf', 'max_df','tf-bias', 'num_epochs', 'recall', 'precision', 'distribution_diff']
-grid_search_df = pd.DataFrame(columns=hyperparams_cols)
-
+hyperparams_cols = ['use_idf', 'max_df','tf-bias', 'use_hidden_layer', 'num_epochs', 'recall@max_len', 'precision@10', 'distribution_diff', 'document_frequency']
 
 param_grid = {'use_idf': [True],
-              'max_df': np.arange(0.002, .005, .001), # np.arange(0, .0055, .0005)
+              'max_df': [1], # np.arange(0, .0055, .0005),
+              'use_hidden_layer': [True],
               'tf_bias': np.arange(.5, 1.5, .5), 
               'num_epochs': [5]} 
 
@@ -208,13 +228,15 @@ grid = ParameterGrid(param_grid)
 recall_validation_scores = []
 precision_validation_scores = []
 distribution_validation_scores = []
+document_frequency_validation_scores = []
+grid_search_data = []
 
 for params in grid:
-    print("***[INFO] Evaluating cross-validated model with hyperparams use_idf: %r, max_df: %f, tf_bias: %f, num_epochs: %d***" % 
-          (params['use_idf'], params['max_df'], params['tf_bias'], params['num_epochs']))
+    print("***[INFO] Evaluating cross-validated model with hyperparams use_idf: %r, max_df: %f, tf_bias: %f, use_hidden_layer: %r, num_epochs: %d***" % 
+          (params['use_idf'], params['max_df'], params['tf_bias'], params['use_hidden_layer'], params['num_epochs']))
 
     fold_num = 1
-    kf = KFold(n_splits=5, random_state=42) # DO NOT FIX RANDOM STATE WHEN RUNNING THE ACTUAL EXPERIMENT - NVM, should be fixed for reproducibility
+    kf = KFold(n_splits=3, random_state=42) # DO NOT FIX RANDOM STATE WHEN RUNNING THE ACTUAL EXPERIMENT - NVM, should be fixed for reproducibility
     for train_idx, valid_idx in kf.split(filtered_vec_df):
         print('======== [INFO] Fold %d' % (fold_num))
         # X = vectors, Y = descriptions
@@ -229,33 +251,42 @@ for params in grid:
         split_Y_train_BOW = to_bag_of_words(split_Y_train, textcolumn, vocab, tf_bias=params['tf_bias'], use_idf=params['use_idf'])
         split_Y_train_BOW = split_Y_train_BOW.toarray()
 
-        (weights_frame, biases) = logistic_regression(split_X_train.iloc[:,1:], split_Y_train_BOW, num_epochs=params['num_epochs'])
+        (weights_frame, biases) = logistic_regression(split_X_train.iloc[:,1:], split_Y_train_BOW, 
+                                                      use_hidden_layer=params['use_hidden_layer'], num_epochs=params['num_epochs'])
 
         print('[INFO] Predicting on validation set for recall...')
-        df_with_keywords = predict(split_X_valid, split_Y_valid, weights_frame, biases, max_descript_len)
+        df_with_keywords = predict(split_X_valid, split_Y_valid, weights_frame, biases, vocab_frame, max_descript_len)
         fold_i_average_recall = calculate_metric(df_with_keywords, 'r')
         recall_validation_scores.append(fold_i_average_recall)
         print('[INFO] Fold %d recall: %f.' % (fold_num, fold_i_average_recall))
-
+        
         print('[INFO] Predicting on validation set for precision...')
-        df_with_keywords = predict(split_X_valid, split_Y_valid, weights_frame, biases, num_top_words)
+        df_with_keywords = predict(split_X_valid, split_Y_valid, weights_frame, biases, vocab_frame, num_top_words)
         fold_i_average_precision = calculate_metric(df_with_keywords, 'p')
         precision_validation_scores.append(fold_i_average_precision)
         print('[INFO] Fold %d precision: %f.' % (fold_num, fold_i_average_precision))
+        
 
         fold_i_distribution_diff = calculate_metric(df_with_keywords, 'c')
         distribution_validation_scores.append(fold_i_distribution_diff)
         print('[INFO] Fold %d cosine similarity: %f.' % (fold_num, fold_i_distribution_diff))
+        
+        fold_i_document_frequency = calculate_metric(df_with_keywords, 'df')
+        document_frequency_validation_scores.append(fold_i_document_frequency)
+        print('[INFO] Fold %d document frequency: %f.' % (fold_num, fold_i_document_frequency))
 
         fold_num += 1
 
     recall_i = np.mean(recall_validation_scores)
     precision_i = np.mean(precision_validation_scores)
     distribution_diff_i = np.mean(distribution_validation_scores)
+    document_frequency_i = np.mean(document_frequency_validation_scores)
 
-    model_i_params = [params['use_idf'], params['max_df'], params['tf_bias'], params['num_epochs'], 
-                      recall_i, precision_i, distribution_diff_i]
-    model_i_params = pd.DataFrame([model_i_params], columns=hyperparams_cols)
-    grid_search_df = grid_search_df.append(model_i_params, sort = False)
+    model_i_params = [params['use_idf'], params['max_df'], params['tf_bias'], params['use_hidden_layer'],
+                      params['num_epochs'], recall_i, precision_i, distribution_diff_i, document_frequency_i]
+
+    grid_search_data.append(dict(zip(hyperparams_cols, model_i_params)))
+    grid_search_df = pd.DataFrame(grid_search_data, columns=hyperparams_cols) 
     print(grid_search_df)
     
+grid_search_df.to_csv('./scores/score_file.csv', index=False)
