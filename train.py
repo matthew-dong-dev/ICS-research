@@ -18,14 +18,15 @@ from keras.models import Model
 from keras import backend as K
 import tensorflow as tf
 config = tf.ConfigProto()
+config.gpu_options.allocator_type = 'BFC'
 config.gpu_options.allow_growth=True
 sess = tf.Session(config=config)
 K.set_session(sess)
 pd.options.mode.chained_assignment = None 
 
-TRAINING_DIR = '/home/matthew/ICS-Research' # os.getcwd()
-DATA_DIR = '/home/matthew/ICS-Research/data'
-OUTPUT_DIR = '/home/matthew/ICS-Research/scores'
+TRAINING_DIR = '/home/matthew/askoski/search-keywords' # os.getcwd()
+DATA_DIR = '/home/matthew/askoski/search-keywords/data'
+OUTPUT_DIR = '/home/matthew/askoski/search-keywords/scores'
 vectorfile = os.path.join(DATA_DIR, 'course_vecs.tsv')
 infofile = os.path.join(DATA_DIR, 'course_info.tsv')
 scorefile_path = os.path.join(OUTPUT_DIR, 'score_file.tsv')
@@ -294,6 +295,6 @@ for params in grid:
     grid_search_data.append(dict(zip(hyperparams_cols, model_i_params)))
     grid_search_df = pd.DataFrame(grid_search_data, columns=hyperparams_cols) 
     print(grid_search_df)
-
+    grid_search_df.to_csv(scorefile_path, sep='\t', index=False)
     
 grid_search_df.to_csv(scorefile_path, sep='\t', index=False)
