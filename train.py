@@ -23,10 +23,12 @@ sess = tf.Session(config=config)
 K.set_session(sess)
 pd.options.mode.chained_assignment = None 
 
-TRAINING_DIR = os.getcwd()
-DATA_DIR = './data'
+TRAINING_DIR = '/home/matthew/ICS-Research' # os.getcwd()
+DATA_DIR = '/home/matthew/ICS-Research/data'
+OUTPUT_DIR = '/home/matthew/ICS-Research/scores'
 vectorfile = os.path.join(DATA_DIR, 'course_vecs.tsv')
 infofile = os.path.join(DATA_DIR, 'course_info.tsv')
+scorefile_path = os.path.join(OUTPUT_DIR, 'score_file.tsv')
 textcolumn = 'course_description'
 
 def get_vocab(dataframe, column, max_df=0.057611, use_idf=True):
@@ -117,15 +119,19 @@ def predict(course_vecs, course_descripts, trained_weights, trained_biases, voca
 
     print('[INFO] Predicting top k inferred keywords for each course...')
     for i in range(num_words_per_course):
-        print(i)
         new_col = vocab_frame.iloc[sorted_frame.iloc[:,i],0] # get the ith top vocab word for each entry
         df_with_keywords['predicted_word_' + str(num_words_per_course-i)] = new_col.values
         
     return df_with_keywords
 
 def calculate_metric(df_with_keywords, metric):
-    """
-    metrics: {r: recall, p: precision}
+    """Calculate metric evaluating quality of inferred keywords with respect to its true course description
+    Args: 
+        df_with_keywords: dataframe with predicted keywords for every course for every columns
+        metrics (string): {r: recall, p: precision, c: cosine similarity, 
+        df: document frequency of inferred keywords using course subject as documents}
+    Returns
+        Desired Metric
     """
     def clean_descrip_title(row):
         punc_remover = str.maketrans('', '', string.punctuation)
@@ -136,6 +142,9 @@ def calculate_metric(df_with_keywords, metric):
 
     def recall_keywords(row):
         return row['description_title_set'].intersection(row['course_keywords_set'])
+    
+    def cosine_similarity(x, y):
+        return 1 - cosine(x,y)
     
     prediction_df = df_with_keywords.copy()
     only_predicted_keywords_df = prediction_df[prediction_df.columns.difference(['course_name', 'course_title', 'course_description', 'course_subject', 'course_alternative_names'])]
@@ -176,7 +185,7 @@ def calculate_metric(df_with_keywords, metric):
         assert unif_keyword_vector.shape == predicted_keyword_vector.shape,\
         'Uniform keyword frequency vector should have same dimension as predicted keywords frequency vector.'
     
-        cos_sim = cosine(predicted_keyword_vector, unif_keyword_vector)
+        cos_sim = cosine_similarity(predicted_keyword_vector, unif_keyword_vector)
         return cos_sim
     if metric == 'df':
         print('[INFO] Calculating Document Frequency of Predicted Keywords across Course Subjects...')
@@ -203,9 +212,6 @@ def calculate_metric(df_with_keywords, metric):
         average_document_frequency_score = np.mean(list(doc_freq_dict.values()))
         return average_document_frequency_score
         
-def cosine_similarity(x, y):
-    return 1 - cosine(x,y)
-
 vec_frame = pd.read_csv(vectorfile, sep = '\t') # Vector space representation of each user, all numeric
 info_frame = pd.read_csv(infofile, sep = '\t') # Course information
 
@@ -217,11 +223,11 @@ num_top_words = 10
 
 hyperparams_cols = ['use_idf', 'max_df','tf-bias', 'use_hidden_layer', 'num_epochs', 'recall@max_len', 'precision@10', 'distribution_diff', 'document_frequency']
 
-param_grid = {'use_idf': [True],
-              'max_df': [1], # np.arange(0, .0055, .0005),
-              'use_hidden_layer': [True],
-              'tf_bias': np.arange(.5, 1.5, .5), 
-              'num_epochs': [5]} 
+param_grid = {'use_idf': [True, False],
+              'max_df': np.arange(.02, .06, .01),
+              'tf_bias': np.append(np.arange(0, 2.5, .5), -999),
+              'num_epochs': [5, 10], 
+              'use_hidden_layer': [True, False]} 
 
 grid = ParameterGrid(param_grid)
 
@@ -236,7 +242,7 @@ for params in grid:
           (params['use_idf'], params['max_df'], params['tf_bias'], params['use_hidden_layer'], params['num_epochs']))
 
     fold_num = 1
-    kf = KFold(n_splits=3, random_state=42) # DO NOT FIX RANDOM STATE WHEN RUNNING THE ACTUAL EXPERIMENT - NVM, should be fixed for reproducibility
+    kf = KFold(n_splits=4, random_state=42) # DO NOT FIX RANDOM STATE WHEN RUNNING THE ACTUAL EXPERIMENT - NVM, should be fixed for reproducibility
     for train_idx, valid_idx in kf.split(filtered_vec_df):
         print('======== [INFO] Fold %d' % (fold_num))
         # X = vectors, Y = descriptions
@@ -288,5 +294,6 @@ for params in grid:
     grid_search_data.append(dict(zip(hyperparams_cols, model_i_params)))
     grid_search_df = pd.DataFrame(grid_search_data, columns=hyperparams_cols) 
     print(grid_search_df)
+
     
-grid_search_df.to_csv('./scores/score_file.csv', index=False)
+grid_search_df.to_csv(scorefile_path, sep='\t', index=False)
