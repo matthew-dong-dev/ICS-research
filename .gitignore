@@ -1,5 +1,5 @@
 # ignore data
-input_data/
+data/
 outputted_keywords/
 
 # Byte-compiled / optimized / DLL files
