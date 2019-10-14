@@ -1,10 +1,13 @@
 # ICS Research
 
-Scripts in this repository are used to generate inferred keywords and optimize model hyperparameters. 
+Scripts in this repository are used for 
 
-## Synopsis
+1. training models to tag word embeddings with semantics, i.e. infer topics for courses and
+1. Perform model selection optimizattion.  
 
-	`sh retrain.sh`
+*Disclaimer: data redacted for privacy purposes.*
+
+## sh retrain.sh
 
 calls scripts
 
@@ -13,7 +16,7 @@ calls scripts
 	
 ## `semantic_model.py [options]`
 
-Creates bag of words representations for the text-valued column, and train a logistic regression model using the full vector space to predict those bag of words.  
+Creates bag of words representations for the text-valued column, and trains a logistic regression model using the full vector space to predict those bag of words.  
 
 Input: 
 
@@ -26,11 +29,12 @@ Input:
     -r textfile_path
     -t textcolumn
 
-### Hyperparameter Arguments
+## `cv_grid_search.py [options]`
 
-    -b tf_bias
-    -e num_epochs
-    -i use_idf
-    -m max_df
+Performs a 5-fold cross validation grid search across the following hyperparameters: 
 
-`tf_bias` is the term-frequency bias, `num_epochs` is the number of epochs to train logistic regression for, `use_idf` is whether or not to use inverse document frequency in tf-TfidfVectorizer, `max_df` is used to control for corpus specific words
+    - tf_bias: term-frequency bias, controls specificity of words 
+    - use_hidden_layer: train a multinomial regression model or a multi-layer perceptron
+    - num_epochs: number of epochs to train models
+    - use_idf: whether or not to use inverse document frequency in tf-TfidfVectorizer
+    - max_df: control for corpus specific words
