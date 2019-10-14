@@ -1,28 +1,29 @@
-# Semantic Model
+# ICS Research
 
 Scripts in this repository are used to generate inferred keywords and optimize model hyperparameters. 
 
-Input: 
-
-    - A text-valued column you would like to perform semantic analysis on.
-    - A Word2vec Vectorfile.
-
 ## Synopsis
 
-	sh retrain.sh [options]
+	`sh retrain.sh`
 
-calls three scripts
+calls scripts
 
 	semantic_model.py
 	group_keywords.py
-	data_joining.py
+	
+## `semantic_model.py [options]`
 
-In particular, `semantic_model.py` will create bag of words representations for the text-valued column, and train a logistic regression model using the full vector space to predict those bag of words.  Note: we do not train with the empty bag of words.
+Creates bag of words representations for the text-valued column, and train a logistic regression model using the full vector space to predict those bag of words.  
+
+Input: 
+
+    - word embeddings you would like to perform semantic analysis on
+    - text-valued data corresponding to word embeddings
 
 ### Options
 
     -v vectorfile_path
-    -r rawfile_path
+    -r textfile_path
     -t textcolumn
 
 ### Hyperparameter Arguments
