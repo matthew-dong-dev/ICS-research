@@ -1,5 +1,9 @@
 # ICS (Intelligent Course Search) Research
 
+> [Research paper](https://link.springer.com/chapter/10.1007%2F978-3-030-29736-7_36)
+> 
+> [Deployed feature](https://askoski.berkeley.edu/search)
+
 Scripts in this repository are used to:
 
 1. Train models to tag word embeddings with semantics, i.e. infer topics for courses
@@ -7,7 +11,7 @@ Scripts in this repository are used to:
 
 *Disclaimer: data redacted for privacy purposes.*
 
-## sh retrain.sh
+## `retrain.sh`
 
 calls scripts
 
