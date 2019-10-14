@@ -4,6 +4,7 @@ import getopt
 import subprocess
 import time
 import timeout_decorator
+import pickle
 import pandas as pd
 import numpy as np
 from collections import Counter
@@ -17,36 +18,37 @@ from keras.layers import Input, Dense
 from keras.models import Model
 from keras import backend as K
 import tensorflow as tf
-config = tf.ConfigProto()
+config = tf.ConfigProto(device_count = {'GPU': 1})
 config.gpu_options.allocator_type = 'BFC'
 config.gpu_options.allow_growth=True
 sess = tf.Session(config=config)
 K.set_session(sess)
-pd.options.mode.chained_assignment = None 
-
+pd.options.mode.chained_assignment=None 
 vectorfile = ''
 infofile = ''
 outputfile = ''
 write_directory = './outputted_keywords'
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'hv:r:t:b:')
+    opts, args = getopt.getopt(sys.argv[1:], 'hv:i:t:b:r:')
 except getopt.GetoptError:
-    print('\npython3 semantic_model.py -v <vectorfile> -r <infofile> -t <textcolumn> -b <tf_bias>')
+    print('\npython3 semantic_model.py -v <vectorfile> -i <infofile> -t <textcolumn> -b <tf_bias> -r <research_file_flag>')
     sys.exit(2)
 
 for opt, arg in opts:
     if opt == '-h':
-        print('\npython3 semantic_model.py -v <vectorfile> -r <infofile> -t <textcolumn> -b <tf_bias>')
-        print('<vectorfile> is the high dimensional vector\n<infofile> is the original input data')
-        print('<textcolumn> is a column in raw file that needs nltk processing')
+        print('\npython3 semantic_model.py -v <vectorfile> -i <infofile> -t <textcolumn> -b <tf_bias>')
+        print('<vectorfile> location of word embeddings you would like to perform semantic analysis on')
+        print('<infofile> location of text-valued data corresponding to word embeddings')
+        print('<textcolumn> is a column in info file to be preprocessed and vectorized')
         print('<tf_bias> is the bias constant for term-frequency')
+        print('<research_file> is a flag indicating whether or not research file should be generated')
         sys.exit()
     if opt in ("-v"):
         print('[INFO] setting -v vectorfile')
         vectorfile = arg
-    if opt in ("-r"):
-        print('[INFO] setting -r infofile')
+    if opt in ("-i"):
+        print('[INFO] setting -i infofile')
         infofile = arg
     if opt in ("-t"):
         print('[INFO] setting -t textcolumn')
@@ -54,13 +56,16 @@ for opt, arg in opts:
     if opt in ("-b"):
         print('[INFO] setting -b tf-bias: ' + arg)
         tf_bias = float(arg)
+    if opt in ("-r"):
+        print('[INFO] setting -r research_file_flag: ' + arg)
+        research_file_flag = False if arg == 'False' else True
 if vectorfile == '':
     print('[DEBUG] option [-v] must be set\n')
     sys.exit()
 if infofile == '':
-    print('[DEBUG] option [-r] must be set\n')
+    print('[DEBUG] option [-i] must be set\n')
     sys.exit()
-
+    
 @timeout_decorator.timeout(60, exception_message='timeout occured at get_vocab')
 def get_vocab(dataframe, column, max_df=0.057611, use_idf=True):
     """Gets the vocab labels to be used as inferred keywords. 
@@ -115,7 +120,7 @@ def logistic_regression(X, Y, use_hidden_layer=False, hidden_layer_size=200, num
         number of epochs (int).
         num_words_per_course (int): Number of words to predict per course.
     Returns:
-        Course description dataframe with a new column for every predicted word.
+        softmax frame - each row is a probability distribution over all words for each course, to be sorted later
     """
     print('[INFO] Performing logistic regression...')
 
@@ -132,16 +137,21 @@ def logistic_regression(X, Y, use_hidden_layer=False, hidden_layer_size=200, num
     model.fit(X, Y, epochs=num_epochs)
 
     # Obtain the softmax predictions for all instances 
-    softmax_frame = pd.DataFrame(model.predict(X))
+    softmax_frame = pd.DataFrame(model.predict(X)) 
+    return softmax_frame
     
-    # From the softmax predictions, save the top 10 predicted words for each data point
-    print('[INFO] Sorting classification results...')
-    sorted_frame = np.argsort(softmax_frame,axis=1).iloc[:, ::-1]
-    
-    return sorted_frame
+# From the softmax predictions, save the top 10 predicted words for each data point
+#     print('[INFO] Sorting classification results...')
+#     sorted_frame = np.argsort(softmax_frame,axis=1).iloc[:, ::-1]
+#     return sorted_frame
 
 def get_production_predictions(sorted_frame, num_words_per_course=10):
-    """
+    """Given the sorted probability distributions for each course, get the top k words for each course
+    Args: 
+        sorted_frame (numpy array): matrix of indices
+        num_words_per_course (int): number of inferred keywords to predict for every course
+    Returns:
+        Course description dataframe with a new column for every predicted word.
     """
     print('[PRODUCTION] Predicting top k inferred keywords for each course...')
     df_with_keywords_production = filtered_info_frame.copy() # filtered_info_frame is global
@@ -228,7 +238,11 @@ def get_random_words(vocab, k):
     random_words = random.sample(list(vocab), k)
     return random_words
 
-#manually setting model parameters, remove later
+def save_obj(obj, name, directory):
+    with open(directory + '/' + name + '.pkl', 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+# manually setting model parameters, change later
 use_idf=False 
 num_epochs=10
 max_df=0.03
@@ -251,6 +265,8 @@ if (len_vec_frame != len_info_frame):
 nonempty_indices = np.where(info_frame[textcolumn].notnull() == True)[0]
 filtered_vec_frame = vec_frame.iloc[nonempty_indices,:]
 filtered_info_frame = info_frame.iloc[nonempty_indices,:]
+filtered_info_frame.reset_index(inplace=True, drop=True)
+filtered_info_frame['abbr_cid'] = filtered_info_frame['course_name'].str.upper().str[::-1].str.replace(' ', '_', 1).str[::-1]
 time_get_data_af = time.time()
 print('[INFO] Getting data took ' + str(time_get_data_af - time_get_data_bf))
 
@@ -269,96 +285,123 @@ print('[INFO] Getting vocab and BOW course representations took ' + str(time_get
 
 # Train model and predict (Only train on course instances with non-empty texts)
 time_train_model_bf = time.time()
-sorted_frame = logistic_regression(filtered_vec_frame.iloc[:,1:], filtered_bow_ndarray, use_hidden_layer=use_hidden_layer, num_epochs=num_epochs)
-df_with_keywords_production = get_production_predictions(sorted_frame) 
+
+softmax_frame = logistic_regression(filtered_vec_frame.iloc[:,1:], filtered_bow_ndarray, use_hidden_layer=use_hidden_layer, num_epochs=num_epochs)
+
 time_train_model_af = time.time()
 print('[INFO] Training model took ' + str(time_train_model_af - time_train_model_bf))
 
+print('[INFO] Sorting softmax probabilities for each course...')
+# softmax_frame.reset_index(drop=True, inplace=True)
+sorted_indices = np.argsort(softmax_frame,axis=1).iloc[:, ::-1] # each index represents a word in descending likelihood 
+# sorted_indices.reset_index(drop=True, inplace=True)
+
+sorted_softmax = softmax_frame.copy()
+sorted_softmax.values.sort(axis=1) 
+sorted_softmax = sorted_softmax.iloc[:, ::-1] # reverse the order of probabilities so that its descending
+# sorted_softmax.reset_index(drop=True, inplace=True)
+
+print('[INFO] Creating softmax dictionary mapping course keywords to its probability...')
+num_courses = sorted_softmax.shape[0]
+course_softmax_map = {}
+for i in range(num_courses):
+    probabilities = sorted_softmax.iloc[i,:]
+    keywords = vocab_frame.iloc[sorted_indices.iloc[i,:], 0].values
+    course_i = filtered_info_frame.iloc[i,]['abbr_cid']
+    keyword_probability_map = dict(zip(keywords, probabilities))
+    course_softmax_map[course_i] = keyword_probability_map
+    
+assert len(course_softmax_map.keys()) == num_courses, 'Number of courses in dictionary should be equal to number of original courses'
+        
 print('[INFO] Writing results to file...')
 time_writing_files_bf = time.time()
-df_with_keywords_production.to_csv(outputfile+'.tsv', sep = '\t', index=False)
-subprocess.call('mv '+outputfile+'.tsv'+' '+outputfile+'.txt', shell=True)
-subprocess.call('mv '+outputfile+'.txt '+write_directory, shell=True)
+DATA_DIR = './data' # relative to the bash script
+save_obj(course_softmax_map, 'course_keyword_probabilites', DATA_DIR)
 time_writing_files_af = time.time()
 print('[INFO] Writing files to file took ' + str(time_writing_files_af - time_writing_files_bf))
 
-######### Generate research file
-time_get_research_file_bf = time.time()
-df_with_keywords_research = generate_research_file(sorted_frame)
-info_columns = ['course_name', 'course_title', 'course_description', 'course_subject']
-combined_cols = ['top_inferred_keywords', 'top_description_keywords', 
-                'top_non_description_keywords', 'random_description_keywords', 'random_keywords', 
-                'all_words', 'all_unique_words', 'num_total_words', 'num_unique_words']
-description_words_cols = []
-predicted_words_cols = []
-top_non_description_cols = []
-random_description_cols = []
-random_words_cols = []
+# df_with_keywords_production = get_production_predictions(softmax_frame) 
+# df_with_keywords_production.to_csv(outputfile+'.tsv', sep = '\t', index=False)
+# subprocess.call('mv '+outputfile+'.tsv'+' '+outputfile+'.txt', shell=True)
+# subprocess.call('mv '+outputfile+'.txt '+write_directory, shell=True)
 
-for i in range(1, 6): 
-    description_words_cols.append('sorted_description_word_' + str(i))
-    predicted_words_cols.append('predicted_word_' + str(i))
-    top_non_description_cols.append('non_description_word_' + str(i))
-    random_description_cols.append('random_description_word_' + str(i))
-    random_words_cols.append('random_word_' + str(i))
+######### Generate research file for user study if flag = True
+if research_file_flag:
+    time_get_research_file_bf = time.time()
+    df_with_keywords_research = generate_research_file(sorted_frame)
+    info_columns = ['course_name', 'course_title', 'course_description', 'course_subject']
+    combined_cols = ['top_inferred_keywords', 'top_description_keywords', 
+                    'top_non_description_keywords', 'random_description_keywords', 'random_keywords', 
+                    'all_words', 'all_unique_words', 'num_total_words', 'num_unique_words']
+    description_words_cols = []
+    predicted_words_cols = []
+    top_non_description_cols = []
+    random_description_cols = []
+    random_words_cols = []
 
-final_cols = info_columns + combined_cols
-word_cols = predicted_words_cols + description_words_cols + top_non_description_cols + random_description_cols + random_words_cols
+    for i in range(1, 6): 
+        description_words_cols.append('sorted_description_word_' + str(i))
+        predicted_words_cols.append('predicted_word_' + str(i))
+        top_non_description_cols.append('non_description_word_' + str(i))
+        random_description_cols.append('random_description_word_' + str(i))
+        random_words_cols.append('random_word_' + str(i))
 
-# df_with_keywords_research.to_csv('/home/matthew/ICS-Research/intermediate0.csv', sep='\t', index=False)
+    final_cols = info_columns + combined_cols
+    word_cols = predicted_words_cols + description_words_cols + top_non_description_cols + random_description_cols + random_words_cols
 
-k=5
-df_with_keywords_research['top_inferred_keywords'] = df_with_keywords_research.filter(predicted_words_cols).apply(lambda x: ','.join(x).split(','), axis=1)
-print('[RESEARCH] Getting sorted descriptions...')
-df_with_keywords_research['top_description_keywords'] = df_with_keywords_research.apply(lambda x: get_sorted_descriptions_words(x['course_title'] + ' ' + x['course_description'], x.filter(regex=r'predicted_word_.*'), k), axis=1)
-print('[RESEARCH] Getting top non description keywords...')
-df_with_keywords_research['top_non_description_keywords'] = df_with_keywords_research.apply(lambda x: get_top_non_description_words(x['course_title'] + ' ' + x['course_description'], x.filter(regex=r'predicted_word_.*'), k), axis=1)
-print('[RESEARCH] Getting random description keywords...')
-df_with_keywords_research['random_description_keywords'] = df_with_keywords_research.apply(lambda x: get_random_description_words(x['course_title'] + ' ' + x['course_description'], k), axis=1)
-print('[RESEARCH] Getting random keywords...')
-df_with_keywords_research['random_keywords'] = df_with_keywords_research.apply(lambda x: get_random_words(vocab, k), axis=1)
-df_with_keywords_research.reset_index(drop=True, inplace=True) # reset index is CRITICAL
+    k=5
+    df_with_keywords_research['top_inferred_keywords'] = df_with_keywords_research.filter(predicted_words_cols).apply(lambda x: ','.join(x).split(','), axis=1)
+    print('[RESEARCH] Getting sorted descriptions...')
+    df_with_keywords_research['top_description_keywords'] = df_with_keywords_research.apply(lambda x: get_sorted_descriptions_words(x['course_title'] + ' ' + x['course_description'], x.filter(regex=r'predicted_word_.*'), k), axis=1)
+    print('[RESEARCH] Getting top non description keywords...')
+    df_with_keywords_research['top_non_description_keywords'] = df_with_keywords_research.apply(lambda x: get_top_non_description_words(x['course_title'] + ' ' + x['course_description'], x.filter(regex=r'predicted_word_.*'), k), axis=1)
+    print('[RESEARCH] Getting random description keywords...')
+    df_with_keywords_research['random_description_keywords'] = df_with_keywords_research.apply(lambda x: get_random_description_words(x['course_title'] + ' ' + x['course_description'], k), axis=1)
+    print('[RESEARCH] Getting random keywords...')
+    df_with_keywords_research['random_keywords'] = df_with_keywords_research.apply(lambda x: get_random_words(vocab, k), axis=1)
+    df_with_keywords_research.reset_index(drop=True, inplace=True) # reset index is CRITICAL
 
-# df_with_keywords_research.to_csv('/home/matthew/ICS-Research/intermediate1.csv', sep='\t', index=False)
+    print('[DEBUG] Running sanity check on research keywords.')
+    df_with_keywords_research['sorted_descriptions_set'] = df_with_keywords_research.top_description_keywords.apply(set)
+    df_with_keywords_research['non_description_keywords_set'] = df_with_keywords_research.top_non_description_keywords.apply(set)
 
-print('[DEBUG] Running sanity check on research keywords.')
-df_with_keywords_research['sorted_descriptions_set'] = df_with_keywords_research.top_description_keywords.apply(set)
-df_with_keywords_research['non_description_keywords_set'] = df_with_keywords_research.top_non_description_keywords.apply(set)
+    def intersection(row):
+        """Get number of words that appear in both the sorted description keywords and the non-description keywords
+        Args: Row.
+        Returns: Int.
+        """ 
+        return len(row['sorted_descriptions_set'] & row['non_description_keywords_set'])
 
-def intersection(row):
-    """Get number of words that appear in both the sorted description keywords and the non-description keywords
-    Args: Row.
-    Returns: Int.
-    """ 
-    return len(row['sorted_descriptions_set'] & row['non_description_keywords_set'])
+    assert(all(df_with_keywords_research.apply(intersection, axis=1)) == False)
 
-assert(all(df_with_keywords_research.apply(intersection, axis=1)) == False)
+    print('[RESEARCH] Generating research file...')
+    user_study_df = df_with_keywords_research.copy()
+    sorted_description_df = pd.DataFrame(df_with_keywords_research.top_description_keywords.values.tolist(), columns=description_words_cols)
+    top_non_description_df = pd.DataFrame(df_with_keywords_research.top_non_description_keywords.values.tolist(), columns=top_non_description_cols)
+    random_description_words_df = pd.DataFrame(df_with_keywords_research.random_description_keywords.values.tolist(), columns=random_description_cols)
+    random_words_df = pd.DataFrame(df_with_keywords_research.random_keywords.values.tolist(), columns=random_words_cols)
+    user_study_df = pd.concat([user_study_df, sorted_description_df, top_non_description_df, random_description_words_df, random_words_df], axis=1)
 
-print('[RESEARCH] Generating research file...')
-user_study_df = df_with_keywords_research.copy()
-sorted_description_df = pd.DataFrame(df_with_keywords_research.top_description_keywords.values.tolist(), columns=description_words_cols)
-top_non_description_df = pd.DataFrame(df_with_keywords_research.top_non_description_keywords.values.tolist(), columns=top_non_description_cols)
-random_description_words_df = pd.DataFrame(df_with_keywords_research.random_description_keywords.values.tolist(), columns=random_description_cols)
-random_words_df = pd.DataFrame(df_with_keywords_research.random_keywords.values.tolist(), columns=random_words_cols)
-user_study_df = pd.concat([user_study_df, sorted_description_df, top_non_description_df, random_description_words_df, random_words_df], axis=1)
+    all_words_df = user_study_df.filter(word_cols)
+    all_words_df.fillna('', inplace=True)
+    all_words = all_words_df.apply(lambda x: list(filter(None, ','.join(x).split(','))), axis=1)
+    user_study_df['all_words'] = all_words
+    user_study_df['all_unique_words'] = all_words.apply(lambda x: list(set(x)))
+    user_study_df['num_total_words'] = user_study_df.all_words.apply(len)
+    user_study_df['num_unique_words'] = user_study_df.all_unique_words.apply(len)
+    user_study_df = user_study_df.filter(final_cols)
 
-all_words_df = user_study_df.filter(word_cols)
-all_words_df.fillna('', inplace=True)
-all_words = all_words_df.apply(lambda x: list(filter(None, ','.join(x).split(','))), axis=1)
-user_study_df['all_words'] = all_words
-user_study_df['all_unique_words'] = all_words.apply(lambda x: list(set(x)))
-user_study_df['num_total_words'] = user_study_df.all_words.apply(len)
-user_study_df['num_unique_words'] = user_study_df.all_unique_words.apply(len)
-user_study_df = user_study_df.filter(final_cols)
+    RESEARCH_DIR = '/home/matthew/ICS-Research'
+    search_study_file_path = os.path.join(RESEARCH_DIR, 'search_study_file.tsv')
+    user_study_df.to_csv(search_study_file_path, sep='\t', index=False)
 
-RESEARCH_DIR = '/home/matthew/ICS-Research'
-search_study_file_path = os.path.join(RESEARCH_DIR, 'search_study_file.tsv')
-user_study_df.to_csv(search_study_file_path, sep='\t', index=False)
+    time_get_research_file_af = time.time()
+    print('[INFO] Getting research file took ' + str((time_get_research_file_af - time_get_research_file_bf)/60) + ' minutes.')
 
-time_get_research_file_af = time.time()
-print('[INFO] Getting research file took ' + str((time_get_research_file_af - time_get_research_file_bf)/60) + ' minutes.')
+else:
+     print('[INFO] Generating research file surpressed.')
 
+    
 timeaf = time.time()
-print('[INFO] End time: ' + str(timeaf))
 print('[INFO] TOTAL time to run semantic_model.py:', (timeaf-timebf) / 60, 'minutes.')
 
