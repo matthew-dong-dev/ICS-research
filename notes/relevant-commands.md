@@ -88,7 +88,7 @@ npm install
 
 1. `ctrl + x` if you ever get stuck in nano
 
-1. CalCentral Test Account
+1. User Test Account
 	- username: test-300934
 	- password: f1$hNch1p$
 
