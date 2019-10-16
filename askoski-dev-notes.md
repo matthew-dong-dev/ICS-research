@@ -1,4 +1,23 @@
 
+Sometimes you have to empty cache and do hard reload, sometimes you have to rebuild the site.  or actually clearing storage through dev tools takes a few seconds?
+Sometimes you have to go to askoski.berkeley.edu and do it there?? - no, this doesn't make sense 
+
+
+Had to change all the endpoint urls from api.askoski.berkeley to just askoski.berkeley BUT your local version plan endpoints don't work? 
+
+---
+
+export outDir='/home/matthew/Models-AskOski/ICS/data'
+outDir='/home/matthew/Models-AskOski/ICS'
+echo $outDir
+
+>>> python
+>>> import os
+>>> os.environ['outDir']
+
+git reset HEAD~1
+/home/matthew/Models-AskOski/ICS/scripts/keywords_eval.ipynb
+
 ## Requirements Feature
 
 - in Models-Askoski you can treat the RNN as a blackbox but how exactly is it making predictions for a particular student?  
@@ -38,6 +57,7 @@ Old README: https://github.com/CAHLR/ICS-research
 1. scroll in screen: https://unix.stackexchange.com/questions/40242/scroll-inside-screen-or-pause-output
 
 - Hit your screen prefix combination (C-a / control+A by default), then hit Escape.
+- THIS IS COPY MODE SO YOU HAVE TO ESCAPE OUT OF IT AGAIN TO SEE LIVE API CALLS 
 
 ## Backend
 
