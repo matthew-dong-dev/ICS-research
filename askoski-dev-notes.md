@@ -1,37 +1,65 @@
+# Service Refactor
 
-Sometimes you have to empty cache and do hard reload, sometimes you have to rebuild the site.  or actually clearing storage through dev tools takes a few seconds?
-Sometimes you have to go to askoski.berkeley.edu and do it there?? - no, this doesn't make sense 
+## RNN 
 
+- in Service-Askoski you can treat the RNN as a blackbox but how exactly is it making predictions for a particular student?  it takes in a bunch of data (what data?)... and passes it into build_matrix_from_dict which is doing what exactly?  
+- try dumping things to the *server terminal* by printing things from your predict endpoint  
+- OR print things and use Postman to send requests so you can view them easier
 
-Had to change all the endpoint urls from api.askoski.berkeley to just askoski.berkeley BUT your local version plan endpoints don't work? 
+### FE Model 
+
+- try dumping things to the *browser console* see what's being returned at each step
+    - 
+First call: 
+```
+this.lookupTables.getId2Sub(),
+this.flaskService.getStudentData() // WHERE IS THE STUDENT ENROLLMENT HISTORY BEING OBTAINED? 
+``` 
+then call 
+```
+this.getRecs();
+```
+
+- `getRecs` in flask.service is what actually turns the recommendations, sends a post request to the `nextcourse/predict` endpoint with the body containing all the student data like sid and any filters...
+- `getStudentData()` calls `getLookupTables` which calls `getLookup` which references the `selects` dict from service.py?
+
+--- 
+
+Logistics 
+
+- Had to change all the endpoint urls from `api.askoski.berkeley` to just `askoski.berkeley`  to enable client server communication, but local version of `plan` endpoints doesn't work rn? 
+
+How to get browser to forget user login data?  i.e. how to delete cache / locally stored data / cookies? 
+
+- https://superuser.com/questions/1305644/how-can-i-delete-locally-stored-data-in-chrome
+- Can't figure out which one works: empty cache and do hard reload from the refresh button, rebuilding the site,  maybe `clear site data` through dev tools just takes a few seconds to propogate?
+- Sometimes you have to go to askoski.berkeley.edu and clear that data? - no, this doesn't make sense because your localhost is completely indepedent of the production server
 
 ---
 
-export outDir='/home/matthew/Models-AskOski/ICS/data'
-outDir='/home/matthew/Models-AskOski/ICS'
-echo $outDir
+# Server Development
 
->>> python
->>> import os
->>> os.environ['outDir']
+1. run `screen -S name`
+1. run the script / start up the backend / open jupyter notebook (jupyter notebook --ip 169.229.192.179 --port 1382)
+1. When you use screen you need to detach with `CTRL+A+D` before you exit ssh. 
+1. `screen -xS name-to-resume`
+1. scroll in screen: https://unix.stackexchange.com/questions/40242/scroll-inside-screen-or-pause-output
 
-git reset HEAD~1
-/home/matthew/Models-AskOski/ICS/scripts/keywords_eval.ipynb
+- Hit your screen prefix combination (C-a / control+A by default), then hit Escape.
+- THIS IS COPY MODE SO YOU HAVE TO ESCAPE OUT OF IT AGAIN TO SEE LIVE API CALLS 
 
-## Requirements Feature
+## Backend
 
-- in Models-Askoski you can treat the RNN as a blackbox but how exactly is it making predictions for a particular student?  
-- try dumping things to the console see what's being returned at each step
-- `getStudentData()` calls `getLookupTables` which calls `getLookup` which references the `selects` dict in service.py?
-
-## questions
-
+- now run `python ../scripts/refresh/refresh_env.py --port=1381 --no-pass` with `env.json` file
+- now it's just `python service.py --no-pass` and change port manually in `env.json`
 - what exists in `UCBD2` directory, referred to a lot in `env.json`?  does it matter for you rn?  you can view the lookup tables in models-askoski
 - where is the production version of FE & BE located?
 
----
+## Frontend
 
-Old README: https://github.com/CAHLR/ICS-research 
+- https://github.com/CAHLR/Angular-AskOski/wiki/Standing-up-a-demo-frontend-on-maxwell no longer true because `development.js` removed? 
+
+---
 
 # Local Development
 
@@ -48,27 +76,6 @@ Old README: https://github.com/CAHLR/ICS-research
 
 - cannot standup service locally, need configurations & packages on maxwell until containerized 
 
-# How to stand up dev instance on server
+--- 
 
-1. run `screen -S name`
-1. run the script / start up the backend / open jupyter notebook (jupyter notebook --ip 169.229.192.179 --port 1382)
-1. When you use screen you need to detach with `CTRL+A+D` before you exit ssh. 
-1. `screen -xS name-to-resume`
-1. scroll in screen: https://unix.stackexchange.com/questions/40242/scroll-inside-screen-or-pause-output
-
-- Hit your screen prefix combination (C-a / control+A by default), then hit Escape.
-- THIS IS COPY MODE SO YOU HAVE TO ESCAPE OUT OF IT AGAIN TO SEE LIVE API CALLS 
-
-## Backend
-
-- now run `python ../scripts/refresh/refresh_env.py --port=1381 --no-pass` with `env.json` file
-
-## Frontend
-
-- https://github.com/CAHLR/Angular-AskOski/wiki/Standing-up-a-demo-frontend-on-maxwell no longer true because `development.js` removed? 
-
-## DevOps Guides
-
-1. https://circleci.com/blog/build-cicd-piplines-using-docker/
-1. https://travis-ci.com/CAHLR/Angular-AskOski/
-1. https://docs.travis-ci.com/user/for-beginners/
+Old dev notes: https://github.com/mdong127/ICS-research/tree/master/notes
