@@ -1,27 +1,51 @@
-# Service Refactor
+# Service RNN Refactor
 
-## RNN 
+## To do 
 
-- in Service-Askoski you can treat the RNN as a blackbox but how exactly is it making predictions for a particular student?  it takes in a bunch of data (what data?)... and passes it into build_matrix_from_dict which is doing what exactly?  
-- try dumping things to the *server terminal* by printing things from your predict endpoint  
-- OR print things and use Postman to send requests so you can view them easier
+1. figure out what the FE is sending to the BE 
+1. figure out how the BE is turning that into predictions, rn the RNN is a blackbox, as well as the /nextcourse/predict endpoint
+WHERE IS THE STUDENT ENROLLMENT HISTORY BEING OBTAINED? 
 
 ### FE Model 
 
 - try dumping things to the *browser console* see what's being returned at each step
-    - 
-First call: 
+
+In ngOnInit() in recs component first calls: 
 ```
 this.lookupTables.getId2Sub(),
-this.flaskService.getStudentData() // WHERE IS THE STUDENT ENROLLMENT HISTORY BEING OBTAINED? 
+this.flaskService.getStudentData() // THIS ONLY HAS TO DO WITH MAJORS? 
+
 ``` 
-then call 
+then calls
+component's `this.getRecs();` which calls `this.flaskService.getRecs(false)` 
+which sends a post request to `nextcourse/predict`  via `this.http.post(url, body)` 
+
+-  not sure how it gets the data it's setting in the body and 
+- then reroutes the page to suggestions with some query params
+
+the predict endpoint dumps:
+
 ```
-this.getRecs();
+{'status':status, 'result':return_list, 'current_year': currentYear, \
+'guide_berkeley_0': guide0, 'guide_berkeley_1': guide2 , \
+'CCN':CCN, 'Description':title}
 ```
 
-- `getRecs` in flask.service is what actually turns the recommendations, sends a post request to the `nextcourse/predict` endpoint with the body containing all the student data like sid and any filters...
+Then in the FE we index over `result` and map it to its subject with `response.result[index] in this.courseToSub`
+
+...
 - `getStudentData()` calls `getLookupTables` which calls `getLookup` which references the `selects` dict from service.py?
+
+
+## RNN 
+
+- try dumping things to the *server terminal* by printing things from your predict endpoint OR use Postman to send requests so you can view the printed output easier
+
+> /nextcourse/predict
+
+-  receives a request form from the FE... and passes it into build_matrix_from_dict which is doing what exactly?  
+- notice changing the SID changes the recommendations...so the data lookup has something to do with the SID
+
 
 --- 
 
