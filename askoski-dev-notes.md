@@ -36,7 +36,6 @@ Then in the FE we index over `result` and map it to its subject with `response.r
 ...
 - `getStudentData()` calls `getLookupTables` which calls `getLookup` which references the `selects` dict from service.py?
 
-
 ## RNN 
 
 - try dumping things to the *server terminal* by printing things from your predict endpoint OR use Postman to send requests so you can view the printed output easier
@@ -46,6 +45,35 @@ Then in the FE we index over `result` and map it to its subject with `response.r
 -  receives a request form from the FE... and passes it into build_matrix_from_dict which is doing what exactly?  
 - notice changing the SID changes the recommendations...so the data lookup has something to do with the SID
 
+Just fucking grind through it even though so much of it is a blackbox like wtf are they working with tensors for?  One thing at a time e.g. don't bother with the RNN preprocess obj yet - ship iteratively
+
+1. focus first on breaking down build_matrix_from_dict into smaller components --> Add documentation and improve method names
+1. try to get a feel for what the inputs to the lstm model are aka the outputs of BMFD - you're trying to dump it in postman but flask won't send numpy arrays
+
+The first part of BMFD is to obtain a student_dict which looks like  `OrderedDict([(20163, [164, 7358, 901, 2331]), (20171, [542, 664, 569, 590]), (20173, [1550, 2736, 6, 594]), (20181, [4072, 760, 543])])`
+
+where the key is the year_semester and the list is the course_ids which we can verify in `anon_id2sems` -->  `"999985": "2016 Fall|2016 Fall|2016 Fall|2016 Fall|2017 Spring|2017 Spring|2017 Spring|2017 Spring|2017 Fall|2017 Fall|2017 Fall|2017 Fall|2018 Spring|2018 Spring|2018 Spring",` and `anon_id2enroll` --> `"164|7358|901|2331|542|664|569|590|1550|2736|6|594|4072|760|543"`
+
+Then the student_dict is unraveled to look like `"x_eval_list": [ [ 164, 7358, 901, 2331 ], [ 542, 664, 569, 590 ], [ 1550, 2736, 6, 594 ], [ 4072, 760, 543 ] ]` and  `"x_eval_semester": [ [ 20163, 20163, 20163, 20163 ], [ 20171, 20171, 20171, 20171 ], [ 20173, 20173, 20173, 20173 ], [ 20181, 20181, 20181 ] ]`
+
+build_matrix_from_dict returns 5 things (*eval_input*, *eval_major*, x_eval_list, x_eval_semester_list, *entry_list*) but only 3 get used as input (`lstm_model.predict([eval_input, eval_major, entry_list]`) 
+
+understand these three, these are the ones that are numpy arrays / matrices and therefore you're having a hard time visualizing in flask 
+
+x_eval_matrix shape is np.zeros((1, MAX_SEM + 1, MAX_COURSE)) = (1, 13, 15)
+
+1. comment what each portion of the code is doing / identify the helper functions being called to help figure out what the purpose of that code is
+1. start by factoring out the get student dict portion
+1. continue by adding documentation to the functions, which'll help you figure out what the critical portions of the code is doing
+1. move relevant shit to an RNN_preprocess.py file 
+
+### Questions
+
+1. Jeff needs to verify that this shit works in production mode (not just no-pass)
+1. can you rename all the eval and x_eval variables or is that some sort of deep learning model convention?
+1. What is BOS
+1. what is myCourses?  caching student data that's already been loaded? 
+1. what a good debugging strategy that isn't dumping to the terminal window.  you need a better way of sending a request to the endpoint and visualizing what each variable represents.  - use Flask debugger
 
 --- 
 
