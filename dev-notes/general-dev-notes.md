@@ -4,11 +4,24 @@
 1. what exists in `UCBD2` directory, referred to a lot in `env.json`?  does it matter for you rn?  you can view the lookup tables in models-askoski
 1. where is the production version of FE & BE located?
 
+Directions for you to pursue
+
+1. finish RNN preprocess refactor
+1. remove global variables - does this go hand in hand with testing to make sure things don't break? 
+1. data-askoski - start looking through the repo, is there any immediate action items here? 
+1. plan refactor
+1. write tests
+
 ---
 
 ## Testing
 
+> Mamba is just like Behat in php, both are BDD testing frameworks.  Just like you have scenarios and keywords in behat, you have contexts and keywords in mamba
 
+1. How are travis and mamba linked? - by the travis.ci file
+1. don't you need to the command `pipenv run mamba` to run all the tests instead of just `- mamba --format=documentation`, apparently not, you can see for yourself in the travis job log all that all the tests are running on build
+1. read mamba documentation
+1. look through other test files 
 
 ---
 

@@ -22,7 +22,7 @@ WHERE IS THE STUDENT ENROLLMENT HISTORY BEING OBTAINED?
 1. add test coverage?  look at testing pipeline
 1. end goal is creating separate build_matrix_from_dict class, pass in arguments during instantiation like APR obj.
 1. consistently pull from master
-1. update README
+1. update README, remove comments from /auth endpoint
 
 If I have a few quick questions about the RNN preprocessing, are you the person to set up a meeting with or someone else?  
 
