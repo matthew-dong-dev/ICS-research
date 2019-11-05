@@ -1,16 +1,24 @@
+test-300852
+f1$hNch1p$
+
 # Misc notes / questions
 
-1. where are the SSL certs located?
+1. where are the SSL certs located? `/research/askoski_common/ssl/`
 1. what exists in `UCBD2` directory, referred to a lot in `env.json`?  does it matter for you rn?  you can view the lookup tables in models-askoski
 1. where is the production version of FE & BE located?
 
 Directions for you to pursue
 
 1. finish RNN preprocess refactor
-1. remove global variables - does this go hand in hand with testing to make sure things don't break? 
-1. data-askoski - start looking through the repo, is there any immediate action items here? 
 1. plan refactor
-1. write tests
+    1. refactor rnn_predict function (everything except form data) + 
+1. data-askoski - start looking through the repo, any immediate action items here? 
+1. add unit test coverage for your refactored shit? look at testing pipeline
+1. remove global variables - a lot of overhead
+
+What is APR data?
+
+- sid, course and what requirement it fulfills, t/f for fulfilled
 
 ---
 

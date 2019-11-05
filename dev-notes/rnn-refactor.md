@@ -1,5 +1,17 @@
 
-# Service RNN Refactor
+# RNN Predict Refactor
+
+1. fix naming for other references to BMFD in plan / service
+1. [] refactor `get_student_enrollment_data`?  look at `lookup_dict`
+    - "lookup_dict: This is the mapping between SID and anonID, which allows use to grab anonymized info for that student. This is faked in --no-pass mode, see No Pass Mode wiki page."
+    - `anon = lookup_dict[sid]`
+    - anon is the Internal Faked CalNet ID
+    - where is dummy_lookup_dict being used?
+
+---
+
+
+# RNN Preprocess Refactor
 
 This seems like a huge task, but just fucking grind through it even though so much of it is a blackbox like wtf are they working with tensors for?  One thing at a time e.g. don't bother with the RNN preprocess obj/class yet.  First just focus on refactoring build_matrix_from_dict, and before that just figure out what each part of the code is doing.  **WORK ITERATIVELY**
 
@@ -14,28 +26,35 @@ WHERE IS THE STUDENT ENROLLMENT HISTORY BEING OBTAINED?
 1. [x] refactor parts of code so there exists a 1-1 correspondence between a method and a lstm input e.g. a get_eval_input, get_eval_major, get_entry_list method
 1. [x] continue by adding documentation to the functions, which'll help you figure out what the critical portions of the code is doing
 1. [x] move relevant shit to a RNN_preprocess.py file 
-1. [] refactor `get_student_enrollment_data`?  look at `lookup_dict`
-    - "lookup_dict: This is the mapping between SID and anonID, which allows use to grab anonymized info for that student. This is faked in --no-pass mode, see No Pass Mode wiki page."
-    - `anon = lookup_dict[sid]`
-    - anon is the Internal Faked CalNet ID
-    - where is dummy_lookup_dict being used?
-1. add test coverage?  look at testing pipeline
-1. end goal is creating separate build_matrix_from_dict class, pass in arguments during instantiation like APR obj.
-1. consistently pull from master
+1. [x] rename eval_input to eval_courses (or eval_enrollment), rename entry_list to eval_entry & make sure request stil goes through
+1. [x] pull from staging
+1. [x] convert utils file into a class
+1. [x] finish updating documentation for functions
+1. [x] figure out SSL error where you can't send requests to https?  is it not finding the certs for some reason?
+    - try exporting paths to the cert and key
+    - problem was you didn't serve your flask app with its ssl_context argument so it was only accessible over http, once you added the context then it was only accessible over https
+1. move getMyClasses back into RNN_preprocess class
+
 1. update README, remove comments from /auth endpoint
 
-If I have a few quick questions about the RNN preprocessing, are you the person to set up a meeting with or someone else?  
+Misc 
+
 
 ### Notes / questions
 
-1. disable debugger before pushing
-1. Who to touch base with for following questions: 
-    1. can you rename all the eval and x_eval variables or is that some sort of deep learning model convention?
-        - renaming eval_input to eval_courses
-    1. What is BOS
-    1. what is myCourses?  caching student data that's already been loaded? 
-    1. does the fact we're only using course history, major, and entry type as lstm input mean those are the only features in our model?
+1. disable debugger & remove print statements before submitting PR
 1. Ask Jeff to verify that this shit works in production mode (vs no-pass) also plan still works as expected
+
+### Questions
+
+1. what is myCourses?  caching student data that's already been loaded? - Yes
+1. What is BOS
+1. good enough as is w/out creating separate class?  No, it's better to be explicit what the obect is
+1. Given a course_list for a semester, generates a vector representation of the course? or semester? - semester
+1. does the fact we're only using course history, major, and entry type as lstm input mean those are the only features in our model? - Yes
+1. can you rename all the eval and x_eval variables or is that some sort of deep learning model convention?
+
+
 
 ## RNN BE  
 
