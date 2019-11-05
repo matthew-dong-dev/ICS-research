@@ -3,6 +3,7 @@ f1$hNch1p$
 
 # Misc notes / questions
 
+1. how does jeff do bE dev work not locally
 1. where are the SSL certs located? `/research/askoski_common/ssl/`
 1. what exists in `UCBD2` directory, referred to a lot in `env.json`?  does it matter for you rn?  you can view the lookup tables in models-askoski
 1. where is the production version of FE & BE located?
@@ -61,13 +62,15 @@ What is APR data?
 
 ## FE 
 
-- **Had to change all the endpoint urls from `api.askoski.berkeley` to just `askoski.berkeley`  to enable client server communication, but local version of `plan` endpoints doesn't work rn?**
+- running into local FE error again where it keeps trying to log into your account and you can't get the site to forget your login details so you can use the dummy account. maybe it's CAS that's caching login details?
 
 How to get browser to forget user login data?  i.e. how to delete cache / locally stored data / cookies? 
 
 - https://superuser.com/questions/1305644/how-can-i-delete-locally-stored-data-in-chrome
 - Can't figure out which one works: empty cache and do hard reload from the refresh button, rebuilding the site,  maybe `clear site data` through dev tools just takes a few seconds to propogate?
 - Sometimes you have to go to askoski.berkeley.edu and clear that data? - no, this doesn't make sense because your localhost is completely indepedent of the production server
+
+- **Had to change all the endpoint urls from `api.askoski.berkeley` to just `askoski.berkeley`  to enable client server communication, but local version of `plan` endpoints doesn't work rn?** - resolved with latest update to staging 11/5 
 
 - .spec file is for tests
 - use `ng serve` and change env port in `environment.ts` to match the backend service you're using for now 

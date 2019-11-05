@@ -10,7 +10,6 @@
 
 ---
 
-
 # RNN Preprocess Refactor
 
 This seems like a huge task, but just fucking grind through it even though so much of it is a blackbox like wtf are they working with tensors for?  One thing at a time e.g. don't bother with the RNN preprocess obj/class yet.  First just focus on refactoring build_matrix_from_dict, and before that just figure out what each part of the code is doing.  **WORK ITERATIVELY**
@@ -34,16 +33,8 @@ WHERE IS THE STUDENT ENROLLMENT HISTORY BEING OBTAINED?
     - try exporting paths to the cert and key
     - problem was you didn't serve your flask app with its ssl_context argument so it was only accessible over http, once you added the context then it was only accessible over https
 1. move getMyClasses back into RNN_preprocess class
-
 1. update README, remove comments from /auth endpoint
-
-Misc 
-
-
-### Notes / questions
-
 1. disable debugger & remove print statements before submitting PR
-1. Ask Jeff to verify that this shit works in production mode (vs no-pass) also plan still works as expected
 
 ### Questions
 
@@ -52,8 +43,8 @@ Misc
 1. good enough as is w/out creating separate class?  No, it's better to be explicit what the obect is
 1. Given a course_list for a semester, generates a vector representation of the course? or semester? - semester
 1. does the fact we're only using course history, major, and entry type as lstm input mean those are the only features in our model? - Yes
-1. can you rename all the eval and x_eval variables or is that some sort of deep learning model convention?
-
+1. can you rename all the eval and x_eval variables or is that some sort of deep learning model convention? - Yes & yes
+1. Ask Jeff to verify that this shit works in production mode (vs no-pass) also plan still works as expected
 
 
 ## RNN BE  
