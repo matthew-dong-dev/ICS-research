@@ -1,6 +1,8 @@
 
 # RNN Predict Refactor
 
+1. update README, remove print statements from /auth endpoint
+1. include tests for all RNN related functions
 1. fix naming for other references to BMFD in plan / service
 1. [] refactor `get_student_enrollment_data`?  look at `lookup_dict`
     - "lookup_dict: This is the mapping between SID and anonID, which allows use to grab anonymized info for that student. This is faked in --no-pass mode, see No Pass Mode wiki page."
@@ -32,9 +34,9 @@ WHERE IS THE STUDENT ENROLLMENT HISTORY BEING OBTAINED?
 1. [x] figure out SSL error where you can't send requests to https?  is it not finding the certs for some reason?
     - try exporting paths to the cert and key
     - problem was you didn't serve your flask app with its ssl_context argument so it was only accessible over http, once you added the context then it was only accessible over https
-1. move getMyClasses back into RNN_preprocess class
-1. update README, remove comments from /auth endpoint
-1. disable debugger & remove print statements before submitting PR
+    - dump the context object into the server terminal to view details
+1. [x] move getMyCourses back into RNN_preprocess class
+1. [x] disable debugger & remove print statements before submitting PR
 
 ### Questions
 
@@ -45,7 +47,6 @@ WHERE IS THE STUDENT ENROLLMENT HISTORY BEING OBTAINED?
 1. does the fact we're only using course history, major, and entry type as lstm input mean those are the only features in our model? - Yes
 1. can you rename all the eval and x_eval variables or is that some sort of deep learning model convention? - Yes & yes
 1. Ask Jeff to verify that this shit works in production mode (vs no-pass) also plan still works as expected
-
 
 ## RNN BE  
 

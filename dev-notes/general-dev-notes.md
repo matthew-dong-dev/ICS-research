@@ -3,8 +3,11 @@ f1$hNch1p$
 
 # Misc notes / questions
 
-1. how does jeff do bE dev work not locally
-1. where are the SSL certs located? `/research/askoski_common/ssl/`
+1. SSL 
+    - look into SSL_context obj & clear related tabs after taking notes
+    - where are the SSL certs located? `/research/askoski_common/ssl/`
+1. look into reqs & explore merge branch 
+1. what envs do senior devs use for BE dev? 
 1. what exists in `UCBD2` directory, referred to a lot in `env.json`?  does it matter for you rn?  you can view the lookup tables in models-askoski
 1. where is the production version of FE & BE located?
 
