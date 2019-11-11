@@ -1,5 +1,13 @@
-test-300852
-f1$hNch1p$
+
+## Next action itmes 
+
+1. [x] finish RNN preprocess refactor
+1. [x] look at testing pipeline
+1. plan refactor
+    1. refactor rnn_predict function (everything except form data)
+    1. add unit test coverage for your refactored functions and other RNN related functions
+1. data-askoski - start looking through the repo
+1. remove global variables - a lot of overhead
 
 # Misc notes / questions
 
@@ -10,19 +18,10 @@ f1$hNch1p$
 1. what envs do senior devs use for BE dev? 
 1. what exists in `UCBD2` directory, referred to a lot in `env.json`?  does it matter for you rn?  you can view the lookup tables in models-askoski
 1. where is the production version of FE & BE located?
-
-Directions for you to pursue
-
-1. finish RNN preprocess refactor
-1. plan refactor
-    1. refactor rnn_predict function (everything except form data) + 
-1. data-askoski - start looking through the repo, any immediate action items here? 
-1. add unit test coverage for your refactored shit? look at testing pipeline
-1. remove global variables - a lot of overhead
-
-What is APR data?
-
-- sid, course and what requirement it fulfills, t/f for fulfilled
+1. What is APR data?
+    - sid, course and what requirement it fulfills, t/f for fulfilled
+    - you can look at your own APR data
+1. test account: test-300852, f1$hNch1p$
 
 ---
 
