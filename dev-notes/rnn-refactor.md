@@ -1,7 +1,7 @@
 
 # RNN Predict Refactor
 
-1. fix FE error where predictions aren't loading... does master use /api/api/getFullRows?
+1. fix FE error where predictions aren't loading... does master use /api/getFullRows?
 1. update README, remove print statements from /auth endpoint
 1. include tests for all RNN related functions
 1. fix naming for other references to BMFD in plan / service
@@ -37,6 +37,8 @@ WHERE IS THE STUDENT ENROLLMENT HISTORY BEING OBTAINED?
     - problem was you didn't serve your flask app with its ssl_context argument so it was only accessible over http, once you added the context then it was only accessible over https
     - dump the context object into the server terminal to view details
 1. [x] move getMyCourses back into RNN_preprocess class
+1. [x] parity with new BMFD in staging
+1. [x] fix Plan.py conflict 
 1. [x] disable debugger & remove print statements before submitting PR
 
 ### Questions

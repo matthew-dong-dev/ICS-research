@@ -1,19 +1,13 @@
 
-## Next action itmes 
+# Misc notes / questions / to do's
 
-1. [x] finish RNN preprocess refactor
-1. [x] look at testing pipeline
-1. plan refactor
-    1. refactor rnn_predict function (everything except form data)
-    1. add unit test coverage for your refactored functions and other RNN related functions
-1. data-askoski - start looking through the repo
-1. remove global variables - a lot of overhead
-
-# Misc notes / questions
-
+1. look at network requests when you go to requirements tab
 1. SSL 
     - look into SSL_context obj & clear related tabs after taking notes
     - where are the SSL certs located? `/research/askoski_common/ssl/`
+    - CORS errors are  different from SSL errors but both can cause HTTP bad request errors if you are trying to make a cross-origin request or if you're trying to request a resource from a non secured site (e.g. there might be outside listeners)
+    - potential problems - is it the server that's blocking the request?  yes... but could it also be the client?
+    - what did you try so far?  if all else fails download the extension
 1. look into reqs & explore merge branch 
 1. what envs do senior devs use for BE dev? 
 1. what exists in `UCBD2` directory, referred to a lot in `env.json`?  does it matter for you rn?  you can view the lookup tables in models-askoski
@@ -63,6 +57,8 @@
 # Local Development
 
 ## FE 
+
+1. if something is broken here run npm install or restart the app
 
 - running into local FE error again where it keeps trying to log into your account and you can't get the site to forget your login details so you can use the dummy account. maybe it's CAS that's caching login details?
 
