@@ -1,6 +1,7 @@
 
 # RNN Predict Refactor
 
+refactor rnn_predict function (everything except form data)
 1. fix FE error where predictions aren't loading... does master use /api/getFullRows?
 1. update README, remove print statements from /auth endpoint
 1. include tests for all RNN related functions

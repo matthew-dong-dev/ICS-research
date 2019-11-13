@@ -8,16 +8,12 @@
     - CORS errors are  different from SSL errors but both can cause HTTP bad request errors if you are trying to make a cross-origin request or if you're trying to request a resource from a non secured site (e.g. there might be outside listeners)
     - potential problems - is it the server that's blocking the request?  yes... but could it also be the client?
     - what did you try so far?  if all else fails download the extension
-1. look into reqs & explore merge branch 
-1. what envs do senior devs use for BE dev? 
 1. what exists in `UCBD2` directory, referred to a lot in `env.json`?  does it matter for you rn?  you can view the lookup tables in models-askoski
 1. where is the production version of FE & BE located?
 1. What is APR data?
     - sid, course and what requirement it fulfills, t/f for fulfilled
     - you can look at your own APR data
 1. test account: test-300852, f1$hNch1p$
-
----
 
 ## Testing
 
@@ -28,27 +24,34 @@
 1. read mamba documentation
 1. look through other test files 
 
----
+---------------------------------------------------------------------------------
 
 # Remote Development 
 
 1. run `screen -S name`
-1. run the script / start up the backend / open jupyter notebook (jupyter notebook --ip 169.229.192.179 --port 1382)
+1. run the script / start up the backend / open jupyter notebook 
+    - `jupyter notebook --ip maxwell.ischool.berkeley.edu --port 1383`
 1. When you use screen you need to detach with `CTRL+A+D` before you exit ssh. 
 1. `screen -xS name-to-resume`
 1. scroll in screen: https://unix.stackexchange.com/questions/40242/scroll-inside-screen-or-pause-output
+    - Hit your screen prefix combination (C-a / control+A by default), then hit Escape.
+    - THIS IS COPY MODE SO YOU HAVE TO ESCAPE OUT OF IT AGAIN TO SEE LIVE API CALLS 
+1. `control + d` terminates screen
 
-- Hit your screen prefix combination (C-a / control+A by default), then hit Escape.
-- THIS IS COPY MODE SO YOU HAVE TO ESCAPE OUT OF IT AGAIN TO SEE LIVE API CALLS 
+## Remote Backend
 
-## Backend
+- change port manually in `env.json` & run `python service.py --no-pass` 
 
-- now run `python ../scripts/refresh/refresh_env.py --port=1381 --no-pass` with `env.json` file
-- now it's just `python service.py --no-pass` and change port manually in `env.json`
-- what exists in `UCBD2` directory, referred to a lot in `env.json`?  does it matter for you rn?  you can view the lookup tables in models-askoski
-- where is the production version of FE & BE located?
+Deprecated
 
-## Frontend
+- `python ../scripts/refresh/refresh_env.py --port=1381 --no-pass` with `env.json` file
+- `source env.sh` `python service.py -np`
+
+```# ports used by user
+netstat -tlnpe | awk '{print $7 " " $4}' | sed s/:/\ /g | grep -E '0.0.0.0|169.229.192.179' | awk '{if ($3 >= 1300 && $3 <=1399 ) print $3" "$1;}'| sort | awk '{ print "id -u -n " $2}' | sh | sort | uniq -c | sort
+```
+
+## Remote Frontend
 
 - https://github.com/CAHLR/Angular-AskOski/wiki/Standing-up-a-demo-frontend-on-maxwell no longer true because `development.js` removed? 
 
@@ -56,7 +59,7 @@
 
 # Local Development
 
-## FE 
+## Local FE 
 
 1. if something is broken here run npm install or restart the app
 
@@ -77,6 +80,6 @@ How to get browser to forget user login data?  i.e. how to delete cache / locall
     - `docker ps` # get the id of the running container
     - `docker stop <container>` # kill it (gracefully)
 
-## BE 
+## Local BE 
 
 - cannot standup service locally, need configurations & packages on maxwell until containerized 

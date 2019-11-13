@@ -33,18 +33,20 @@
 	- `ssh -A -t matthew@askoski.berkeley.edu scp /home/matthew/data/course_shortname_title.pkl matthew@cahl.berkeley.edu:~/askoski/data`
 	- `ssh -A -t matthew@cahl.berkeley.edu scp /home/matthew/askoski/data/course_subject_long_to_short.csv matthew@askoski.berkeley.edu:/home/matthew/data`
 
-1. ssh matthew@askoski.berkeley.edu
-1. jupyter notebook --ip 169.229.192.179 --port 1332
-1. http://maxwell.ischool.berkeley.edu:1332/ 
+1. Use ipython env
 
 	```
-	[optional] jupyter notebook --generate-config
-	[optional] jupyter notebook password
-	screen
-	jupyter notebook --ip maxwell.ischool.berkeley.edu --port 1332
-	(replace X with an integer)
-	(then navigate your web browser to: http://maxwell.ischool.berkeley.edu:1332)
-	(you can now close the terminal session, screen will keep jupyter running) 
+	ssh matthew@askoski.berkeley.edu
+	jupyter notebook --generate-config
+	jupyter notebook password
+	jupyter notebook --ip 169.229.192.179 --port 1332 / jupyter notebook --ip maxwell.ischool.berkeley.edu --port 1332
+	Go to http://maxwell.ischool.berkeley.edu:1332/ 
+	```
+	VS
+	```
+	jupyter notebook --no-browser --port=XXXX #replace this with a number greater than 1080#
+	Then, on your local machine (e.g., laptop) type the following in a terminal
+	ssh -N -L localhost:8888:localhost:XXXX username@askoski.berkeley.edu
 	```
 
 1. `jupyter notebook --certfile=/etc/jupn-cert.pem --keyfile /etc/jupn-key.key --ip cahl.berkeley.edu --port 1338`
