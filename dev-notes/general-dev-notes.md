@@ -13,7 +13,6 @@
 1. What is APR data?
     - sid, course and what requirement it fulfills, t/f for fulfilled
     - you can look at your own APR data
-1. test account: test-300852, f1$hNch1p$
 
 ## Testing
 
@@ -63,7 +62,7 @@ netstat -tlnpe | awk '{print $7 " " $4}' | sed s/:/\ /g | grep -E '0.0.0.0|169.2
 
 1. if something is broken here run npm install or restart the app
 
-- running into local FE error again where it keeps trying to log into your account and you can't get the site to forget your login details so you can use the dummy account. maybe it's CAS that's caching login details?
+- running into local FE error again where it keeps trying to log into your account and you can't get the site to forget your login details so you can use the dummy account. maybe it's CAS that's caching login details?  it's the same error when trying to log into caltime - you inputted your credentials incorrectly once and kept getting stuck in an login error message.  Worked in icognito but using dev tools to clear shit didn't work, you had to clear everything through the browser settings for you to be able to go in properly again.   
 
 How to get browser to forget user login data?  i.e. how to delete cache / locally stored data / cookies? 
 
