@@ -33,11 +33,12 @@ Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pS
 
 ### what happens with a new data dump 
 
-1. Raw EDW data --> hashing & preprocessing by refresh.py, which generates the master lookup_dict & dumps timestamped directory in UCB2/edw_data 
-    - what is in this directory?
-1. Generates more lookup tables + pickles & working files to run service
-    - e.g. pathways in `env.json` updated 
-1. Runs Models-Askoski `retrain.sh`
+1. Raw EDW data --> hashing & preprocessing by `refresh.py`, which generates the master lookup_dict & generates a timestamped directory in UCB2/edw_data 
+    - what are each of the individual dirs: apr  classAPI  flat  hashed  logs  model  pickle
+    - lookup tables + pickles & working files to run service sourced through `env.json` which is loaded through `scripts/refresh/global_vars.py`) 
+    - your search.pkl would not be here because that's only produced when models retrain pipeline is run. 
+    - data pipeline --> models retrain --> restart service to get updated search file
+1. Runs Models-Askoski `retrain.sh` - 
 
 ### what does debugging usually involve?
 
@@ -46,7 +47,7 @@ Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pS
 
 ### Just so everyone is clear on what’s causing the indexing errors:
 
-- Service reads from the hashed majors, grades, etc. files which are in the top level of /research/UCBD2/edw_data (through env.json which is loaded through `scripts/refresh/global_vars.py`) 
+- Service reads from the hashed majors, grades, etc. files which are in the top level of /research/UCBD2/edw_data 
 
 These are older files from the end of summer. It’s decoding the student ids with /research/askoski_common/bins/sidHash_new.bin, which is being overwritten by the data pipeline with mappings calculated from newer data. (are all these things being mapped?)
 
@@ -60,13 +61,19 @@ The problem was a combination of a couple issues:
 2. we were loading the ENV json and then rewriting it to disk, but it wasn't being reloaded in memory. we should have sanity checks next time in between stages of the pipeline to check things like this, or better yet, separate out each stage of the pipeline entirely.
 3. importing modules caused the ENV json in each one to load at the start meaning it was stale after new json was created. again we should be using sanity checks at each stage to verify that assumptions made in the code are actually true.
 
-### Future tasks
+### Types of tasks / debugging
 
+- Requirements - not displaying unmet requirement bubble interface for some students.  How to deal with APR object?
 - Explore re-training is broken - currently uses old research data
 - Create a system level cron job that monitors data pipeline for new edw files and initiates the pipeline.
 - Revisit open seats daily poll of classes api in thread
 - Course API - keep credit restriction and prerequisite course information when querying Course API - save to two tsvs and make available to researchers via data repo (zach wants to incorporate the API scripts into the pipeline)
 - Saved hashed files to a directory called Hashed inside UCD2, as well as a timestamped directory within edw_data
 - Update the models code to use pipeline Classes data instead of fixed Classes_2011_2018 data
+- What does the semester changeover entail?
 
-### What does the semester changeover entail?
+### Meeting w/ Chris
+
+- Met w/ Zach, willing to be the main point person for this pipeline so you're trying to absorb as much information so you can start working on actions items.
+- Clarify questions about pipeline and then ask which would be a good action item to start with
+- how do you play around while testing?
