@@ -1,3 +1,5 @@
+how to actually run the pipeline, do semester changeover, don't move encrypted
+
 ## Where things live
 
 Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pSqs4bkL1WeA/edit#gid=0
@@ -11,7 +13,7 @@ Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pS
 ## Data pipeline high level overview
 
 1. Get EDW snapshots from university + pull course API info each semester --> feeds into models --> displayed on FE.  
-1. EDW Data dump (snapshots) 3 times a semester, after every term
+1. EDW Data dump (snapshots) 3 times a semester, after every term into /research/UCBDATA
     - includes updated enrollment history, grades, majors, entry type, APR data
     - enrollment records used for C2V (expore feature) & RNN (requirements)
 1. Ingested data = from data dumps, Collected data = from APIs
@@ -79,6 +81,7 @@ The problem was a combination of a couple issues:
 ### Move all scripts and post-processed data out of UCBDATA. This directory should be reserved exclusively for campus exports
     - Double save hash to UCBD2/ (top level or a separate directory called hashed) and timestamped directory
     - *Don't delete the encrypted file o/w you have to wait for the next data dump*
+    - verify data is encrypted before moving out of UCBDAta
 
 
 ## SQL DB Transition instead of pandas
