@@ -52,9 +52,6 @@ Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pS
 
 ### Types of tasks / debugging
 
-- Move all scripts and post-processed data out of UCBDATA. This directory should be reserved exclusively for campus exports
-    - Saved hashed files to a directory called Hashed inside UCBD2, as well as a timestamped directory within edw_data
-    - *Don't delete the encrypted file o/w you have to wait for the next data dump*
 - Requirements - not displaying unmet requirement bubble interface for some students.  This would be dealing with the APR object?
 - Explore re-training is broken - currently uses old research data
 - Revisit open seats daily poll of classes api in thread
@@ -78,6 +75,10 @@ The problem was a combination of a couple issues:
 1. some of the file names for campus data dumps were incorrect. not sure who was responsible for this but we should verify file names next time when writing stuff like this.
 2. we were loading the ENV json and then rewriting it to disk, but it wasn't being reloaded in memory. we should have sanity checks next time in between stages of the pipeline to check things like this, or better yet, separate out each stage of the pipeline entirely.
 3. importing modules caused the ENV json in each one to load at the start meaning it was stale after new json was created. again we should be using sanity checks at each stage to verify that assumptions made in the code are actually true.
+
+### Move all scripts and post-processed data out of UCBDATA. This directory should be reserved exclusively for campus exports
+    - Double save hash to UCBD2/ (top level or a separate directory called hashed) and timestamped directory
+    - *Don't delete the encrypted file o/w you have to wait for the next data dump*
 
 
 ## SQL DB Transition instead of pandas
