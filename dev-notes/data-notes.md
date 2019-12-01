@@ -57,7 +57,6 @@ Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pS
 - Requirements - not displaying unmet requirement bubble interface for some students.  This would be dealing with the APR object?
 - Explore re-training is broken - currently uses old research data
 - Revisit open seats daily poll of classes api in thread
-- What does the semester changeover entail?
 - Creating a new filter in AskOski that will filter a user's suggested courses based on whether their majors fall within the class reservations. This filter will be applied automatically to the already existing Open Seats filter. This task is a two-step process:
 1)  Modify Data-AskOski to include reserve capacity information with each class, which involves querying the reserved seats API and augmenting the next_sem_dict to include reserve capacity data.
 2)  Modify Service-AskOski to filter classes shown based on the reserve capacity data and the student's own majors. This involves creating a mapping between majors as represented in AskOski to the requirement groups in the API, and then creating a filter with it.
@@ -78,13 +77,19 @@ The problem was a combination of a couple issues:
 2. we were loading the ENV json and then rewriting it to disk, but it wasn't being reloaded in memory. we should have sanity checks next time in between stages of the pipeline to check things like this, or better yet, separate out each stage of the pipeline entirely.
 3. importing modules caused the ENV json in each one to load at the start meaning it was stale after new json was created. again we should be using sanity checks at each stage to verify that assumptions made in the code are actually true.
 
-### Move all scripts and post-processed data out of UCBDATA. This directory should be reserved exclusively for campus exports
-    - Double save hash to UCBD2/ (top level or a separate directory called hashed) and timestamped directory
-    - *Don't delete the encrypted file o/w you have to wait for the next data dump*
-    - verify data is encrypted before moving out of UCBDAta
-
-
 ## SQL DB Transition instead of pandas
 
 - service-askoski will definitely have to change because it's will no longer load pickle files but make SQL queries?  possibly models-askoski will change
 - keep data askoski pipeline to process data but load exports into mySQL to be used in production
+
+### Move all scripts and post-processed data out of UCBDATA. This directory should be reserved exclusively for campus exports
+    - Double save hash to UCBD2/ (top level or a separate directory called hashed) and timestamped directory
+    - *Don't delete the encrypted file o/w you have to wait for the next data dump*
+    - verify data is encrypted before moving out of UCBDATA
+    - which are the files to not delete and look at the structure of the files
+
+1. hashed vs encrypted data - which one is the anonymized using the lookup dict? 
+
+1. change default hashed data in models and add search model retrain
+1. remove hashed data from UCBDATA
+1. where is the op level data being copied
