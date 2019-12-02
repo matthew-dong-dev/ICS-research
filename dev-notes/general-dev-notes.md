@@ -50,6 +50,14 @@ Deprecated
 netstat -tlnpe | awk '{print $7 " " $4}' | sed s/:/\ /g | grep -E '0.0.0.0|169.229.192.179' | awk '{if ($3 >= 1300 && $3 <=1399 ) print $3" "$1;}'| sort | awk '{ print "id -u -n " $2}' | sh | sort | uniq -c | sort
 ```
 
+export outDir='/home/matthew/Models-AskOski/ICS/data'
+outDir='/home/matthew/Models-AskOski/ICS'
+echo $outDir
+
+>>> python
+>>> import os
+>>> os.environ['outDir']
+
 ## Remote Frontend
 
 - https://github.com/CAHLR/Angular-AskOski/wiki/Standing-up-a-demo-frontend-on-maxwell no longer true because `development.js` removed? 

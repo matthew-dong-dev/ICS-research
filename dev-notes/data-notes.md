@@ -1,5 +1,3 @@
-how to actually run the pipeline, do semester changeover, don't move encrypted
-
 ## Where things live
 
 Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pSqs4bkL1WeA/edit#gid=0
@@ -24,7 +22,7 @@ Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pS
 
 1. what UCBD2 used to be but with all its misc files cleaned & organized such that it only includes non-student data like classes information 
     - non student data will live on github in data-askoski
-    - what about hashed data?  Yes
+    - what about hashed data?  Yes but gitignored?
 1. want to be able to rollback our data, have both ingested and collected data organized and versioned
 1. What data comes from the APIs needs to be standardized
     - new semester courses, ...? 
@@ -82,14 +80,60 @@ The problem was a combination of a couple issues:
 - service-askoski will definitely have to change because it's will no longer load pickle files but make SQL queries?  possibly models-askoski will change
 - keep data askoski pipeline to process data but load exports into mySQL to be used in production
 
-### Move all scripts and post-processed data out of UCBDATA. This directory should be reserved exclusively for campus exports
-    - Double save hash to UCBD2/ (top level or a separate directory called hashed) and timestamped directory
-    - *Don't delete the encrypted file o/w you have to wait for the next data dump*
-    - verify data is encrypted before moving out of UCBDATA
-    - which are the files to not delete and look at the structure of the files
+### Move all scripts and post-processed data out of UCBDATA & UCBD2
+    - *Don't delete the encrypted files o/w you have to wait for the next data dump*
+    - verify data is encrypted before moving out of UCBDATA - actually just keep here according to Zach
+    - which are the files to not delete - just the raw files
 
-1. hashed vs encrypted data - which one is the anonymized using the lookup dict? 
+1. Double save hash in UCBD2
+1. hashed vs encrypted data - which one is the anonymized using the lookup dict?  hashed? 
+1. [x] change default srcDir in models and add search model retrain
+1. remove hashed data from UCBDATA in refresh.py 
+1. Double check that models retrain still runs on the hashed data in UCBD2/edw_data/hashe
+1. Double check rm -r works from os.system
 
-1. change default hashed data in models and add search model retrain
-1. remove hashed data from UCBDATA
-1. where is the op level data being copied
+ look at the structure of the files
+
+
+/research/UCBD2/pipeline-test/hashed
+edw_askoski_apr_student_requirements_hashed.txt  edw_askoski_student_grades_hashed.txt
+edw_askoski_student_cohorts_hashed.txt           edw_askoski_student_majors_hashed.txt
+
+> edw_askoski_apr_student_requirements_hashed.txt 
+
+REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE|`ANON_ID`
+
+## unhashed
+
+#STUDENT_ID|REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE
+
+> edw_askoski_student_grades_hashed.txt
+
+#SEMESTER_YEAR_NAME_CONCAT|STUDENT_CREDIT_HRS_NBR|COURSE_CONTROL_NBR|INSTR_NAME_CONCAT|OFFERING_TYPE_DESC|ROOM_SHARE_BUNDLE_NBR|SECTION_NBR|COURSE_SUBJECT_NAME_NUMBER|UNDERGRAD_GRAD_STATUS|COURSE_NUMBER|COURSE_SUBJECT_SHORT_NM|COURSE_TITLE_NM|CRS_ACADEMIC_DEPT_SHORT_NM|GRADE_NM|GRADE_POINTS_NBR|GRADE_SORT_NBR|GRADE_SUBTYPE_DESC|GRADE_TYPE_DESC|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE|`ANON_ID`
+
+## Unhashed
+
+#SEMESTER_YEAR_NAME_CONCAT|STUDENT_ID|STUDENT_CREDIT_HRS_NBR|PERSON_PARTY_SK|COURSE_CONTROL_NBR|INSTR_NAME_CONCAT|OFFERING_TYPE_DESC|ROOM_SHARE_BUNDLE_NBR|SECTION_NBR|COURSE_SUBJECT_NAME_NUMBER|UNDERGRAD_GRAD_STATUS|COURSE_NUMBER|COURSE_SUBJECT_SHORT_NM|COURSE_TITLE_NM|CRS_ACADEMIC_DEPT_SHORT_NM|GRADE_NM|GRADE_POINTS_NBR|GRADE_SORT_NBR|GRADE_SUBTYPE_DESC|GRADE_TYPE_DESC|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE
+
+>  edw_askoski_student_cohorts_hashed.txt 
+
+#SEMESTER_YEAR_NAME_CONCAT|RETENTION_FLAG_AFTER_1_YEARS|RETENTION_FLAG_AFTER_2_YEARS|RETENTION_FLAG_AFTER_3_YEARS|RETENTION_FLAG_AFTER_4_YEARS|RETENTION_FLAG_AFTER_5_YEARS|RETENTION_FLAG_AFTER_6_YEARS|YEARS_TO_GRADUATION|PROBATION_FIRST_YR_FLAG|APPLICATION_ENTRY_TYPE|SEMESTER_YEAR|SEMESTER_NAME|LOAD_DATE|ANON_ID
+
+1. edw_askoski_student_majors_hashed.txt
+
+#SEMESTER_YEAR_NAME_CONCAT|STUDENT_COUNT|UNGRAD_GRAD_CODE|EXAM_UNITS_NO|ACADEMIC_DEPARTMENT_NAME|ACADEMIC_DIVISION_NAME|MAJOR_NAME|COLLEGE_NAME|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE|ANON_ID
+
+2019-10-12-11-04
+05_05PM-July-30-2019 --> 2019-07-30-17-05
+
+edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
+edw_2018.tsv --> hashed grades old file
+data.dict --> meta data
+
+
+
+just do manually
+
+- pycache is just machine optimized code created every time python script is run, can be ignored - or deleted in this case
+- models-askoski is deprecated, nothing in git log
+- dev is empty
