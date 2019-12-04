@@ -22,6 +22,8 @@
 
 ---------------------------------------------------------------------------------
 
+> Always pull from staging but start dev from master.
+
 # Remote Development 
 
 1. run `screen -S name`
