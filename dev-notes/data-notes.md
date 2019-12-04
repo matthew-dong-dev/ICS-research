@@ -1,3 +1,11 @@
+## Questions
+
+1. Clarify how the main lookup dict works
+1. hashed vs encrypted data - which one is the anonymized using the lookup dict?  hashed? 
+    - Encryption is a two-way function where information is scrambled in such a way that it can be unscrambled later.
+    - "Hashing, one-way function where data is mapped to a fixed-length value. Hashing is primarily used for authentication. With a properly designed algorithm, there is no way to reverse the hashing process to reveal the original password."  So if there's a lookup dict that maps original sids to anons, is it really hashed?
+    - Salting is an additional step during hashing, typically seen in association to hashed passwords, that adds an additional value to the end of the password that changes the hash value produced. This adds a layer of security to the hashing process, specifically against brute force attacks. A brute force attack is where a computer or botnet attempt every possible combination of letters and numbers and characters until the password is found.  They can also attempt to hash every possible combination of letters and numbers and characters (companies use well known hashing functions?) until your pw is found, don't even have to know the actual password.  Adding creates unique pw's and therefore unique hashes so if a hacker finds one, he doesn't find another.    
+
 ## Where things live
 
 Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pSqs4bkL1WeA/edit#gid=0
@@ -29,7 +37,7 @@ Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pS
     - currently outputted in Classes_2011_2018? 
     - different versions of Run's & Chris' APIs?  
 1. Course API - keep credit restriction and prerequisite course information when querying Course API - save to two tsvs and make available to researchers via data repo (zach wants to incorporate the API scripts into the pipeline)
-1. Update the models code to use pipeline Classes data instead of fixed Classes_2011_2018 data
+1. Update the models code to use pipeline Classes data instead of Classes_2011_2018 data
 
 ## Current state of Data-AskOski
 
@@ -38,10 +46,10 @@ Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pS
 1. Raw EDW data --> hashing & preprocessing by `refresh.py`, which generates the master lookup_dict & generates a timestamped directory in UCB2/edw_data 
     - what are each of the individual dirs?: apr  classAPI  flat  hashed  logs  model  pickle
     - lookup tables + pickles & working files to run service sourced through `env.json` which is loaded through `scripts/refresh/global_vars.py`) 
-    - some flat files here are just copied over like abrev.tsv
+    - some flat files here are just copied over like abbrev.tsv
     - your search.pkl would not be here because that's only produced when models retrain pipeline is run. 
     - data pipeline --> models retrain --> restart service to get updated search file
-1. Runs Models-Askoski `retrain.sh` - 
+1. Runs Models-Askoski `retrain.sh`
 
 ### what does debugging usually involve?
 
@@ -83,17 +91,21 @@ The problem was a combination of a couple issues:
 ### Move all scripts and post-processed data out of UCBDATA & UCBD2
     - *Don't delete the encrypted files o/w you have to wait for the next data dump*
     - verify data is encrypted before moving out of UCBDATA - actually just keep here according to Zach
-    - which are the files to not delete - just the raw files
+    - which are the files to not delete - don't delete the raw files
 
-1. Double save hash in UCBD2
-1. hashed vs encrypted data - which one is the anonymized using the lookup dict?  hashed? 
-1. [x] change default srcDir in models and add search model retrain
-1. remove hashed data from UCBDATA in refresh.py 
-1. Double check that models retrain still runs on the hashed data in UCBD2/edw_data/hashe
-1. Double check rm -r works from os.system
+1. [x] archive files in UCBD2
+1. [x] remove folders manually from UCBD2 - check if they can be deleted
+    - pycache is just machine optimized code created every time python script is run, can be ignored - or deleted in this case
+    - models-askoski is deprecated, nothing in git log
+    - dev is empty
+1. [x] change default srcDir path in models and add search model retrain
+1. [x] Double save hash in UCBD2 & remove hashed data from UCBDATA in refresh.py 
+    - Double check `rm -r` works from `os.system`
+1. Double check that models retrain still runs on the hashed data in UCBD2/edw_data/hashed
 
- look at the structure of the files
 
+
+1. look at the structure of the files
 
 /research/UCBD2/pipeline-test/hashed
 edw_askoski_apr_student_requirements_hashed.txt  edw_askoski_student_grades_hashed.txt
@@ -103,7 +115,7 @@ edw_askoski_student_cohorts_hashed.txt           edw_askoski_student_majors_hash
 
 REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE|`ANON_ID`
 
-## unhashed
+> edw_askoski_apr_student_requirements.txt (unhashed)
 
 #STUDENT_ID|REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE
 
@@ -131,9 +143,3 @@ edw_2018.tsv --> hashed grades old file
 data.dict --> meta data
 
 
-
-just do manually
-
-- pycache is just machine optimized code created every time python script is run, can be ignored - or deleted in this case
-- models-askoski is deprecated, nothing in git log
-- dev is empty

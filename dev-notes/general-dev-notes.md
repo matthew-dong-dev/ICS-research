@@ -9,10 +9,7 @@
     - potential problems - is it the server that's blocking the request?  yes... but could it also be the client?
     - what did you try so far?  if all else fails download the extension
 1. what exists in `UCBD2` directory, referred to a lot in `env.json`?  does it matter for you rn?  you can view the lookup tables in models-askoski
-1. where is the production version of FE & BE located?
-1. What is APR data?
-    - sid, course and what requirement it fulfills, t/f for fulfilled
-    - you can look at your own APR data
+1. where is the production version of FE & BE located? `/home/askoski`
 
 ## Testing
 
