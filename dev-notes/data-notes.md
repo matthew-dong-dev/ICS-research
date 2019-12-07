@@ -102,7 +102,7 @@ The problem was a combination of a couple issues:
 1. [x] Double save hash in UCBD2 & remove hashed data from UCBDATA in refresh.py 
     - Double check `rm -r` works from `os.system`
 1. Double check that models retrain still runs on the hashed data in UCBD2/edw_data/hashed
-
+1. PR note: double save anonymized data to UCBD2/edw_data and remove hashed data from UCBDATA
 
 
 1. look at the structure of the files

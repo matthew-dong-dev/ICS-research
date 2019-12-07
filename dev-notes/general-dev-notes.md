@@ -1,6 +1,15 @@
 
 # Misc notes / questions / to do's
 
+You're trying to balance several different tasks at once
+
+1. Cleaning UCBD2 & UCBDATA folders
+    - haven't figured out why the retrain script doesn't work...
+    - need to message Zach & Run
+1. Looking into APR filter - is the corresponding task the missing requirements filters?
+1. Search bigram
+
+
 1. look at network requests when you go to requirements tab
 1. SSL 
     - look into SSL_context obj & clear related tabs after taking notes
@@ -34,6 +43,7 @@
 1. scroll in screen: https://unix.stackexchange.com/questions/40242/scroll-inside-screen-or-pause-output
     - Hit your screen prefix combination (C-a / control+A by default), then hit Escape.
     - THIS IS COPY MODE SO YOU HAVE TO ESCAPE OUT OF IT AGAIN TO SEE LIVE API CALLS 
+    - Copy mode only works in screen
 1. `control + d` terminates screen
 
 ## Remote Backend
