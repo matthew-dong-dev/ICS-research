@@ -42,9 +42,9 @@ You're trying to balance several different tasks at once
 1. `screen -xS name-to-resume`
 1. scroll in screen: https://unix.stackexchange.com/questions/40242/scroll-inside-screen-or-pause-output
     - Hit your screen prefix combination (C-a / control+A by default), then hit Escape.
-    - THIS IS COPY MODE SO YOU HAVE TO ESCAPE OUT OF IT AGAIN TO SEE LIVE API CALLS 
-    - Copy mode only works in screen
+    - Copy mode only works in screen, you can scroll normally otherwise
 1. `control + d` terminates screen
+1. If you feel that the pgoram is hanging, YOU HAVE TO ESCAPE OUT OF COPY MODE TO SEE LIVE OUTPUT
 
 ## Remote Backend
 

@@ -1,10 +1,50 @@
-## Questions
+## Things to look into
 
+1. look into refresh.md & env.sh - these files are outdated, but tells a lot about how things work
+1. look at imported functions in refresh.py
 1. Clarify how the main lookup dict works
 1. hashed vs encrypted data - which one is the anonymized using the lookup dict?  hashed? 
     - Encryption is a two-way function where information is scrambled in such a way that it can be unscrambled later.
     - "Hashing, one-way function where data is mapped to a fixed-length value. Hashing is primarily used for authentication. With a properly designed algorithm, there is no way to reverse the hashing process to reveal the original password."  So if there's a lookup dict that maps original sids to anons, is it really hashed?
     - Salting is an additional step during hashing, typically seen in association to hashed passwords, that adds an additional value to the end of the password that changes the hash value produced. This adds a layer of security to the hashing process, specifically against brute force attacks. A brute force attack is where a computer or botnet attempt every possible combination of letters and numbers and characters until the password is found.  They can also attempt to hash every possible combination of letters and numbers and characters (companies use well known hashing functions?) until your pw is found, don't even have to know the actual password.  Adding creates unique pw's and therefore unique hashes so if a hacker finds one, he doesn't find another.    
+1. look at the structure of the files
+
+/research/UCBD2/pipeline-test/hashed
+edw_askoski_apr_student_requirements_hashed.txt  edw_askoski_student_grades_hashed.txt
+edw_askoski_student_cohorts_hashed.txt           edw_askoski_student_majors_hashed.txt
+
+> edw_askoski_apr_student_requirements_hashed.txt 
+
+REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE|`ANON_ID`
+
+> edw_askoski_apr_student_requirements.txt (unhashed)
+
+#STUDENT_ID|REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE
+
+> edw_askoski_student_grades_hashed.txt
+
+#SEMESTER_YEAR_NAME_CONCAT|STUDENT_CREDIT_HRS_NBR|COURSE_CONTROL_NBR|INSTR_NAME_CONCAT|OFFERING_TYPE_DESC|ROOM_SHARE_BUNDLE_NBR|SECTION_NBR|COURSE_SUBJECT_NAME_NUMBER|UNDERGRAD_GRAD_STATUS|COURSE_NUMBER|COURSE_SUBJECT_SHORT_NM|COURSE_TITLE_NM|CRS_ACADEMIC_DEPT_SHORT_NM|GRADE_NM|GRADE_POINTS_NBR|GRADE_SORT_NBR|GRADE_SUBTYPE_DESC|GRADE_TYPE_DESC|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE|`ANON_ID`
+
+## Unhashed
+
+#SEMESTER_YEAR_NAME_CONCAT|STUDENT_ID|STUDENT_CREDIT_HRS_NBR|PERSON_PARTY_SK|COURSE_CONTROL_NBR|INSTR_NAME_CONCAT|OFFERING_TYPE_DESC|ROOM_SHARE_BUNDLE_NBR|SECTION_NBR|COURSE_SUBJECT_NAME_NUMBER|UNDERGRAD_GRAD_STATUS|COURSE_NUMBER|COURSE_SUBJECT_SHORT_NM|COURSE_TITLE_NM|CRS_ACADEMIC_DEPT_SHORT_NM|GRADE_NM|GRADE_POINTS_NBR|GRADE_SORT_NBR|GRADE_SUBTYPE_DESC|GRADE_TYPE_DESC|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE
+
+>  edw_askoski_student_cohorts_hashed.txt 
+
+#SEMESTER_YEAR_NAME_CONCAT|RETENTION_FLAG_AFTER_1_YEARS|RETENTION_FLAG_AFTER_2_YEARS|RETENTION_FLAG_AFTER_3_YEARS|RETENTION_FLAG_AFTER_4_YEARS|RETENTION_FLAG_AFTER_5_YEARS|RETENTION_FLAG_AFTER_6_YEARS|YEARS_TO_GRADUATION|PROBATION_FIRST_YR_FLAG|APPLICATION_ENTRY_TYPE|SEMESTER_YEAR|SEMESTER_NAME|LOAD_DATE|ANON_ID
+
+1. edw_askoski_student_majors_hashed.txt
+
+#SEMESTER_YEAR_NAME_CONCAT|STUDENT_COUNT|UNGRAD_GRAD_CODE|EXAM_UNITS_NO|ACADEMIC_DEPARTMENT_NAME|ACADEMIC_DIVISION_NAME|MAJOR_NAME|COLLEGE_NAME|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE|ANON_ID
+
+2019-10-12-11-04
+05_05PM-July-30-2019 --> 2019-07-30-17-05
+
+edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
+edw_2018.tsv --> hashed grades old file
+data.dict --> meta data
+
+--- 
 
 ## Where things live
 
@@ -38,6 +78,8 @@ Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pS
     - different versions of Run's & Chris' APIs?  
 1. Course API - keep credit restriction and prerequisite course information when querying Course API - save to two tsvs and make available to researchers via data repo (zach wants to incorporate the API scripts into the pipeline)
 1. Update the models code to use pipeline Classes data instead of Classes_2011_2018 data
+
+---
 
 ## Current state of Data-AskOski
 
@@ -89,6 +131,7 @@ The problem was a combination of a couple issues:
 - keep data askoski pipeline to process data but load exports into mySQL to be used in production
 
 ### Move all scripts and post-processed data out of UCBDATA & UCBD2
+    
     - *Don't delete the encrypted files o/w you have to wait for the next data dump*
     - verify data is encrypted before moving out of UCBDATA - actually just keep here according to Zach
     - which are the files to not delete - don't delete the raw files
@@ -101,45 +144,31 @@ The problem was a combination of a couple issues:
 1. [x] change default srcDir path in models and add search model retrain
 1. [x] Double save hash in UCBD2 & remove hashed data from UCBDATA in refresh.py 
     - Double check `rm -r` works from `os.system`
-1. Double check that models retrain still runs on the hashed data in UCBD2/edw_data/hashed
-1. PR note: double save anonymized data to UCBD2/edw_data and remove hashed data from UCBDATA
+1. PR note
+Included:
+- Double save anonymized data to UCBD2/edw_data/hashed
+- Remove hashed data from UCBDATA after saving to UCBD2
 
+Test:
+- Running pipeline should have hashed data saved to both timestamped directory and hashed directory in edw_data as well as hashed data removed from from UCBDATA
 
-1. look at the structure of the files
+### Incorporate Courses / Classes API into Data pipeline 
 
-/research/UCBD2/pipeline-test/hashed
-edw_askoski_apr_student_requirements_hashed.txt  edw_askoski_student_grades_hashed.txt
-edw_askoski_student_cohorts_hashed.txt           edw_askoski_student_majors_hashed.txt
+1. where does `hashed path` get defined? in env.sh vs env.json?  
+    - actually from `makeJson` which takes dirName (timestamp) as an argument and then creates `env.json`
+1. why does /research/UCBD2/pipeline-test still exist in env.json? bc env.json hasn't been updated from running master 
+1. Double check that models retrain still runs on the hashed data in UCBD2/edw_data/hashed?  
+1. Running pipeline should retrain all the models and write all the files service needs to /models 
+    - need to copy over env.json & relaunch service? 
+1. Checking update-pipeline runs without error, run from your own directory & reserve /askoski for master?
+    - how long does entire retraining take?  need to run in screen?
+1. how to verify pipeline has successfully run?  should have outputs in the timestamped dir?  
+1. what's the difference between Models API scripts and Data API scripts?  
+    - dumped into pickle folders, etc..
+    - refresh.sh is dumping outputs into timestamped `salt` - why? 
+1. Missing file `/research/UCBDATA/edw_askoski_apr_student_requirements.txt "['PERSON_PARTY_SK'] not found in axis"`
+    - copy from prev directory
+1. cp: cannot stat '/research/UCBDATA/edw_askoski_course_lists.txt': No such file or directory
 
-> edw_askoski_apr_student_requirements_hashed.txt 
-
-REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE|`ANON_ID`
-
-> edw_askoski_apr_student_requirements.txt (unhashed)
-
-#STUDENT_ID|REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE
-
-> edw_askoski_student_grades_hashed.txt
-
-#SEMESTER_YEAR_NAME_CONCAT|STUDENT_CREDIT_HRS_NBR|COURSE_CONTROL_NBR|INSTR_NAME_CONCAT|OFFERING_TYPE_DESC|ROOM_SHARE_BUNDLE_NBR|SECTION_NBR|COURSE_SUBJECT_NAME_NUMBER|UNDERGRAD_GRAD_STATUS|COURSE_NUMBER|COURSE_SUBJECT_SHORT_NM|COURSE_TITLE_NM|CRS_ACADEMIC_DEPT_SHORT_NM|GRADE_NM|GRADE_POINTS_NBR|GRADE_SORT_NBR|GRADE_SUBTYPE_DESC|GRADE_TYPE_DESC|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE|`ANON_ID`
-
-## Unhashed
-
-#SEMESTER_YEAR_NAME_CONCAT|STUDENT_ID|STUDENT_CREDIT_HRS_NBR|PERSON_PARTY_SK|COURSE_CONTROL_NBR|INSTR_NAME_CONCAT|OFFERING_TYPE_DESC|ROOM_SHARE_BUNDLE_NBR|SECTION_NBR|COURSE_SUBJECT_NAME_NUMBER|UNDERGRAD_GRAD_STATUS|COURSE_NUMBER|COURSE_SUBJECT_SHORT_NM|COURSE_TITLE_NM|CRS_ACADEMIC_DEPT_SHORT_NM|GRADE_NM|GRADE_POINTS_NBR|GRADE_SORT_NBR|GRADE_SUBTYPE_DESC|GRADE_TYPE_DESC|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE
-
->  edw_askoski_student_cohorts_hashed.txt 
-
-#SEMESTER_YEAR_NAME_CONCAT|RETENTION_FLAG_AFTER_1_YEARS|RETENTION_FLAG_AFTER_2_YEARS|RETENTION_FLAG_AFTER_3_YEARS|RETENTION_FLAG_AFTER_4_YEARS|RETENTION_FLAG_AFTER_5_YEARS|RETENTION_FLAG_AFTER_6_YEARS|YEARS_TO_GRADUATION|PROBATION_FIRST_YR_FLAG|APPLICATION_ENTRY_TYPE|SEMESTER_YEAR|SEMESTER_NAME|LOAD_DATE|ANON_ID
-
-1. edw_askoski_student_majors_hashed.txt
-
-#SEMESTER_YEAR_NAME_CONCAT|STUDENT_COUNT|UNGRAD_GRAD_CODE|EXAM_UNITS_NO|ACADEMIC_DEPARTMENT_NAME|ACADEMIC_DIVISION_NAME|MAJOR_NAME|COLLEGE_NAME|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE|ANON_ID
-
-2019-10-12-11-04
-05_05PM-July-30-2019 --> 2019-07-30-17-05
-
-edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
-edw_2018.tsv --> hashed grades old file
-data.dict --> meta data
-
+chmod -R 777 Data-AskOski & Models
 
