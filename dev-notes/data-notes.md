@@ -1,14 +1,16 @@
 # how to run pipeline
 
 1. Replace /home/askoski/Models-AskOski with local version /home/matthew/Models-AskOski to test changes
-1. chmod -R 777 Data-AskOski & Models-AskOski if necessary - what is this command doing? 
+1. `chmod -R 777` Data-AskOski & Models-AskOski if necessary - what is this command doing? 
 1. Run refresh.py in screen 
 1. how long does entire retraining take? 
     - Hashing - 5mins 
     - Models retraining - currently like 10 hours 
     - refresh api - 1 hour ish
-1. *Don't delete the encrypted files o/w you have to wait for the next data dump*
 1. Verify pipeline has successfully by copying env.json to service and results are as expected
+1. Currently fixed / hardcoded
+    - `hashed`, `encypted`, `decrypted` folders in UCBDATA
+    - `classAPI` in UCBD2
 
 ## [Data-Pipeline] Deep dive
 
@@ -22,7 +24,7 @@
 1. hashed vs encrypted data - which one is the anonymized using the lookup dict?  hashed?  Yes
     - Encryption is a two-way function where information is scrambled in such a way that it can be unscrambled later.
     - "Hashing, one-way function where data is mapped to a fixed-length value. Hashing is primarily used for authentication. With a properly designed algorithm, there is no way to reverse the hashing process to reveal the original password."  So if there's a lookup dict that maps original sids to anons, is it really hashed?
-    - Salting is an additional step during hashing, typically seen in association to hashed passwords, that adds an additional value to the end of the password that changes the hash value produced. This adds a layer of security to the hashing process, specifically against brute force attacks. A brute force attack is where a computer or botnet attempt every possible combination of letters and numbers and characters until the password is found.  They can also attempt to hash every possible combination of letters and numbers and characters (companies use well known hashing functions?) until your pw is found, don't even have to know the actual password.  Adding creates unique pw's and therefore unique hashes so if a hacker finds one, he doesn't find another.    
+    - Salting is an additional step during hashing, typically seen in association to hashed passwords, that adds an additional value to the end of the password that changes the hash value produced. This adds a layer of security to the hashing process, specifically against brute force attacks. A brute force attack is where a computer or botnet attempt every possible combination of letters and numbers and characters until the password is found.  They can also attempt to hash every possible combination of letters and numbers and characters (companies use well known hashing functions?) until your pw is found, don't even have to know the actual password.  Adding salt creates unique pw's and therefore unique hashes so if a hacker finds one, he doesn't find another.    
 
 --- 
 
@@ -36,15 +38,23 @@ Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pS
 /research/UCBD2 --> unknown misc items
 /research/askoski_common --> contains misc items
 
-## Data pipeline high level overview
+## Data pipeline overview
 
 1. Get EDW snapshots from university + pull course API info each semester --> feeds into models --> displayed on FE.  
-1. EDW Data dump (snapshots) 3 times a semester, after every term into /research/UCBDATA
+1. EDW Data dump (snapshots) 3 times a semester after every term into /research/UCBDATA
     - includes updated enrollment history, grades, majors, entry type, APR data
     - enrollment records used for C2V (expore feature) & RNN (requirements)
-1. Ingested data = from data dumps, Collected data = from APIs
-    - Collected data streams should also be incorporated in the data pipeline  
-    - Ingested data pipeline should be run 3x a semester and collected data should be run more frequently during enrollment periods
+    - data pipeline --> models retrain --> restart service to get updated search file
+    - search.pkl would not be here because that's only produced when models retrain pipeline is run. 
+
+1. Raw EDW data --> run `refresh.py`, which generates the master lookup_dict & generates a timestamped directory in UCBD2/edw_data with
+    - apr  classAPI  flat  hashed  logs  model  pickle
+    - some flat files here are just copied over from timestamped directories like abbrev.tsv?
+    - lookup tables + pickles & working files to run service sourced through `env.json` which is loaded through `scripts/refresh/refresh_env.py`) 
+1. Runs Models-Askoski `retrain.sh` which create all lookup pickles for enrollments, requirements, offered classes, etc.
+1. 
+1. Move all files outputted from Models into timestamped directory
+
 
 ## What Data-AskOski should be / should have
 
@@ -52,6 +62,9 @@ Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pS
     - non student data will live on github in data-askoski
     - what about hashed data?  Yes but gitignored?
 1. want to be able to rollback our data, have both ingested and collected data organized and versioned
+1. Ingested data = from data dumps, Collected data = from APIs
+    - Collected data streams should also be incorporated in the data pipeline  
+    - Ingested data pipeline should be run 3x a semester and collected data should be run more frequently during enrollment periods
 1. What data comes from the APIs needs to be standardized
     - new semester courses, ...? 
     - currently outputted in Classes_2011_2018? 
@@ -65,14 +78,6 @@ Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pS
 
 ### what happens with a new data dump 
 
-1. Raw EDW data --> hashing & preprocessing by `refresh.py`, which generates the master lookup_dict & generates a timestamped directory in UCB2/edw_data 
-    - what are each of the individual dirs?: apr  classAPI  flat  hashed  logs  model  pickle
-    - lookup tables + pickles & working files to run service sourced through `env.json` which is loaded through `scripts/refresh/global_vars.py`) 
-    - some flat files here are just copied over like abbrev.tsv
-    - your search.pkl would not be here because that's only produced when models retrain pipeline is run. 
-    - data pipeline --> models retrain --> restart service to get updated search file
-1. Runs Models-Askoski `retrain.sh`
-
 ### what does debugging usually involve?
 
 - biggest pain point is the lookup_dict (anon to SID) because if this is wrong then everything else is wrong in terms of the other lookup tables for majors / courses because then you pull from class API in service, among others things
@@ -84,7 +89,10 @@ Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pS
 
 ## [Data] Deep dive
 
-1. clean hashed-archive
+1. clean ucbd2-archive, check what each file does and where it already exists in the system before deleting
+    - start with hashed-archive
+    - *Don't delete the encrypted files o/w you have to wait for the next data dump*
+1. what is the size of the data being used - how many records, how far back - see the research paper
 1. look at the structure of the files
 
 /research/UCBD2/pipeline-test/hashed

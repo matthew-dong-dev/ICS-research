@@ -3,6 +3,7 @@
 1. where does `hashed path` get defined? in env.sh vs env.json?  
     - actually from `makeJson` which takes dirName (timestamp) as an argument and then creates `env.json`
     - bash file is unused
+    - NEED `hashed` directory in UCBDATA
 1. why does /research/UCBD2/pipeline-test still exist in env.json? bc env.json hasn't been updated from running master 
 1. Double check that models retrain still runs on the hashed data in UCBD2/edw_data/hashed?  
 1. Running pipeline should retrain all the models and write all the files service needs to /models 
@@ -11,7 +12,7 @@
     - need to run in screen?  Yes
 1. how to verify pipeline has successfully run?  should have outputs in the timestamped dir?  
     - yes, or copy env.json and make sure service runs as expected
-1. Missing files 
+1. Missing files?? 
     - `/research/UCBDATA/edw_askoski_apr_student_requirements.txt "['PERSON_PARTY_SK'] not found in axis"`
     - `cp: cannot stat '/research/UCBDATA/edw_askoski_course_lists.txt': No such file or directory`
     - Models-AskOski/RNN/evaluate.py: `No such file or directory: '/research/UCBD2/classAPI/next_sem_classes_new.p'`
