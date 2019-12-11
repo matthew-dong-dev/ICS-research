@@ -29,10 +29,19 @@
 
 ### Types of tasks / debugging
 
-1. Incorporate fixed /research/UCBD2/classAPI/ into pipeline
+1. get familiar with how to do a semester changeover
+1. Incorporate fixed /research/UCBD2/classAPI/ into pipeline that gets next semester's classes
+1. Reconcile Data-AskOski API scripts & Models-AskOski API scripts.  What's the difference between Models API scripts and Data API scripts?  
+    - dumped into pickle folders, etc..
+    - refresh.sh is dumping outputs into timestamped `salt` - why? SAlt stands for serendipitous alternatives
 
-- Requirements - not displaying unmet requirement bubble interface for some students.  This would be dealing with the APR object?
-- Explore re-training is broken - currently uses old research data
+1. Requirements bug - not displaying unmet requirement filters for some students - this would be dealing with the APR object?
+1. Ingested data pipeline should be run 3x a semester and collected data should be run more frequently during enrollment periods
+
+## Possibly done? 
+
+- Course API - keep credit restriction and prerequisite course information when querying Course API - save to two tsvs and make available to researchers via data repo 
+- Explore re-training is broken - currently uses old research data. Update the models code to use pipeline Classes data instead of Classes_2011_2018 data
 - Revisit open seats daily poll of classes api in thread
 - Creating a new filter in AskOski that will filter a user's suggested courses based on whether their majors fall within the class reservations. This filter will be applied automatically to the already existing Open Seats filter. This task is a two-step process:
 1)  Modify Data-AskOski to include reserve capacity information with each class, which involves querying the reserved seats API and augmenting the next_sem_dict to include reserve capacity data.
@@ -62,7 +71,6 @@ The problem was a combination of a couple issues:
 
 - service-askoski will definitely have to change because it's will no longer load pickle files but make SQL queries?  possibly models-askoski will change
 - keep data askoski pipeline to process data but load exports into mySQL to be used in production
-
 
 ### Move all scripts and post-processed data out of UCBDATA & UCBD2
     

@@ -12,15 +12,18 @@
     - `hashed`, `encypted`, `decrypted` folders in UCBDATA
     - `classAPI` in UCBD2
 
+Sandbox testing environment 
+    - just clone the repo to your directory and change output pathways?  don't need to change pathways, just delete the timestamped output 
+    - how to test individual parts of the pipeline?  run the individual scripts 
+
+---
+
 ## [Data-Pipeline] Deep dive
 
 1. look into refresh.md & env.sh - these files are outdated, but tells a lot about how things work
-1. look at imported functions in refresh.py
-1. how does the main sid to anon lookup work and how does that affect the course indexing?
-1. get familiar with how to do a semester changeover
-1.  What's the difference between Models API scripts and Data API scripts?  
-    - dumped into pickle folders, etc..
-    - refresh.sh is dumping outputs into timestamped `salt` - why? SAlt stands for serendipitous alternatives
+1. look at imported functions in refresh.py - what is refresh user, enrollments, grade_info, etc... doing
+1. biggest pain point is the lookup_dict (anon to SID) because if this is wrong then everything else is wrong in terms of the other lookup tables for majors / courses.  how does the main sid to anon lookup work and how does that affect the course indexing?  
+    - look at the indexing error action item in data-action-items.md
 1. hashed vs encrypted data - which one is the anonymized using the lookup dict?  hashed?  Yes
     - Encryption is a two-way function where information is scrambled in such a way that it can be unscrambled later.
     - "Hashing, one-way function where data is mapped to a fixed-length value. Hashing is primarily used for authentication. With a properly designed algorithm, there is no way to reverse the hashing process to reveal the original password."  So if there's a lookup dict that maps original sids to anons, is it really hashed?
@@ -28,62 +31,38 @@
 
 --- 
 
-## Where things live
-
-Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pSqs4bkL1WeA/edit#gid=0
-
-/home/askoski --> where everything is launched from as the askoski user
-/research/UCBDATA --> where the snapshots are exported from campus
-/research/UCBD2/edw_data --> hashed / anonymized data
-/research/UCBD2 --> unknown misc items
-/research/askoski_common --> contains misc items
-
 ## Data pipeline overview
 
-1. Get EDW snapshots from university + pull course API info each semester --> feeds into models --> displayed on FE.  
+1. 30,000 feet: Get EDW snapshots from university + pull course API info each semester --> feeds into models --> loaded by service --> displayed on FE.  
 1. EDW Data dump (snapshots) 3 times a semester after every term into /research/UCBDATA
     - includes updated enrollment history, grades, majors, entry type, APR data
     - enrollment records used for C2V (expore feature) & RNN (requirements)
     - data pipeline --> models retrain --> restart service to get updated search file
     - search.pkl would not be here because that's only produced when models retrain pipeline is run. 
-
 1. Raw EDW data --> run `refresh.py`, which generates the master lookup_dict & generates a timestamped directory in UCBD2/edw_data with
     - apr  classAPI  flat  hashed  logs  model  pickle
     - some flat files here are just copied over from timestamped directories like abbrev.tsv?
     - lookup tables + pickles & working files to run service sourced through `env.json` which is loaded through `scripts/refresh/refresh_env.py`) 
 1. Runs Models-Askoski `retrain.sh` which create all lookup pickles for enrollments, requirements, offered classes, etc.
-1. 
+1. Run Models-AskOski `refresh.sh` which does...
 1. Move all files outputted from Models into timestamped directory
 
+*Where things live*
 
-## What Data-AskOski should be / should have
+- Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pSqs4bkL1WeA/edit#gid=0
+- `/home/askoski` --> where everything is launched from as the askoski user
+- `/research/UCBDATA` --> where the snapshots are exported from campus
+- `/research/UCBD2/edw_data` --> hashed / anonymized data & versioned snapshots of data
+- `/research/askoski_common` --> contains misc items
 
-1. what UCBD2 used to be but with all its misc files cleaned & organized such that it only includes non-student data like classes information 
+*What Data-AskOski should be / should have*
+
+> what UCBD2 used to be but with all its misc files cleaned & organized such that it only includes non-student data like classes information.  want to be able to rollback our data, have both ingested and collected data organized and versioned
     - non student data will live on github in data-askoski
-    - what about hashed data?  Yes but gitignored?
-1. want to be able to rollback our data, have both ingested and collected data organized and versioned
-1. Ingested data = from data dumps, Collected data = from APIs
+    - what about hashed data?  Yes but gitignored
+    - Ingested data = from data dumps, Collected data = from APIs
     - Collected data streams should also be incorporated in the data pipeline  
-    - Ingested data pipeline should be run 3x a semester and collected data should be run more frequently during enrollment periods
-1. What data comes from the APIs needs to be standardized
-    - new semester courses, ...? 
-    - currently outputted in Classes_2011_2018? 
-    - different versions of Run's & Chris' APIs?  
-1. Course API - keep credit restriction and prerequisite course information when querying Course API - save to two tsvs and make available to researchers via data repo (zach wants to incorporate the API scripts into the pipeline)
-1. Update the models code to use pipeline Classes data instead of Classes_2011_2018 data
-
----
-
-## Current state of Data-AskOski
-
-### what happens with a new data dump 
-
-### what does debugging usually involve?
-
-- biggest pain point is the lookup_dict (anon to SID) because if this is wrong then everything else is wrong in terms of the other lookup tables for majors / courses because then you pull from class API in service, among others things
-    - Clarify how this lookup works
-- how to get a sandbox testing environment - just clone the repo to your directory and change output pathways?
-    - how to test individual parts of the pipeline?  create dummy repos w/ same name and then run that part of the pipeline
+> what it actually is: timestamped directories
 
 ---
 
