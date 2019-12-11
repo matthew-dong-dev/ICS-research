@@ -1,48 +1,28 @@
-## Things to look into
+# how to run pipeline
+
+1. Replace /home/askoski/Models-AskOski with local version /home/matthew/Models-AskOski to test changes
+1. chmod -R 777 Data-AskOski & Models-AskOski if necessary - what is this command doing? 
+1. Run refresh.py in screen 
+1. how long does entire retraining take? 
+    - Hashing - 5mins 
+    - Models retraining - currently like 10 hours 
+    - refresh api - 1 hour ish
+1. *Don't delete the encrypted files o/w you have to wait for the next data dump*
+1. Verify pipeline has successfully by copying env.json to service and results are as expected
+
+## [Data-Pipeline] Deep dive
 
 1. look into refresh.md & env.sh - these files are outdated, but tells a lot about how things work
 1. look at imported functions in refresh.py
-1. Clarify how the main lookup dict works
-1. hashed vs encrypted data - which one is the anonymized using the lookup dict?  hashed? 
+1. how does the main sid to anon lookup work and how does that affect the course indexing?
+1. get familiar with how to do a semester changeover
+1.  What's the difference between Models API scripts and Data API scripts?  
+    - dumped into pickle folders, etc..
+    - refresh.sh is dumping outputs into timestamped `salt` - why? SAlt stands for serendipitous alternatives
+1. hashed vs encrypted data - which one is the anonymized using the lookup dict?  hashed?  Yes
     - Encryption is a two-way function where information is scrambled in such a way that it can be unscrambled later.
     - "Hashing, one-way function where data is mapped to a fixed-length value. Hashing is primarily used for authentication. With a properly designed algorithm, there is no way to reverse the hashing process to reveal the original password."  So if there's a lookup dict that maps original sids to anons, is it really hashed?
     - Salting is an additional step during hashing, typically seen in association to hashed passwords, that adds an additional value to the end of the password that changes the hash value produced. This adds a layer of security to the hashing process, specifically against brute force attacks. A brute force attack is where a computer or botnet attempt every possible combination of letters and numbers and characters until the password is found.  They can also attempt to hash every possible combination of letters and numbers and characters (companies use well known hashing functions?) until your pw is found, don't even have to know the actual password.  Adding creates unique pw's and therefore unique hashes so if a hacker finds one, he doesn't find another.    
-1. look at the structure of the files
-
-/research/UCBD2/pipeline-test/hashed
-edw_askoski_apr_student_requirements_hashed.txt  edw_askoski_student_grades_hashed.txt
-edw_askoski_student_cohorts_hashed.txt           edw_askoski_student_majors_hashed.txt
-
-> edw_askoski_apr_student_requirements_hashed.txt 
-
-REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE|`ANON_ID`
-
-> edw_askoski_apr_student_requirements.txt (unhashed)
-
-#STUDENT_ID|REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE
-
-> edw_askoski_student_grades_hashed.txt
-
-#SEMESTER_YEAR_NAME_CONCAT|STUDENT_CREDIT_HRS_NBR|COURSE_CONTROL_NBR|INSTR_NAME_CONCAT|OFFERING_TYPE_DESC|ROOM_SHARE_BUNDLE_NBR|SECTION_NBR|COURSE_SUBJECT_NAME_NUMBER|UNDERGRAD_GRAD_STATUS|COURSE_NUMBER|COURSE_SUBJECT_SHORT_NM|COURSE_TITLE_NM|CRS_ACADEMIC_DEPT_SHORT_NM|GRADE_NM|GRADE_POINTS_NBR|GRADE_SORT_NBR|GRADE_SUBTYPE_DESC|GRADE_TYPE_DESC|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE|`ANON_ID`
-
-## Unhashed
-
-#SEMESTER_YEAR_NAME_CONCAT|STUDENT_ID|STUDENT_CREDIT_HRS_NBR|PERSON_PARTY_SK|COURSE_CONTROL_NBR|INSTR_NAME_CONCAT|OFFERING_TYPE_DESC|ROOM_SHARE_BUNDLE_NBR|SECTION_NBR|COURSE_SUBJECT_NAME_NUMBER|UNDERGRAD_GRAD_STATUS|COURSE_NUMBER|COURSE_SUBJECT_SHORT_NM|COURSE_TITLE_NM|CRS_ACADEMIC_DEPT_SHORT_NM|GRADE_NM|GRADE_POINTS_NBR|GRADE_SORT_NBR|GRADE_SUBTYPE_DESC|GRADE_TYPE_DESC|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE
-
->  edw_askoski_student_cohorts_hashed.txt 
-
-#SEMESTER_YEAR_NAME_CONCAT|RETENTION_FLAG_AFTER_1_YEARS|RETENTION_FLAG_AFTER_2_YEARS|RETENTION_FLAG_AFTER_3_YEARS|RETENTION_FLAG_AFTER_4_YEARS|RETENTION_FLAG_AFTER_5_YEARS|RETENTION_FLAG_AFTER_6_YEARS|YEARS_TO_GRADUATION|PROBATION_FIRST_YR_FLAG|APPLICATION_ENTRY_TYPE|SEMESTER_YEAR|SEMESTER_NAME|LOAD_DATE|ANON_ID
-
-1. edw_askoski_student_majors_hashed.txt
-
-#SEMESTER_YEAR_NAME_CONCAT|STUDENT_COUNT|UNGRAD_GRAD_CODE|EXAM_UNITS_NO|ACADEMIC_DEPARTMENT_NAME|ACADEMIC_DIVISION_NAME|MAJOR_NAME|COLLEGE_NAME|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE|ANON_ID
-
-2019-10-12-11-04
-05_05PM-July-30-2019 --> 2019-07-30-17-05
-
-edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
-edw_2018.tsv --> hashed grades old file
-data.dict --> meta data
 
 --- 
 
@@ -100,75 +80,44 @@ Files: https://docs.google.com/spreadsheets/d/1wEH1HqMnRr3dg5l-ggrPHLZKDScZuL4pS
 - how to get a sandbox testing environment - just clone the repo to your directory and change output pathways?
     - how to test individual parts of the pipeline?  create dummy repos w/ same name and then run that part of the pipeline
 
-### Types of tasks / debugging
+---
 
-- Requirements - not displaying unmet requirement bubble interface for some students.  This would be dealing with the APR object?
-- Explore re-training is broken - currently uses old research data
-- Revisit open seats daily poll of classes api in thread
-- Creating a new filter in AskOski that will filter a user's suggested courses based on whether their majors fall within the class reservations. This filter will be applied automatically to the already existing Open Seats filter. This task is a two-step process:
-1)  Modify Data-AskOski to include reserve capacity information with each class, which involves querying the reserved seats API and augmenting the next_sem_dict to include reserve capacity data.
-2)  Modify Service-AskOski to filter classes shown based on the reserve capacity data and the student's own majors. This involves creating a mapping between majors as represented in AskOski to the requirement groups in the API, and then creating a filter with it.
+## [Data] Deep dive
 
-### Indexing error that broke the system for entirety of F19 during the data-askoski transition:
+1. clean hashed-archive
+1. look at the structure of the files
 
-- Service reads from the hashed majors, grades, etc. files which are in the top level of /research/UCBD2/edw_data 
+/research/UCBD2/pipeline-test/hashed
+edw_askoski_apr_student_requirements_hashed.txt  edw_askoski_student_grades_hashed.txt
+edw_askoski_student_cohorts_hashed.txt           edw_askoski_student_majors_hashed.txt
 
-These are older files from the end of summer. It’s decoding the student ids with /research/askoski_common/bins/sidHash_new.bin, which is being overwritten by the data pipeline with mappings calculated from newer data. (are all these things being mapped?)
+> edw_askoski_apr_student_requirements_hashed.txt 
 
-- Service using old grade, majors, requirements tables + new sid lookup table -> indexing errors
-- A really quick fix would be to run the pipeline on old data, which would revert the lookup table and fix the indexing errors on Service.
-- I am in the process of pointing the data pipeline to write the lookups to a separate folder that wouldn’t mess with the current Service.
+REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE|`ANON_ID`
 
-The problem was a combination of a couple issues:
+> edw_askoski_apr_student_requirements.txt (unhashed)
 
-1. some of the file names for campus data dumps were incorrect. not sure who was responsible for this but we should verify file names next time when writing stuff like this.
-2. we were loading the ENV json and then rewriting it to disk, but it wasn't being reloaded in memory. we should have sanity checks next time in between stages of the pipeline to check things like this, or better yet, separate out each stage of the pipeline entirely.
-3. importing modules caused the ENV json in each one to load at the start meaning it was stale after new json was created. again we should be using sanity checks at each stage to verify that assumptions made in the code are actually true.
+#STUDENT_ID|REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE
 
-## SQL DB Transition instead of pandas
+> edw_askoski_student_grades_hashed.txt
 
-- service-askoski will definitely have to change because it's will no longer load pickle files but make SQL queries?  possibly models-askoski will change
-- keep data askoski pipeline to process data but load exports into mySQL to be used in production
+#SEMESTER_YEAR_NAME_CONCAT|STUDENT_CREDIT_HRS_NBR|COURSE_CONTROL_NBR|INSTR_NAME_CONCAT|OFFERING_TYPE_DESC|ROOM_SHARE_BUNDLE_NBR|SECTION_NBR|COURSE_SUBJECT_NAME_NUMBER|UNDERGRAD_GRAD_STATUS|COURSE_NUMBER|COURSE_SUBJECT_SHORT_NM|COURSE_TITLE_NM|CRS_ACADEMIC_DEPT_SHORT_NM|GRADE_NM|GRADE_POINTS_NBR|GRADE_SORT_NBR|GRADE_SUBTYPE_DESC|GRADE_TYPE_DESC|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE|`ANON_ID`
 
-### Move all scripts and post-processed data out of UCBDATA & UCBD2
-    
-    - *Don't delete the encrypted files o/w you have to wait for the next data dump*
-    - verify data is encrypted before moving out of UCBDATA - actually just keep here according to Zach
-    - which are the files to not delete - don't delete the raw files
+## Unhashed
 
-1. [x] archive files in UCBD2
-1. [x] remove folders manually from UCBD2 - check if they can be deleted
-    - pycache is just machine optimized code created every time python script is run, can be ignored - or deleted in this case
-    - models-askoski is deprecated, nothing in git log
-    - dev is empty
-1. [x] change default srcDir path in models and add search model retrain
-1. [x] Double save hash in UCBD2 & remove hashed data from UCBDATA in refresh.py 
-    - Double check `rm -r` works from `os.system`
-1. PR note
-Included:
-- Double save anonymized data to UCBD2/edw_data/hashed
-- Remove hashed data from UCBDATA after saving to UCBD2
+#SEMESTER_YEAR_NAME_CONCAT|STUDENT_ID|STUDENT_CREDIT_HRS_NBR|PERSON_PARTY_SK|COURSE_CONTROL_NBR|INSTR_NAME_CONCAT|OFFERING_TYPE_DESC|ROOM_SHARE_BUNDLE_NBR|SECTION_NBR|COURSE_SUBJECT_NAME_NUMBER|UNDERGRAD_GRAD_STATUS|COURSE_NUMBER|COURSE_SUBJECT_SHORT_NM|COURSE_TITLE_NM|CRS_ACADEMIC_DEPT_SHORT_NM|GRADE_NM|GRADE_POINTS_NBR|GRADE_SORT_NBR|GRADE_SUBTYPE_DESC|GRADE_TYPE_DESC|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE
 
-Test:
-- Running pipeline should have hashed data saved to both timestamped directory and hashed directory in edw_data as well as hashed data removed from from UCBDATA
+>  edw_askoski_student_cohorts_hashed.txt 
 
-### Incorporate Courses / Classes API into Data pipeline 
+#SEMESTER_YEAR_NAME_CONCAT|RETENTION_FLAG_AFTER_1_YEARS|RETENTION_FLAG_AFTER_2_YEARS|RETENTION_FLAG_AFTER_3_YEARS|RETENTION_FLAG_AFTER_4_YEARS|RETENTION_FLAG_AFTER_5_YEARS|RETENTION_FLAG_AFTER_6_YEARS|YEARS_TO_GRADUATION|PROBATION_FIRST_YR_FLAG|APPLICATION_ENTRY_TYPE|SEMESTER_YEAR|SEMESTER_NAME|LOAD_DATE|ANON_ID
 
-1. where does `hashed path` get defined? in env.sh vs env.json?  
-    - actually from `makeJson` which takes dirName (timestamp) as an argument and then creates `env.json`
-1. why does /research/UCBD2/pipeline-test still exist in env.json? bc env.json hasn't been updated from running master 
-1. Double check that models retrain still runs on the hashed data in UCBD2/edw_data/hashed?  
-1. Running pipeline should retrain all the models and write all the files service needs to /models 
-    - need to copy over env.json & relaunch service? 
-1. Checking update-pipeline runs without error, run from your own directory & reserve /askoski for master?
-    - how long does entire retraining take?  need to run in screen?
-1. how to verify pipeline has successfully run?  should have outputs in the timestamped dir?  
-1. what's the difference between Models API scripts and Data API scripts?  
-    - dumped into pickle folders, etc..
-    - refresh.sh is dumping outputs into timestamped `salt` - why? 
-1. Missing file `/research/UCBDATA/edw_askoski_apr_student_requirements.txt "['PERSON_PARTY_SK'] not found in axis"`
-    - copy from prev directory
-1. cp: cannot stat '/research/UCBDATA/edw_askoski_course_lists.txt': No such file or directory
+1. edw_askoski_student_majors_hashed.txt
 
-chmod -R 777 Data-AskOski & Models
+#SEMESTER_YEAR_NAME_CONCAT|STUDENT_COUNT|UNGRAD_GRAD_CODE|EXAM_UNITS_NO|ACADEMIC_DEPARTMENT_NAME|ACADEMIC_DIVISION_NAME|MAJOR_NAME|COLLEGE_NAME|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE|ANON_ID
 
+2019-10-12-11-04
+05_05PM-July-30-2019 --> 2019-07-30-17-05
+
+edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
+edw_2018.tsv --> hashed grades old file
+data.dict --> meta data
