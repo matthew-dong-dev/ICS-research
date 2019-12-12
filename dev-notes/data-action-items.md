@@ -1,4 +1,4 @@
-### Incorporate Courses / Classes API into Data pipeline 
+### Task: Incorporate Courses / Classes API into Data pipeline 
 
 1. where does `hashed path` get defined? in env.sh vs env.json?  
     - actually from `makeJson` which takes dirName (timestamp) as an argument and then creates `env.json`
@@ -25,20 +25,36 @@
     - File "../C2V/preprocess.py", line 190, in <module> with open(os.path.join(RNN_DIR, 'course2idx.json'), 'r', encoding='utf-8') as f:
         No such file or directory: '/research/UCBD2/edw_data/2019-12-10-17-55/model/course2idx.json' <- this file is missing 3 times
     -  need to copy from prev timestamped directory?  no, it was caused by missing directory classAPI which caused all the course mappings to not be generated 
+1. File "train.py", line 253, in <module>
+    sys.exit(main(sys.argv[2:]))
+  File "train.py", line 204, in main
+    has_gpa=hyper_parameter_dict['has_gpa'], has_bow=hyper_parameter_dict['has_bow'], use_pca=hyper_parameter_dict['use_pca'], detail_output=True)
+  File "/research/home/askoski/Models-AskOski/RNN/evaluate.py", line 157, in run_on_evalset
+    available_courses = get_available_courses(eval_semester)
+  File "/research/home/askoski/Models-AskOski/RNN/evaluate.py", line 107, in get_available_courses
+    print("There are {} unique courses offered in semester {}".format(len(course_detail_dict[eval_semester]), eval_semester))
+KeyError: '20198'
+
+
+
+
 1. Replace /home/askoski/Models-AskOski with /home/matthew/Models-AskOski - change back before creating PR
+1. Update documentation with what retrain.sh does
 
-### Types of tasks / debugging
 
+## Action Item backlog
+
+1. continue data-pipeline deep dive
+1. continue data-pipeline deep dive
 1. get familiar with how to do a semester changeover
 1. Incorporate fixed /research/UCBD2/classAPI/ into pipeline that gets next semester's classes
 1. Reconcile Data-AskOski API scripts & Models-AskOski API scripts.  What's the difference between Models API scripts and Data API scripts?  
     - dumped into pickle folders, etc..
     - refresh.sh is dumping outputs into timestamped `salt` - why? SAlt stands for serendipitous alternatives
-
 1. Requirements bug - not displaying unmet requirement filters for some students - this would be dealing with the APR object?
 1. Ingested data pipeline should be run 3x a semester and collected data should be run more frequently during enrollment periods
 
-## Possibly done? 
+### Possibly done? 
 
 - Course API - keep credit restriction and prerequisite course information when querying Course API - save to two tsvs and make available to researchers via data repo 
 - Explore re-training is broken - currently uses old research data. Update the models code to use pipeline Classes data instead of Classes_2011_2018 data
@@ -49,9 +65,9 @@
 
 ---
 
-# Completed 
+## Completed 
 
-### Indexing error that broke the system for entirety of F19 during the data-askoski transition:
+### Task: Indexing error that broke the system for entirety of F19 during the data-askoski transition:
 
 - Service reads from the hashed majors, grades, etc. files which are in the top level of /research/UCBD2/edw_data 
 
@@ -67,12 +83,12 @@ The problem was a combination of a couple issues:
 2. we were loading the ENV json and then rewriting it to disk, but it wasn't being reloaded in memory. we should have sanity checks next time in between stages of the pipeline to check things like this, or better yet, separate out each stage of the pipeline entirely.
 3. importing modules caused the ENV json in each one to load at the start meaning it was stale after new json was created. again we should be using sanity checks at each stage to verify that assumptions made in the code are actually true.
 
-## SQL DB Transition instead of pandas
+### Task: SQL DB Transition instead of pandas
 
 - service-askoski will definitely have to change because it's will no longer load pickle files but make SQL queries?  possibly models-askoski will change
 - keep data askoski pipeline to process data but load exports into mySQL to be used in production
 
-### Move all scripts and post-processed data out of UCBDATA & UCBD2
+### Task: Move all scripts and post-processed data out of UCBDATA & UCBD2
     
     - *Don't delete the encrypted files o/w you have to wait for the next data dump*
     - verify data is encrypted before moving out of UCBDATA - actually just keep here according to Zach

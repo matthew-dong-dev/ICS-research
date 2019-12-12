@@ -1,15 +1,6 @@
 
 # Misc notes / questions / to do's
 
-You're trying to balance several different tasks at once
-
-1. Cleaning UCBD2 & UCBDATA folders
-    - haven't figured out why the retrain script doesn't work...
-    - need to message Zach & Run
-1. Looking into APR filter - is the corresponding task the missing requirements filters?
-1. Search bigram
-
-
 1. look at network requests when you go to requirements tab
 1. SSL 
     - look into SSL_context obj & clear related tabs after taking notes
@@ -35,6 +26,7 @@ You're trying to balance several different tasks at once
 
 # Remote Development 
 
+1. Do work locally in an IDE, then copy & paste into ipython env is what Jeff recommends
 1. run `screen -S name`
 1. run the script / start up the backend / open jupyter notebook 
     - `jupyter notebook --ip maxwell.ischool.berkeley.edu --port 1383`

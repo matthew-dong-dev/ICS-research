@@ -1,8 +1,8 @@
 # how to run pipeline
 
-1. Replace /home/askoski/Models-AskOski with local version /home/matthew/Models-AskOski to test changes
+1. to test changes replace `/home/askoski/Models-AskOski` pathways with local version `/home/matthew/Models-AskOski`
 1. `chmod -R 777` Data-AskOski & Models-AskOski if necessary - what is this command doing? 
-1. Run refresh.py in screen 
+1. Run `refresh.py` in screen 
 1. how long does entire retraining take? 
     - Hashing - 5mins 
     - Models retraining - currently like 10 hours 
@@ -11,6 +11,16 @@
 1. Currently fixed / hardcoded
     - `hashed`, `encypted`, `decrypted` folders in UCBDATA
     - `classAPI` in UCBD2
+1. Searched in:
+    >>> import nltk
+    >>> nltk.download('stopwords')
+    - '/usr/nltk_data'
+    - '/usr/share/nltk_data'
+    - '/usr/lib/nltk_data'
+    - '/usr/share/nltk_data'
+    - '/usr/local/share/nltk_data'
+    - '/usr/lib/nltk_data'
+    - '/usr/local/lib/nltk_data'
 
 Sandbox testing environment 
     - just clone the repo to your directory and change output pathways?  don't need to change pathways, just delete the timestamped output 
@@ -30,6 +40,51 @@ Sandbox testing environment
     - Salting is an additional step during hashing, typically seen in association to hashed passwords, that adds an additional value to the end of the password that changes the hash value produced. This adds a layer of security to the hashing process, specifically against brute force attacks. A brute force attack is where a computer or botnet attempt every possible combination of letters and numbers and characters until the password is found.  They can also attempt to hash every possible combination of letters and numbers and characters (companies use well known hashing functions?) until your pw is found, don't even have to know the actual password.  Adding salt creates unique pw's and therefore unique hashes so if a hacker finds one, he doesn't find another.    
 
 --- 
+
+## [Data] Deep dive
+
+1. clean ucbd2-archive & update spreadsheet, check what each file does and where it already exists in the system before deleting
+    - start with hashed-archive
+        - edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
+        - edw_2018.tsv --> hashed grades old file
+        - data.dict --> meta data
+    - *Don't delete the encrypted files o/w you have to wait for the next data dump*
+1. what is the size of the data being used - how many records, how far back - see the research paper
+    - 100K students, 2M enrollment records, since 2008
+1. look at the structure of the files
+
+/research/UCBD2/pipeline-test/hashed
+edw_askoski_apr_student_requirements_hashed.txt  edw_askoski_student_grades_hashed.txt
+edw_askoski_student_cohorts_hashed.txt           edw_askoski_student_majors_hashed.txt
+
+> edw_askoski_apr_student_requirements_hashed.txt 
+
+REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE|`ANON_ID`
+
+> edw_askoski_apr_student_requirements.txt (unhashed)
+
+#STUDENT_ID|REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE
+
+> edw_askoski_student_grades_hashed.txt
+
+#SEMESTER_YEAR_NAME_CONCAT|STUDENT_CREDIT_HRS_NBR|COURSE_CONTROL_NBR|INSTR_NAME_CONCAT|OFFERING_TYPE_DESC|ROOM_SHARE_BUNDLE_NBR|SECTION_NBR|COURSE_SUBJECT_NAME_NUMBER|UNDERGRAD_GRAD_STATUS|COURSE_NUMBER|COURSE_SUBJECT_SHORT_NM|COURSE_TITLE_NM|CRS_ACADEMIC_DEPT_SHORT_NM|GRADE_NM|GRADE_POINTS_NBR|GRADE_SORT_NBR|GRADE_SUBTYPE_DESC|GRADE_TYPE_DESC|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE|`ANON_ID`
+
+## Unhashed
+
+#SEMESTER_YEAR_NAME_CONCAT|STUDENT_ID|STUDENT_CREDIT_HRS_NBR|PERSON_PARTY_SK|COURSE_CONTROL_NBR|INSTR_NAME_CONCAT|OFFERING_TYPE_DESC|ROOM_SHARE_BUNDLE_NBR|SECTION_NBR|COURSE_SUBJECT_NAME_NUMBER|UNDERGRAD_GRAD_STATUS|COURSE_NUMBER|COURSE_SUBJECT_SHORT_NM|COURSE_TITLE_NM|CRS_ACADEMIC_DEPT_SHORT_NM|GRADE_NM|GRADE_POINTS_NBR|GRADE_SORT_NBR|GRADE_SUBTYPE_DESC|GRADE_TYPE_DESC|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE
+
+>  edw_askoski_student_cohorts_hashed.txt 
+
+#SEMESTER_YEAR_NAME_CONCAT|RETENTION_FLAG_AFTER_1_YEARS|RETENTION_FLAG_AFTER_2_YEARS|RETENTION_FLAG_AFTER_3_YEARS|RETENTION_FLAG_AFTER_4_YEARS|RETENTION_FLAG_AFTER_5_YEARS|RETENTION_FLAG_AFTER_6_YEARS|YEARS_TO_GRADUATION|PROBATION_FIRST_YR_FLAG|APPLICATION_ENTRY_TYPE|SEMESTER_YEAR|SEMESTER_NAME|LOAD_DATE|ANON_ID
+
+1. edw_askoski_student_majors_hashed.txt
+
+#SEMESTER_YEAR_NAME_CONCAT|STUDENT_COUNT|UNGRAD_GRAD_CODE|EXAM_UNITS_NO|ACADEMIC_DEPARTMENT_NAME|ACADEMIC_DIVISION_NAME|MAJOR_NAME|COLLEGE_NAME|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE|ANON_ID
+
+2019-10-12-11-04
+05_05PM-July-30-2019 --> 2019-07-30-17-05
+
+---
 
 ## Data pipeline overview
 
@@ -65,46 +120,3 @@ Sandbox testing environment
 > what it actually is: timestamped directories
 
 ---
-
-## [Data] Deep dive
-
-1. clean ucbd2-archive, check what each file does and where it already exists in the system before deleting
-    - start with hashed-archive
-    - *Don't delete the encrypted files o/w you have to wait for the next data dump*
-1. what is the size of the data being used - how many records, how far back - see the research paper
-1. look at the structure of the files
-
-/research/UCBD2/pipeline-test/hashed
-edw_askoski_apr_student_requirements_hashed.txt  edw_askoski_student_grades_hashed.txt
-edw_askoski_student_cohorts_hashed.txt           edw_askoski_student_majors_hashed.txt
-
-> edw_askoski_apr_student_requirements_hashed.txt 
-
-REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE|`ANON_ID`
-
-> edw_askoski_apr_student_requirements.txt (unhashed)
-
-#STUDENT_ID|REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_DESCR80_RQ_LINE_TBL|REQ_LINE_TYPE|COURSE_LIST|ITEM_R_STATUS|LOAD_DATE
-
-> edw_askoski_student_grades_hashed.txt
-
-#SEMESTER_YEAR_NAME_CONCAT|STUDENT_CREDIT_HRS_NBR|COURSE_CONTROL_NBR|INSTR_NAME_CONCAT|OFFERING_TYPE_DESC|ROOM_SHARE_BUNDLE_NBR|SECTION_NBR|COURSE_SUBJECT_NAME_NUMBER|UNDERGRAD_GRAD_STATUS|COURSE_NUMBER|COURSE_SUBJECT_SHORT_NM|COURSE_TITLE_NM|CRS_ACADEMIC_DEPT_SHORT_NM|GRADE_NM|GRADE_POINTS_NBR|GRADE_SORT_NBR|GRADE_SUBTYPE_DESC|GRADE_TYPE_DESC|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE|`ANON_ID`
-
-## Unhashed
-
-#SEMESTER_YEAR_NAME_CONCAT|STUDENT_ID|STUDENT_CREDIT_HRS_NBR|PERSON_PARTY_SK|COURSE_CONTROL_NBR|INSTR_NAME_CONCAT|OFFERING_TYPE_DESC|ROOM_SHARE_BUNDLE_NBR|SECTION_NBR|COURSE_SUBJECT_NAME_NUMBER|UNDERGRAD_GRAD_STATUS|COURSE_NUMBER|COURSE_SUBJECT_SHORT_NM|COURSE_TITLE_NM|CRS_ACADEMIC_DEPT_SHORT_NM|GRADE_NM|GRADE_POINTS_NBR|GRADE_SORT_NBR|GRADE_SUBTYPE_DESC|GRADE_TYPE_DESC|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE
-
->  edw_askoski_student_cohorts_hashed.txt 
-
-#SEMESTER_YEAR_NAME_CONCAT|RETENTION_FLAG_AFTER_1_YEARS|RETENTION_FLAG_AFTER_2_YEARS|RETENTION_FLAG_AFTER_3_YEARS|RETENTION_FLAG_AFTER_4_YEARS|RETENTION_FLAG_AFTER_5_YEARS|RETENTION_FLAG_AFTER_6_YEARS|YEARS_TO_GRADUATION|PROBATION_FIRST_YR_FLAG|APPLICATION_ENTRY_TYPE|SEMESTER_YEAR|SEMESTER_NAME|LOAD_DATE|ANON_ID
-
-1. edw_askoski_student_majors_hashed.txt
-
-#SEMESTER_YEAR_NAME_CONCAT|STUDENT_COUNT|UNGRAD_GRAD_CODE|EXAM_UNITS_NO|ACADEMIC_DEPARTMENT_NAME|ACADEMIC_DIVISION_NAME|MAJOR_NAME|COLLEGE_NAME|SEMESTER_YEAR|SEMESTER_NAME|SNAPSHOT_CODE|LOAD_DATE|ANON_ID
-
-2019-10-12-11-04
-05_05PM-July-30-2019 --> 2019-07-30-17-05
-
-edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
-edw_2018.tsv --> hashed grades old file
-data.dict --> meta data
