@@ -2,7 +2,7 @@
 
 1. where does `hashed path` get defined? in env.sh vs env.json?  
     - actually from `makeJson` which takes dirName (timestamp) as an argument and then creates `env.json`
-    - bash file is unused
+    - bash env file is unused
     - NEED `hashed` directory in UCBDATA
 1. why does /research/UCBD2/pipeline-test still exist in env.json? bc env.json hasn't been updated from running master 
 1. Double check that models retrain still runs on the hashed data in UCBD2/edw_data/hashed?  
@@ -13,7 +13,7 @@
 1. how to verify pipeline has successfully run?  should have outputs in the timestamped dir?  
     - yes, or copy env.json and make sure service runs as expected
 1. Missing files?? 
-    - `/research/UCBDATA/edw_askoski_apr_student_requirements.txt "['PERSON_PARTY_SK'] not found in axis"`
+    - `/research/UCBDATA/edw_askoski_apr_student_requirements.txt "['PERSON_PARTY_SK'] not found in axis"`, this is a try catch block
     - `cp: cannot stat '/research/UCBDATA/edw_askoski_course_lists.txt': No such file or directory`
     - Models-AskOski/RNN/evaluate.py: `No such file or directory: '/research/UCBD2/classAPI/next_sem_classes_new.p'`
     - nearest_course.py: `FileNotFoundError: [Errno 2] No such file or directory: '/research/UCBD2/edw_data/2019-12-10-17-55/model/course2idx_new.json'`
@@ -33,12 +33,43 @@
     available_courses = get_available_courses(eval_semester)
   File "/research/home/askoski/Models-AskOski/RNN/evaluate.py", line 107, in get_available_courses
     print("There are {} unique courses offered in semester {}".format(len(course_detail_dict[eval_semester]), eval_semester))
-KeyError: '20198'
-
-
-
+KeyError: '20198' --> change to 20191
+1. Traceback (most recent call last):
+  File "add_new_courses.py", line 96, in <module>
+FileNotFoundError: [Errno 2] File b'../shared/generate_descriptions/outputs/courses_with_description.tsv' does not exist: b'../shared/generate_descriptions/outputs/courses_with_description.tsv'
+    - READING FROM A DIRECTORY AND FILE THAT DOESN'T EXIST
+    - PROBABLY LOOKING FOR course_description_final.tsv BUT THIS FILE IS ONLY GENERATED DURING THE REFRESH STAGE
+1. Traceback (most recent call last):
+  File "nearest_course.py", line 110, in <module>
+    main()
+  File "nearest_course.py", line 97, in main
+    course2idx_new = json.load(open(COURSE2IDX_NEW_PATH, 'r'))
+FileNotFoundError: [Errno 2] No such file or directory: '/research/UCBD2/edw_data/2019-12-12-16-37/model/course2idx_new.json'
+    - nearest_course.py called from `add_new_courses.sh`
+    - `course2idx_new.json` not properly outputted from `add_new_courses.py`
+1. File "augment_model.py", line 82, in <module>
+    main(sys.argv[1])
+mv: cannot stat '/research/UCBD2/edw_data/2019-12-12-16-37/model/course2idx_all.json': No such file or directory
+mv: cannot stat '/research/UCBD2/edw_data/2019-12-12-16-37/model/idx2course_all.json': No such file or directory
+mv: cannot stat '/research/UCBD2/edw_data/2019-12-12-16-37/model/askoski_new': No such file or directory
+mv: cannot stat '/research/UCBD2/edw_data/2019-12-12-16-37/model/askoski_new.json': No such file or directory
+    - ALL THESE ARE FROM THE SAME ERROR above bc
+1. Traceback (most recent call last):
+  File "../C2V/preprocess.py", line 190, in <module>
+    with open(os.path.join(RNN_DIR, 'course2idx.json'), 'r', encoding='utf-8') as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/research/UCBD2/edw_data/2019-12-12-16-37/model/course2idx.json'
+    - Also same error as above because course2idx_all.json is renamed to course2idx.json but the former is never created due to the error in `add_new_courses.py`
+1. If need to run Models independently
+    - export srcDir='/research/UCBD2/edw_data/2019-12-11-12-02/hashed'
+    - export outDir='/research/UCBD2/edw_data/2019-12-11-12-02/model'
+    - export saltDir='/research/UCBD2/edw_data/2019-12-11-12-02/salt'
+    - export aprDir='/research/UCBD2/edw_data/2019-12-11-12-02/apr'
 
 1. Replace /home/askoski/Models-AskOski with /home/matthew/Models-AskOski - change back before creating PR
+    - change in refresh.py (Data), retrain.sh (Models), refresh.sh (Models)
+1. do not move folder UCBD2/classAPI
+1. changed `edw_askoski_course_lists` to `edw_askoski_apr_course_lists`
+1. change KeyError: '20198' --> change to 20191 in RNN `config.json`
 1. Update documentation with what retrain.sh does
 
 
