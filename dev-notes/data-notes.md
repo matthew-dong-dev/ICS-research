@@ -14,6 +14,7 @@
 1. Searched in:
     >>> import nltk
     >>> nltk.download('stopwords')
+    >>> nltk.download('punkt')
     - '/usr/nltk_data'
     - '/usr/share/nltk_data'
     - '/usr/lib/nltk_data'

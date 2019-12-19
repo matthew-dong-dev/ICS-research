@@ -8,6 +8,15 @@
     - CORS errors are  different from SSL errors but both can cause HTTP bad request errors if you are trying to make a cross-origin request or if you're trying to request a resource from a non secured site (e.g. there might be outside listeners)
     - potential problems - is it the server that's blocking the request?  yes... but could it also be the client?
     - what did you try so far?  if all else fails download the extension
+1. What are these files in askoski_common
+    env_dict["sidHashBin"] = commonPath + '/bins/sidHash_new.bin'
+    env_dict["seedBin"] = commonPath + '/bins/seed.bin'
+    env_dict["readBin"] = commonPath + '/bins/read.bin'
+    env_dict["writeBin"] = commonPath + '/bins/write.bin'
+    env_dict["classesIdBin"] = commonPath + '/bins/classesId.bin'
+    env_dict["classesKeyBin"] = commonPath + '/bins/classesKey.bin'
+    env_dict["key"] = commonPath + '/ssl/askoski.berkeley.key'
+    env_dict["crt"] = commonPath + '/ssl/oski.crt.old'
 1. what exists in `UCBD2` directory, referred to a lot in `env.json`?  does it matter for you rn?  you can view the lookup tables in models-askoski
 1. where is the production version of FE & BE located? `/home/askoski`
 
