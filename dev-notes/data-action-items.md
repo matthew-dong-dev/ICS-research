@@ -66,12 +66,11 @@ FileNotFoundError: [Errno 2] No such file or directory: '/research/UCBD2/edw_dat
     - export aprDir='/research/UCBD2/edw_data/2019-12-11-12-02/apr'
 1. same error with `../shared/course_api/outputs/course_description_final.tsv` also `Getting class section data from API` only goes up to 33? 
     - changed `COURSE_DESCRIPTION_PATH` to `course_description_init.tsv` in `add_new_courses.py`
-    - also change `course_info_path` in ICS `data-joining`
-1. how is it still training the model with it doesn't even have a vector file?
-    - because it's reading previous files in the local data directory --> need to remove these files
-    - is it reading in the proper files? 
+    - also change `course_info_path` in ICS `data-joining.py`
 1. refresh_serendipitous_bow.py NLTK error causes `course_id.pkl` to not be generated which creates a propogated error in refresh_serendipitous_c2v
-
+1. how is ICS still training the model with it doesn't even have a vector file?
+    - because it's reading previous files in the local data directory --> need to remove these files
+    - is it reading in the most updated files?  track where `idx2course` & `course2vec.npy` are coming from
 
 ### To do's
 

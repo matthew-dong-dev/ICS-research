@@ -1,6 +1,5 @@
 # how to run pipeline
 
-1. to test changes replace `/home/askoski/Models-AskOski` pathways with local version `/home/matthew/Models-AskOski`
 1. `chmod -R 777` Data-AskOski & Models-AskOski if necessary - what is this command doing? 
 1. Run `refresh.py` in screen 
 1. how long does entire retraining take? 
@@ -8,13 +7,14 @@
     - Models retraining - currently like 10 hours 
     - refresh api - 1 hour ish
 1. Verify pipeline has successfully by copying env.json to service and results are as expected
-1. Currently fixed / hardcoded
+1. Currently fixed / hardcoded folders needed for pipeline to run
     - `hashed`, `encypted`, `decrypted` folders in UCBDATA
     - `classAPI` in UCBD2
-1. Searched in:
+1. NLTK Dependencies
     >>> import nltk
     >>> nltk.download('stopwords')
     >>> nltk.download('punkt')
+    move to: 
     - '/usr/nltk_data'
     - '/usr/share/nltk_data'
     - '/usr/lib/nltk_data'
@@ -22,10 +22,10 @@
     - '/usr/local/share/nltk_data'
     - '/usr/lib/nltk_data'
     - '/usr/local/lib/nltk_data'
-
-Sandbox testing environment 
-    - just clone the repo to your directory and change output pathways?  don't need to change pathways, just delete the timestamped output 
-    - how to test individual parts of the pipeline?  run the individual scripts 
+1. Sandbox testing environment 
+    - To test changes just clone the repo to your directory & replace `/home/askoski/Models-AskOski` pathways with local version `/home/matthew/Models-AskOski`
+    - Change output pathways? No just delete the timestamped output 
+    - how to test individual parts of the pipeline? Just run the individual scripts 
 
 ---
 
