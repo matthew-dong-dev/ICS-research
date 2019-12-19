@@ -5,7 +5,7 @@
     - bash env file is unused
     - NEED `hashed` directory in UCBDATA
 1. why does /research/UCBD2/pipeline-test still exist in env.json? bc env.json hasn't been updated from running master 
-1. Double check that models retrain still runs on the hashed data in UCBD2/edw_data/hashed?  
+1. Double check that models retrain still runs on the hashed data in UCBD2/edw_data/hashed?  No, will definitely work because they're the same files
 1. Running pipeline should retrain all the models and write all the files service needs to /models 
     - need to copy over env.json & relaunch service?  Yes
 1. Checking update-pipeline runs without error, run from your own directory & reserve /askoski for master?  Yes
@@ -14,17 +14,17 @@
     - yes, or copy env.json and make sure service runs as expected
 1. Missing files?? 
     - `/research/UCBDATA/edw_askoski_apr_student_requirements.txt "['PERSON_PARTY_SK'] not found in axis"`, this is a try catch block
-    - `cp: cannot stat '/research/UCBDATA/edw_askoski_course_lists.txt': No such file or directory`
-    - Models-AskOski/RNN/evaluate.py: `No such file or directory: '/research/UCBD2/classAPI/next_sem_classes_new.p'`
+    - `cp: cannot stat '/research/UCBDATA/edw_askoski_course_lists.txt': No such file or directory` --> changed `edw_askoski_course_lists` to `edw_askoski_apr_course_lists`
+    - Models-AskOski/RNN/evaluate.py: `No such file or directory: '/research/UCBD2/classAPI/next_sem_classes_new.p'` --> bring back folder UCBD2/classAPI from archive
     - nearest_course.py: `FileNotFoundError: [Errno 2] No such file or directory: '/research/UCBD2/edw_data/2019-12-10-17-55/model/course2idx_new.json'`
-    - what are all the _bk files & what file are these? 
+    - what are all the _bk files & what file are these? - _bk = backup files 
         - mv: cannot stat '/research/UCBD2/edw_data/2019-12-10-17-55/model/course2idx_all.json': No such file or directory
         - mv: cannot stat '/research/UCBD2/edw_data/2019-12-10-17-55/model/idx2course_all.json': No such file or directory
         - mv: cannot stat '/research/UCBD2/edw_data/2019-12-10-17-55/model/askoski_new': No such file or directory
         - mv: cannot stat '/research/UCBD2/edw_data/2019-12-10-17-55/model/askoski_new.json': No such file or directory
     - File "../C2V/preprocess.py", line 190, in <module> with open(os.path.join(RNN_DIR, 'course2idx.json'), 'r', encoding='utf-8') as f:
         No such file or directory: '/research/UCBD2/edw_data/2019-12-10-17-55/model/course2idx.json' <- this file is missing 3 times
-    -  need to copy from prev timestamped directory?  no, it was caused by missing directory classAPI which caused all the course mappings to not be generated 
+    -  need to copy from prev timestamped directory?  no, it was caused by missing directory classAPI which caused all the course mappings to not be generated, this was a propagated error
 1. File "train.py", line 253, in <module>
     sys.exit(main(sys.argv[2:]))
   File "train.py", line 204, in main
@@ -33,7 +33,7 @@
     available_courses = get_available_courses(eval_semester)
   File "/research/home/askoski/Models-AskOski/RNN/evaluate.py", line 107, in get_available_courses
     print("There are {} unique courses offered in semester {}".format(len(course_detail_dict[eval_semester]), eval_semester))
-KeyError: '20198' --> change to 20191
+KeyError: '20198' --> change to 20191 in RNN `config.json` 
 1. Traceback (most recent call last):
   File "add_new_courses.py", line 96, in <module>
 FileNotFoundError: [Errno 2] File b'../shared/generate_descriptions/outputs/courses_with_description.tsv' does not exist: b'../shared/generate_descriptions/outputs/courses_with_description.tsv'
@@ -72,7 +72,16 @@ FileNotFoundError: [Errno 2] No such file or directory: '/research/UCBD2/edw_dat
     - is it reading in the proper files? 
 1. refresh_serendipitous_bow.py NLTK error causes `course_id.pkl` to not be generated which creates a propogated error in refresh_serendipitous_c2v
 
-Questions: 
+
+### To do's
+
+1. Is this error a problem in data refresh?  `invalid literal for int() with base 10: 'STUDENT_ID' STUDENT_ID`? 
+1. change back before creating PR: 
+    - Replace /home/askoski/Models-AskOski with /home/matthew/Models-AskOski in refresh.py (Data), retrain.sh (Models)
+    - commented out getPass lines
+1. Update documentation with what retrain.sh does in Models & Data (look at env.sh) file and how long retraining takes according to run
+
+### Questions: 
 
 1. what is the purpose of the copy files section? 
     cp $rootDir/outputs/course2nb.json $outDir
@@ -80,16 +89,8 @@ Questions:
     cp $rootDir/outputs/askoski.json $outDir
     cp $rootDir/outputs/course2vec.npy $outDir
     cp $rootDir/outputs/search_keywords.pkl $outDir
-1. does it make sense that match_course_to_idx2course and joining course& class descriptions comes after all the retraining?  what's the point in that?  
+1. does it make sense that match_course_to_idx2course and joining course & class descriptions comes after all the retraining?  what's the point in that?  
     - difference between course_description_init vs course_description_final? 
-1. invalid literal for int() with base 10: 'STUDENT_ID' STUDENT_ID
-
-1. Replace /home/askoski/Models-AskOski with /home/matthew/Models-AskOski - change back before creating PR
-    - change in refresh.py (Data), retrain.sh (Models), refresh.sh (Models)
-1. do not move folder UCBD2/classAPI
-1. changed `edw_askoski_course_lists` to `edw_askoski_apr_course_lists`
-1. change KeyError: '20198' --> change to 20191 in RNN `config.json`
-1. Update documentation with what retrain.sh does
 
 ---
 

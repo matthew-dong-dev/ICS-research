@@ -32,6 +32,7 @@
 ---------------------------------------------------------------------------------
 
 > Always pull from staging but start dev from master.
+> KNOW WHEN YOU'RE IN REMOTE VS LOCAL DEV - you didn't see git ignore changes because your console was on the server and you accidentally removed files you thought you could get back but you were on the server Models-AskOski not local
 
 # Remote Development 
 
@@ -45,7 +46,7 @@
     - Hit your screen prefix combination (C-a / control+A by default), then hit Escape.
     - Copy mode only works in screen, you can scroll normally otherwise
 1. `control + d` terminates screen
-1. If you feel that the pgoram is hanging, YOU HAVE TO ESCAPE OUT OF COPY MODE TO SEE LIVE OUTPUT
+1. If you feel that the program is hanging, YOU HAVE TO ESCAPE OUT OF COPY MODE TO SEE LIVE OUTPUT
 
 ## Remote Backend
 

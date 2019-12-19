@@ -88,7 +88,7 @@ rm -rf node_modules
 npm install
 ```
 
-1. `ctrl + x` if you ever get stuck in nano
+1. `ctrl + x` if you ever get stuck in nano and don't save buffer
 
 1. User Test Account
 	- username: test-300934
