@@ -6,7 +6,7 @@
     - Hashing - 5mins 
     - Models retraining - currently like 10 hours 
     - refresh api - 1 hour ish
-1. Verify pipeline has successfully by copying env.json to service and results are as expected
+1. Verify pipeline has successfully by copying env.json to service and results are as expected `cp /home/matthew/Data-AskOski/env.json /home/matthew/Service-AskOski/service`
 1. Currently fixed / hardcoded folders needed for pipeline to run
     - `hashed`, `encypted`, `decrypted` folders in UCBDATA
     - `classAPI` in UCBD2

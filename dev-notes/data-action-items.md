@@ -71,18 +71,12 @@ FileNotFoundError: [Errno 2] No such file or directory: '/research/UCBD2/edw_dat
 1. how is ICS still training the model with it doesn't even have a vector file?
     - because it's reading previous files in the local data directory --> need to remove these files
     - is it reading in the most updated files?  track where `idx2course` & `course2vec.npy` are coming from
-1. `Loaded Next Semester Courses HTTP Error 404: Not Found` - is this an actual error or did it just run out of pages to read and it's actually fine?  the class files look the same
 
-### To do's
 
-1. Is this error a problem in data refresh?  `invalid literal for int() with base 10: 'STUDENT_ID' STUDENT_ID`? 
-1. change back before creating PR: 
-    - Replace /home/askoski/Models-AskOski with /home/matthew/Models-AskOski in refresh.py (Data), retrain.sh (Models)
-    - commented out getPass lines
-1. Update documentation with what retrain.sh does in Models & Data (look at env.sh) file and how long retraining takes according to run
-1. RNN & C2V retraining completed but don't think you can just comment them out bc they have to write their output to the corresponding timestamped directory? 
-1. cp /home/matthew/Data-AskOski/env.json /home/matthew/Service-AskOski/service
-1. service errors 
+### service errors  
+
+> `cp /home/matthew/Data-AskOski/env.json /home/matthew/Service-AskOski/service`
+
 ```
 Traceback (most recent call last):
   File "service.py", line 30, in <module>
@@ -93,9 +87,23 @@ KeyError: 'bowCourseIdFile'
 ```
 - there exists two bowCourseIdFiles in the old env.json with literally the same key --> only one in new env.json and is not called bowCourseIdFile but just courseIdFile
 - course2vectorBOWEquivalencyMatrix vs bowRelationMatrix in old env.json since there's only one bowRelationMatrixFile in the new env.json
+- there exists two references to same file `bestC2V` & `best_model_file`
+    - actually not the same file, it's confusing naming convention bc bestC2V refers to `course2vec.npy` but best_model_file refers to `best_course2vec.pkl`
+
+### To do's
+
+1. **writing courseDescriptionFinalFile to env.json should be a .tsv file** 
+1. Is this error a problem in data refresh?  `invalid literal for int() with base 10: 'STUDENT_ID' STUDENT_ID`? 
+1. change back before creating PR: 
+    - Replace /home/askoski/Models-AskOski with /home/matthew/Models-AskOski in refresh.py (Data), retrain.sh (Models)
+    - commented out getPass lines
+1. Update documentation with what retrain.sh does in Models & Data (look at env.sh) file and how long retraining takes according to run
+1. RNN & C2V retraining completed but don't think you can just comment them out bc they have to write their output to the corresponding timestamped directory? 
+
 
 ### Questions: 
 
+1. `Loaded Next Semester Courses HTTP Error 404: Not Found` - is this an actual error or did it just run out of pages to read and it's actually fine?  the class files look the same
 1. why are static files being copied from Jeff's home directory?
 1. what is the purpose of the copy files section? 
     cp $rootDir/outputs/course2nb.json $outDir
