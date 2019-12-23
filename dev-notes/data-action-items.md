@@ -71,6 +71,7 @@ FileNotFoundError: [Errno 2] No such file or directory: '/research/UCBD2/edw_dat
 1. how is ICS still training the model with it doesn't even have a vector file?
     - because it's reading previous files in the local data directory --> need to remove these files
     - is it reading in the most updated files?  track where `idx2course` & `course2vec.npy` are coming from
+1. `Loaded Next Semester Courses HTTP Error 404: Not Found` - is this an actual error or did it just run out of pages to read and it's actually fine?  the class files look the same
 
 ### To do's
 
@@ -79,9 +80,23 @@ FileNotFoundError: [Errno 2] No such file or directory: '/research/UCBD2/edw_dat
     - Replace /home/askoski/Models-AskOski with /home/matthew/Models-AskOski in refresh.py (Data), retrain.sh (Models)
     - commented out getPass lines
 1. Update documentation with what retrain.sh does in Models & Data (look at env.sh) file and how long retraining takes according to run
+1. RNN & C2V retraining completed but don't think you can just comment them out bc they have to write their output to the corresponding timestamped directory? 
+1. cp /home/matthew/Data-AskOski/env.json /home/matthew/Service-AskOski/service
+1. service errors 
+```
+Traceback (most recent call last):
+  File "service.py", line 30, in <module>
+    from load import *
+  File "/research/home/matthew/Service-AskOski/service/load.py", line 111, in <module>
+    bow_course_id_file = env_dict['bowCourseIdFile']
+KeyError: 'bowCourseIdFile'
+```
+- there exists two bowCourseIdFiles in the old env.json with literally the same key --> only one in new env.json and is not called bowCourseIdFile but just courseIdFile
+- course2vectorBOWEquivalencyMatrix vs bowRelationMatrix in old env.json since there's only one bowRelationMatrixFile in the new env.json
 
 ### Questions: 
 
+1. why are static files being copied from Jeff's home directory?
 1. what is the purpose of the copy files section? 
     cp $rootDir/outputs/course2nb.json $outDir
     cp $rootDir/outputs/askoski $outDir
@@ -98,7 +113,7 @@ FileNotFoundError: [Errno 2] No such file or directory: '/research/UCBD2/edw_dat
 1. continue data-pipeline deep dive
 1. continue data-pipeline deep dive
 1. get familiar with how to do a semester changeover
-1. Incorporate fixed /research/UCBD2/classAPI/ into pipeline that gets next semester's classes
+1. Incorporate fixed /research/UCBD2/classAPI/ into pipeline that gets next semester's classes --> this happens in refresh_classes_from_api.py
 1. Reconcile Data-AskOski API scripts & Models-AskOski API scripts.  What's the difference between Models API scripts and Data API scripts?  
     - dumped into pickle folders, etc..
     - refresh.sh is dumping outputs into timestamped `salt` - why? SAlt stands for serendipitous alternatives

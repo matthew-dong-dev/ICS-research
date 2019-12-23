@@ -14,6 +14,7 @@
     >>> import nltk
     >>> nltk.download('stopwords')
     >>> nltk.download('punkt')
+    >>> nltk.download('wordnet')
     move to: 
     - '/usr/nltk_data'
     - '/usr/share/nltk_data'
