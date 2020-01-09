@@ -6,11 +6,11 @@
 	- `cat` output files to read
 	- `top` to view jobs
 
-1. GPU issues
+1. GPU memory issues
 	- `export CUDA_VISIBLE_DEVICES=""` to only use CPUs (`env` to check env variables)
 	- export is a command that you give directly to the shell (e.g. bash), to tell it to add or modify one of its environment variables. You can't change your shell's environment from a child process (such as Python), it's just not possible.  Therefore you can't set which GPU using `os.environ["CUDA_VISIBLE_DEVICES"]="1,2,3"`
 	- use `export CUDA_VISIBLE_DEVICES=1` instead
-	- If encounter `ResourceExhaustedError` run `gpu_who` and kill your existing jobs, but make sure you don't accidentally kill the backend
+	- If encounter `ResourceExhaustedError` or `Allocator (GPU_0_bfc) ran out of memory` run `gpu_who` and kill your existing jobs, but make sure you don't accidentally kill the backend OR reduce batch size
 
 1. `screen`
 	- run `screen -S name` 
