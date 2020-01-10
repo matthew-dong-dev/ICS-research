@@ -1,7 +1,8 @@
 # how to run pipeline
 
 1. `chmod -R 777` Data-AskOski & Models-AskOski if necessary - what is this command doing? 
-1. Run `refresh.py` in screen 
+1. make sure both Data & Models are on the right branch and have pulled most recent changes
+1. Run `refresh.py` in screen
 1. how long does entire retraining take? 
     - Hashing - 5mins 
     - Models retraining - currently like 10 hours 
@@ -26,23 +27,26 @@
 1. Sandbox testing environment 
     - To test changes just clone the repo to your directory & replace `/home/askoski/Models-AskOski` pathways with local version `/home/matthew/Models-AskOski`
     - Change output pathways? No just delete the timestamped output 
-    - how to test individual parts of the pipeline? Just run the individual scripts 
+1. can you run pipeline parts in isolation?  Yes, just run the individual retrain scripts but should not do this during full run through even if RNN retraining is completed because all the models all need to write their outputs referencing the same timestamped directory 
 
 ---
 
 ## [Data-Pipeline] Deep dive
 
 1. look into refresh.md & env.sh - these files are outdated, but tells a lot about how things work
-1. look at imported functions in refresh.py - what is refresh user, enrollments, grade_info, etc... doing
-1. biggest pain point is the lookup_dict (anon to SID) because if this is wrong then everything else is wrong in terms of the other lookup tables for majors / courses.  how does the main sid to anon lookup work and how does that affect the course indexing?  
+1. look into how the hashing works
+    - "The lookup table will be stored in /research/UCBD2/edw_data/TIMESTAMP"
+    - what is sidHashBin file?  what are .bin files?
+    - what is sid_to_hash.txt? (is this the actual lookup file?)  the file is being removed in utils.py
     - look at the indexing error action item in data-action-items.md
-1. hashed vs encrypted data - which one is the anonymized using the lookup dict?  hashed?  Yes
+    - "biggest pain point is the lookup_dict (anon to SID) because if this is wrong then everything else is wrong in terms of the other lookup tables for majors / courses.  how does the main sid to anon lookup work and how does that affect the course indexing?"
+    - hashed vs encrypted data - which one is the anonymized using the lookup dict?  hashed?  Yes
     - Encryption is a two-way function where information is scrambled in such a way that it can be unscrambled later.
     - "Hashing, one-way function where data is mapped to a fixed-length value. Hashing is primarily used for authentication. With a properly designed algorithm, there is no way to reverse the hashing process to reveal the original password."  So if there's a lookup dict that maps original sids to anons, is it really hashed?
     - Salting is an additional step during hashing, typically seen in association to hashed passwords, that adds an additional value to the end of the password that changes the hash value produced. This adds a layer of security to the hashing process, specifically against brute force attacks. A brute force attack is where a computer or botnet attempt every possible combination of letters and numbers and characters until the password is found.  They can also attempt to hash every possible combination of letters and numbers and characters (companies use well known hashing functions?) until your pw is found, don't even have to know the actual password.  Adding salt creates unique pw's and therefore unique hashes so if a hacker finds one, he doesn't find another.    
-    - how does it work? "The lookup table will be stored in /research/UCBD2/edw_data/TIMESTAMP"
-    - what is sidHashBin file?  what are .bin files?
-    - what is sid_to_hash.txt? (is this the actual lookup file?)  the file is being removed in utils.py
+
+    
+1. look at imported functions in refresh.py - what is refresh user, enrollments, grade_info, etc... doing
 
 --- 
 
