@@ -11,6 +11,7 @@
 1. Currently fixed / hardcoded folders needed for pipeline to run
     - `hashed`, `encypted`, `decrypted` folders in UCBDATA
     - `classAPI` in UCBD2
+    - some static files in Jeff's local directory
 1. NLTK Dependencies
     >>> import nltk
     >>> nltk.download('stopwords')

@@ -71,6 +71,10 @@ FileNotFoundError: [Errno 2] No such file or directory: '/research/UCBD2/edw_dat
 1. how is ICS still training the model with it doesn't even have a vector file?
     - because it's reading previous files in the local data directory --> need to remove these files
     - is it reading in the most updated files?  track where `idx2course` & `course2vec.npy` are coming from
+1. cp: missing destination file operand after '/home/matthew/Models-AskOski/shared/class_api/outputs/abbreviations.tsv'
+Try 'cp --help' for more information.
+cp: missing destination file operand after '/home/matthew/Models-AskOski/shared/class_section_api/outputs/class_section_final.tsv'
+- /research/UCBD2/edw_data/2020-01-09-19-51/plan
 
 ### service errors  
 
