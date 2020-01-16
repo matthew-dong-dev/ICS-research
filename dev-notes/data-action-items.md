@@ -75,6 +75,7 @@ FileNotFoundError: [Errno 2] No such file or directory: '/research/UCBD2/edw_dat
 Try 'cp --help' for more information.
 cp: missing destination file operand after '/home/matthew/Models-AskOski/shared/class_section_api/outputs/class_section_final.tsv'
 - /research/UCBD2/edw_data/2020-01-09-19-51/plan
+1. move deprecated files from askoski_common to archive in UCBD2 - do a text search for /research/askoski_common in Data and Models to see which files / folders are still being used
 
 ### service errors  
 
