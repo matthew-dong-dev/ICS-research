@@ -33,7 +33,7 @@
     available_courses = get_available_courses(eval_semester)
   File "/research/home/askoski/Models-AskOski/RNN/evaluate.py", line 107, in get_available_courses
     print("There are {} unique courses offered in semester {}".format(len(course_detail_dict[eval_semester]), eval_semester))
-KeyError: '20198' --> change to 20191 in RNN `config.json` 
+KeyError: '20198' --> change to 20191 in RNN `config.json` by checking course_detail_dict
 1. Traceback (most recent call last):
   File "add_new_courses.py", line 96, in <module>
 FileNotFoundError: [Errno 2] File b'../shared/generate_descriptions/outputs/courses_with_description.tsv' does not exist: b'../shared/generate_descriptions/outputs/courses_with_description.tsv'
@@ -105,7 +105,14 @@ KeyError: 'bowCourseIdFile'
 
 ### Questions: 
 
-1. `Loaded Next Semester Courses HTTP Error 404: Not Found` - is this an actual error or did it just run out of pages to read and it's actually fine?  the class files look the same
+1. ask Run 
+    - why retraining takes 2+ days now
+    - refresh_serendipitous_c2v.py:74: RuntimeWarning: invalid value encountered in true_divide
+  bow_weight_for_equi /= bow_weight0[:, np.newaxis]
+    - refresh_serendipitous_bow.py:29: FutureWarning: by argument to sort_index is deprecated, please use 
+.sort_values(by=...)
+  courses = courses.sort_index(by=['idx'])
+1. `Loaded Next Semester Courses HTTP Error 404: Not Found` - is this an actual error or did it just run out of pages to read and it's actually fine?  the class files look the same (from Data-AskOski refresh api script)
 1. why are static files being copied from Jeff's home directory?
 1. what is the purpose of the copy files section? 
     cp $rootDir/outputs/course2nb.json $outDir
@@ -126,7 +133,7 @@ KeyError: 'bowCourseIdFile'
 1. Incorporate fixed /research/UCBD2/classAPI/ into pipeline that gets next semester's classes --> this happens in refresh_classes_from_api.py
 1. Reconcile Data-AskOski API scripts & Models-AskOski API scripts.  What's the difference between Models API scripts and Data API scripts?  
     - dumped into pickle folders, etc..
-    - refresh.sh is dumping outputs into timestamped `salt` - why? SAlt stands for serendipitous alternatives
+    - refresh.sh (from Models) is dumping outputs into timestamped `salt` - why? SAlt stands for serendipitous alternatives
 1. Requirements bug - not displaying unmet requirement filters for some students - this would be dealing with the APR object?
 1. Ingested data pipeline should be run 3x a semester and collected data should be run more frequently during enrollment periods
 

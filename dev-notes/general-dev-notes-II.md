@@ -34,6 +34,9 @@
 	- `ssh -A -t matthew@cahl.berkeley.edu scp /home/matthew/askoski/data/course_subject_long_to_short.csv matthew@askoski.berkeley.edu:/home/matthew/data`
 
 1. Transfer file locally `scp matthew@askoski.berkeley.edu:/home/matthew/Data-AskOski/env.json /Users/mdong/dataScience/cahlr/askoski/Data-AskOski`
+`scp matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2020-01-13-15-16/model/course_detail_dict.json /Users/mdong/dataScience/cahlr/askoski`
+
+/research/UCBD2/ucbd2_archive
 
 1. Use ipython env
 
