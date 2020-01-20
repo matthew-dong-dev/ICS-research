@@ -76,6 +76,15 @@ Try 'cp --help' for more information.
 cp: missing destination file operand after '/home/matthew/Models-AskOski/shared/class_section_api/outputs/class_section_final.tsv'
 - /research/UCBD2/edw_data/2020-01-09-19-51/plan
 1. move deprecated files from askoski_common to archive in UCBD2 - do a text search for /research/askoski_common in Data and Models to see which files / folders are still being used
+    - /research/UCBD2/ucbd2_archive/askoski_common_archive
+1. refresh_serendipitous_c2v.py:74: RuntimeWarning: invalid value encountered in true_divide
+  bow_weight_for_equi /= bow_weight0[:, np.newaxis]
+  refresh_serendipitous_bow.py:29: FutureWarning: by argument to sort_index is deprecated, please use .sort_values(by=...
+)
+  courses = courses.sort_index(by=['idx'])
+1. /add_new_courses.sh: line 5: 31520 Killed                  python augment_model.py askoski
+^[[Bmv: cannot stat '/research/UCBD2/edw_data/2020-01-16-13-04/model/askoski_new': No such file or directory
+mv: cannot stat '/research/UCBD2/edw_data/2020-01-16-13-04/model/askoski_new.json': No such file or directory
 
 ### service errors  
 
