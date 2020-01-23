@@ -82,7 +82,7 @@ cp: missing destination file operand after '/home/matthew/Models-AskOski/shared/
   refresh_serendipitous_bow.py:29: FutureWarning: by argument to sort_index is deprecated, please use .sort_values(by=...)
   courses = courses.sort_index(by=['idx'])
 1. /add_new_courses.sh: line 5: 31520 Killed   python augment_model.py askoski
-^[[Bmv: cannot stat '/research/UCBD2/edw_data/2020-01-16-13-04/model/askoski_new': No such file or directory
+mv: cannot stat '/research/UCBD2/edw_data/2020-01-16-13-04/model/askoski_new': No such file or directory
 mv: cannot stat '/research/UCBD2/edw_data/2020-01-16-13-04/model/askoski_new.json': No such file or directory
 
 ### service errors  

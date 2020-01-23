@@ -33,10 +33,11 @@
 	- `ssh -A -t matthew@askoski.berkeley.edu scp /home/matthew/data/course_shortname_title.pkl matthew@cahl.berkeley.edu:~/askoski/data`
 	- `ssh -A -t matthew@cahl.berkeley.edu scp /home/matthew/askoski/data/course_subject_long_to_short.csv matthew@askoski.berkeley.edu:/home/matthew/data`
 
-1. Transfer file locally `scp matthew@askoski.berkeley.edu:/home/matthew/Data-AskOski/env.json /Users/mdong/dataScience/cahlr/askoski/Data-AskOski`
-`scp matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2020-01-16-13-04/model/course_detail_dict.json /Users/mdong/dataScience/cahlr/askoski`
+1. Transfer file locally `scp matthew@askoski.berkeley.edu:/home/matthew/Data-AskOski/env.json /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/service`
 
-/research/UCBD2/ucbd2_archive
+`scp matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2020-01-16-13-04/salt/best_course2vec.pkl /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/dummy_data/salt`
+
+zip singlefile.zip original_file
 
 1. Use ipython env
 
