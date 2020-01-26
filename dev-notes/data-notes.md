@@ -8,6 +8,7 @@
     - Models retraining - currently like 10 hours 
     - refresh api - 1 hour ish
 1. Verify pipeline has successfully by copying env.json to service and results are as expected `cp /home/matthew/Data-AskOski/env.json /home/matthew/Service-AskOski/service`
+    - what's the way to test if env.json works not just env.test.json? - we can assume if np mode works with the dummy_data files then production will work bc they are the same files.  What about the files that were diffed by github?  well if they were actually changed then Run took them from the latest pipeline run so np and p mode should still be the same
 1. Currently fixed / hardcoded folders needed for pipeline to run
     - `hashed`, `encypted`, `decrypted` folders in UCBDATA
     - `/research/UCBD2/classAPI` for RNN `add_new_courses.py`

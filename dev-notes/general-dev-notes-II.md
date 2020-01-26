@@ -35,7 +35,7 @@
 
 1. Transfer file locally `scp matthew@askoski.berkeley.edu:/home/matthew/Data-AskOski/env.json /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/service`
 
-`scp matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2020-01-16-13-04/salt/best_course2vec.pkl /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/dummy_data/salt`
+`scp matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2020-01-16-13-04/plan/course_prediction_baseline.tsv /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/dummy_data/plan`
 
 zip singlefile.zip original_file
 
