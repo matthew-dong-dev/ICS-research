@@ -102,6 +102,9 @@ KeyError: 'bowCourseIdFile'
 - there exists two references to same file `bestC2V` & `best_model_file`
     - actually not the same file, it's confusing naming convention bc bestC2V refers to `course2vec.npy` but best_model_file refers to `best_course2vec.pkl`
 
+ValueError: Error when checking input: expected inputCourseMultihot to have shape (13, 9329) but got array with shape (13, 9368)
+    - what is the difference between np and password mode where if all the files are the same between them, you get the same results and errors.  no you don't get the same results, bc of fake data but you do get the same error like you did above
+
 [x] **writing courseDescriptionFinalFile to env.json should be a .tsv file** 
 
 ### To do's

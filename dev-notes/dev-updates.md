@@ -1,4 +1,10 @@
 
+1/28/20
+
+With greater context you're realizing yes this is a cool project and yes you're in a little over your head.  No way you should be in this role you're in where you're basically the admin of the data pipeline, good thing you took it seriously and taught yourself what you needed.
+
+---
+
 1/16/20
 
 After 2 months you finally know what you don't know regarding the data pipeline and are able to begin to grok where the lookup table error occurred.
