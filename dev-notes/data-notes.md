@@ -37,7 +37,7 @@
 
 ---
 
-## [Data-Pipeline] Deep dive
+## Data-Pipeline Deep dive
 
 1. look into refresh.md & env.sh - these files are outdated, but tells a lot about how things work
 1. look into how the hashing works
@@ -51,13 +51,9 @@
     - "Hashing, one-way function where data is mapped to a fixed-length value. Hashing is primarily used for authentication. With a properly designed algorithm, there is no way to reverse the hashing process to reveal the original password."  So if there's a lookup dict that maps original sids to anons, is it really hashed?
     - Salting is an additional step during hashing, typically seen in association to hashed passwords, that adds an additional value to the end of the password that changes the hash value produced. This adds a layer of security to the hashing process, specifically against brute force attacks. A brute force attack is where a computer or botnet attempt every possible combination of letters and numbers and characters until the password is found.  They can also attempt to hash every possible combination of letters and numbers and characters (companies use well known hashing functions?) until your pw is found, don't even have to know the actual password.  Adding salt creates unique pw's and therefore unique hashes so if a hacker finds one, he doesn't find another.    
 
-    
 1. look at imported functions in refresh.py - what is refresh user, enrollments, grade_info, etc... doing
 
---- 
-
-
-## [Data] Deep dive
+## Raw Data Deep dive
 
 1. clean ucbd2-archive & update spreadsheet, check what each file does and where it already exists in the system before deleting
     - start with hashed-archive

@@ -1,7 +1,12 @@
+# Current action item
+
+1. Incorporate fixed /research/UCBD2/classAPI/ into pipeline that gets next semester's classes --> this is produced from refresh_classes_from_api.py?
+
+---
+
 ### Questions: 
 
-1. How long does retraining take?
-1. why are static files being copied from Jeff's home directory?
+1. How long does each part of retraining take?
 1. what is the purpose of the copy files section? 
     cp $rootDir/outputs/course2nb.json $outDir
     cp $rootDir/outputs/askoski $outDir
@@ -26,13 +31,10 @@
 
 ## Action Item backlog
 
-1. continue data-pipeline deep dive
 1. get familiar with how to do a semester changeover
-1. Incorporate fixed /research/UCBD2/classAPI/ into pipeline that gets next semester's classes --> this happens in refresh_classes_from_api.py
 1. Reconcile Data-AskOski API scripts & Models-AskOski API scripts.  What's the difference between Models API scripts and Data API scripts?  
     - dumped into pickle folders, etc..
     - refresh.sh (from Models) is dumping outputs into timestamped `salt` - why? SAlt stands for serendipitous alternatives
-1. Requirements bug - not displaying unmet requirement filters for some students - this would be dealing with the APR object?
 1. Ingested data pipeline should be run 3x a semester and collected data should be run more frequently during enrollment periods
 
 - Course API - keep credit restriction and prerequisite course information when querying Course API - save to two tsvs and make available to researchers via data repo 
