@@ -1,4 +1,52 @@
-### Task: Incorporate Courses / Classes API into Data pipeline 
+### Questions: 
+
+1. How long does retraining take?
+1. why are static files being copied from Jeff's home directory?
+1. what is the purpose of the copy files section? 
+    cp $rootDir/outputs/course2nb.json $outDir
+    cp $rootDir/outputs/askoski $outDir
+    cp $rootDir/outputs/askoski.json $outDir
+    cp $rootDir/outputs/course2vec.npy $outDir
+    cp $rootDir/outputs/search_keywords.pkl $outDir
+1. does it make sense that match_course_to_idx2course and joining course & class descriptions comes after all the retraining?  what's the point in that?  
+    - difference between course_description_init vs course_description_final? 
+
+## Errors? 
+
+1. Is this error a problem in data refresh?  `invalid literal for int() with base 10: 'STUDENT_ID' STUDENT_ID`? 
+1. Models c2v retraining message
+    - refresh_serendipitous_c2v.py:74: RuntimeWarning: invalid value encountered in true_divide
+  bow_weight_for_equi /= bow_weight0[:, np.newaxis]
+    - refresh_serendipitous_bow.py:29: FutureWarning: by argument to sort_index is deprecated, please use 
+.sort_values(by=...)
+    courses = courses.sort_index(by=['idx'])
+1. `Loaded Next Semester Courses HTTP Error 404: Not Found` - is this an actual error or did it just run out of pages to read and it's actually fine?  the class files look the same (from Data-AskOski refresh api script)
+
+---
+
+## Action Item backlog
+
+1. continue data-pipeline deep dive
+1. get familiar with how to do a semester changeover
+1. Incorporate fixed /research/UCBD2/classAPI/ into pipeline that gets next semester's classes --> this happens in refresh_classes_from_api.py
+1. Reconcile Data-AskOski API scripts & Models-AskOski API scripts.  What's the difference between Models API scripts and Data API scripts?  
+    - dumped into pickle folders, etc..
+    - refresh.sh (from Models) is dumping outputs into timestamped `salt` - why? SAlt stands for serendipitous alternatives
+1. Requirements bug - not displaying unmet requirement filters for some students - this would be dealing with the APR object?
+1. Ingested data pipeline should be run 3x a semester and collected data should be run more frequently during enrollment periods
+
+- Course API - keep credit restriction and prerequisite course information when querying Course API - save to two tsvs and make available to researchers via data repo 
+- Explore re-training is broken - currently uses old research data. Update the models code to use pipeline Classes data instead of Classes_2011_2018 data
+- Revisit open seats daily poll of classes api in thread
+- Creating a new filter in AskOski that will filter a user's suggested courses based on whether their majors fall within the class reservations. This filter will be applied automatically to the already existing Open Seats filter. This task is a two-step process:
+1)  Modify Data-AskOski to include reserve capacity information with each class, which involves querying the reserved seats API and augmenting the next_sem_dict to include reserve capacity data.
+2)  Modify Service-AskOski to filter classes shown based on the reserve capacity data and the student's own majors. This involves creating a mapping between majors as represented in AskOski to the requirement groups in the API, and then creating a filter with it.
+
+---
+
+## Completed 
+
+### Task: Incorporate Courses / Classes API, Salt & Plan into Data pipeline 
 
 1. where does `hashed path` get defined? in env.sh vs env.json?  
     - actually from `makeJson` which takes dirName (timestamp) as an argument and then creates `env.json`
@@ -106,61 +154,6 @@ ValueError: Error when checking input: expected inputCourseMultihot to have shap
     - what is the difference between np and password mode where if all the files are the same between them, you get the same results and errors.  no you don't get the same results, bc of fake data but you do get the same error like you did above
 
 [x] **writing courseDescriptionFinalFile to env.json should be a .tsv file** 
-
-### To do's
-
-1. Is this error a problem in data refresh?  `invalid literal for int() with base 10: 'STUDENT_ID' STUDENT_ID`? 
-1. change back before creating PR: 
-    - Replace /home/askoski/Models-AskOski with /home/matthew/Models-AskOski in refresh.py (Data), retrain.sh (Models)
-    - commented out getPass lines
-1. Update documentation with what retrain.sh does in Models & Data (look at env.sh) file and how long retraining takes according to run
-
-### Questions: 
-
-1. ask Run 
-    - why retraining takes 2+ days now
-    - refresh_serendipitous_c2v.py:74: RuntimeWarning: invalid value encountered in true_divide
-  bow_weight_for_equi /= bow_weight0[:, np.newaxis]
-    - refresh_serendipitous_bow.py:29: FutureWarning: by argument to sort_index is deprecated, please use 
-.sort_values(by=...)
-  courses = courses.sort_index(by=['idx'])
-1. `Loaded Next Semester Courses HTTP Error 404: Not Found` - is this an actual error or did it just run out of pages to read and it's actually fine?  the class files look the same (from Data-AskOski refresh api script)
-1. why are static files being copied from Jeff's home directory?
-1. what is the purpose of the copy files section? 
-    cp $rootDir/outputs/course2nb.json $outDir
-    cp $rootDir/outputs/askoski $outDir
-    cp $rootDir/outputs/askoski.json $outDir
-    cp $rootDir/outputs/course2vec.npy $outDir
-    cp $rootDir/outputs/search_keywords.pkl $outDir
-1. does it make sense that match_course_to_idx2course and joining course & class descriptions comes after all the retraining?  what's the point in that?  
-    - difference between course_description_init vs course_description_final? 
-
----
-
-## Action Item backlog
-
-1. continue data-pipeline deep dive
-1. continue data-pipeline deep dive
-1. get familiar with how to do a semester changeover
-1. Incorporate fixed /research/UCBD2/classAPI/ into pipeline that gets next semester's classes --> this happens in refresh_classes_from_api.py
-1. Reconcile Data-AskOski API scripts & Models-AskOski API scripts.  What's the difference between Models API scripts and Data API scripts?  
-    - dumped into pickle folders, etc..
-    - refresh.sh (from Models) is dumping outputs into timestamped `salt` - why? SAlt stands for serendipitous alternatives
-1. Requirements bug - not displaying unmet requirement filters for some students - this would be dealing with the APR object?
-1. Ingested data pipeline should be run 3x a semester and collected data should be run more frequently during enrollment periods
-
-### Possibly done? 
-
-- Course API - keep credit restriction and prerequisite course information when querying Course API - save to two tsvs and make available to researchers via data repo 
-- Explore re-training is broken - currently uses old research data. Update the models code to use pipeline Classes data instead of Classes_2011_2018 data
-- Revisit open seats daily poll of classes api in thread
-- Creating a new filter in AskOski that will filter a user's suggested courses based on whether their majors fall within the class reservations. This filter will be applied automatically to the already existing Open Seats filter. This task is a two-step process:
-1)  Modify Data-AskOski to include reserve capacity information with each class, which involves querying the reserved seats API and augmenting the next_sem_dict to include reserve capacity data.
-2)  Modify Service-AskOski to filter classes shown based on the reserve capacity data and the student's own majors. This involves creating a mapping between majors as represented in AskOski to the requirement groups in the API, and then creating a filter with it.
-
----
-
-## Completed 
 
 ### Task: Indexing error that broke the system for entirety of F19 during the data-askoski transition:
 

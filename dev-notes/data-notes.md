@@ -1,7 +1,6 @@
 # how to run pipeline
 
-1. `chmod -R 777` Data-AskOski & Models-AskOski if necessary - what is this command doing? 
-1. make sure both Data & Models are on the right branch and have pulled most recent changes
+1. Before running make sure both Data & Models are on the right branch and you've pulled most recent changes
 1. Run `refresh.py` in screen
 1. how long does entire retraining take? 
     - Hashing - 5mins 
@@ -13,7 +12,15 @@
 1. Currently fixed / hardcoded folders needed for pipeline to run
     - `hashed`, `encypted`, `decrypted` folders in UCBDATA
     - `/research/UCBD2/classAPI` for RNN `add_new_courses.py`
-    - some static files in Jeff's local directory
+    - some static files in Jeff's local directory?
+1. Sandbox testing environment 
+    - To test changes just clone the repo to your directory & replace `/home/askoski/Models-AskOski` pathways with local version `/home/matthew/Models-AskOski` and change back before creating PR
+    - Change output pathways? No just delete the timestamped output 
+    - can you run pipeline parts in isolation?  Yes, just run the individual retrain scripts but should not do this during full run through even if RNN retraining is completed because all the models all need to write their outputs referencing the same timestamped directory 
+
+## Possible error resolution
+
+1. `chmod -R 777` Data-AskOski & Models-AskOski if necessary - what is this command doing? 
 1. NLTK Dependencies
     >>> import nltk
     >>> nltk.download('stopwords')
@@ -27,10 +34,6 @@
     - '/usr/local/share/nltk_data'
     - '/usr/lib/nltk_data'
     - '/usr/local/lib/nltk_data'
-1. Sandbox testing environment 
-    - To test changes just clone the repo to your directory & replace `/home/askoski/Models-AskOski` pathways with local version `/home/matthew/Models-AskOski`
-    - Change output pathways? No just delete the timestamped output 
-1. can you run pipeline parts in isolation?  Yes, just run the individual retrain scripts but should not do this during full run through even if RNN retraining is completed because all the models all need to write their outputs referencing the same timestamped directory 
 
 ---
 

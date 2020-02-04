@@ -3,15 +3,13 @@
 
 With greater context you're realizing yes this is a cool project and yes you're in a little over your head.  No way you should be in this role you're in where you're basically the admin of the data pipeline, good thing you took it seriously and taught yourself what you needed.
 
-There's a tradeoff, prod keeps breaking now (e.g. data pipeline broke prod for entire F19 semester and you broke prod twice by removing files it was using and changing some RNN scripts) but that's bc we're developing up the pipelines and cleaning up tech debt to make sure we're forward compatible to things like multi campus and more stable moving forward (closer to CI/CD)
+You do whatever work is necessary: FE, BE work, data pipeline, ml modeling, but no system architecture or devops (yet).
 
----
+There's a tradeoff, prod keeps breaking now (e.g. data pipeline broke prod for entire F19 semester and you broke prod twice by removing files it was using and changing some RNN scripts) but that's bc we're developing up the pipelines and cleaning up tech debt to make sure we're forward compatible to things like multi campus and more stable moving forward (closer to CI/CD)
 
 1/16/20
 
 After 2 months you finally know what you don't know regarding the data pipeline and are able to begin to grok where the lookup table error occurred.
-
----
 
 12/11/19
 
@@ -21,8 +19,6 @@ Now you're more or less settled into the data role - you're not familiar with th
 1. Then fill in knowledge gaps & reconcile all the moving parts to determine what the the next action item is.  
 1. Things are pretty organic, Zach doesn't exactly know what's going around either and you have free reign for what direction you want to pursue.  
 1. You're willing to be the main point person for this pipeline so you're trying to absorb as much information so you can start working on actions items, which will help you figure out what you don't know.  
-
----
 
 11/1/19
 
@@ -38,8 +34,6 @@ GJ putting in 9.5 hours of playing around with the flask service and FE model to
 Dev job training / SWE Immersion to also enable the transition:
 
 - 10/19 - 10/20 = 1.5 + 1.5 + 1.5+1.5 + .75 = 6.75 
-
---- 
 
 10/11/19
 
