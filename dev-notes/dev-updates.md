@@ -1,9 +1,9 @@
 
 1/28/20
 
-With greater context you're realizing yes this is a cool project and yes you're in a little over your head.  No way you should be in this role you're in where you're basically the admin of the data pipeline, good thing you took it seriously and taught yourself what you needed.
+With greater context you're realizing yes this is a cool project and yes you're in a little over your head.  No way you should be in this role you're in where you're basically the admin of the data pipeline, good thing you took it seriously and taught yourself what you needed.  Working on askoski is really organic, you're doing a job a full time swe should be doing and you should embrace it and learn as much as you can.  
 
-You do whatever work is necessary: FE, BE work, data pipeline, ml modeling, but no system architecture or devops (yet).
+If people ask what you do for the project - you do whatever work is necessary: FE, BE work, data pipeline, ml modeling, but no system architecture or devops (yet).
 
 There's a tradeoff, prod keeps breaking now (e.g. data pipeline broke prod for entire F19 semester and you broke prod twice by removing files it was using and changing some RNN scripts) but that's bc we're developing up the pipelines and cleaning up tech debt to make sure we're forward compatible to things like multi campus and more stable moving forward (closer to CI/CD)
 

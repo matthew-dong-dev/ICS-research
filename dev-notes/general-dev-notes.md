@@ -39,7 +39,7 @@
 1. Do work locally in an IDE, then copy & paste into ipython env is what Jeff recommends
 1. run `screen -S name`
 1. run the script / start up the backend / open jupyter notebook 
-    - `jupyter notebook --ip maxwell.ischool.berkeley.edu --port 1383`
+    - `jupyter notebook --ip maxwell.ischool.berkeley.edu --port 1382`
 1. When you use screen you need to detach with `CTRL+A+D` before you exit ssh. 
 1. `screen -xS name-to-resume`
 1. scroll in screen: https://unix.stackexchange.com/questions/40242/scroll-inside-screen-or-pause-output

@@ -35,7 +35,7 @@
 
 1. Transfer file locally `scp matthew@askoski.berkeley.edu:/home/matthew/Data-AskOski/env.json /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/service`
 
-`scp matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2019-11-19-14-37/model/idx2major.json /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/dummy_data/model`
+`scp matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2019-11-19-14-37/model/idx2major.json /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/dummy_data/flat`
 
 scp /Users/mdong/Desktop/mdong.jpg matthew@askoski.berkeley.edu:/home/matthew/
 

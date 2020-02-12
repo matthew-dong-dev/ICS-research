@@ -1,6 +1,7 @@
 # how to run pipeline
 
 1. Before running make sure both Data & Models are on the right branch and you've pulled most recent changes
+    - Replace `/home/askoski/Models-AskOski` with your local path in refresh.py (Data) & retrain.sh (Models)
 1. Run `refresh.py` in screen
 1. how long does entire retraining take? 
     - Hashing - 5mins 
