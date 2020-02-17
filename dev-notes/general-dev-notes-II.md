@@ -29,17 +29,14 @@
 
 
 1. To transfer between servers: `ssh -A -t user1@remote1 scp srcpath user2@remote2:destpath` 
-
 	- `ssh -A -t matthew@askoski.berkeley.edu scp /home/matthew/data/course_shortname_title.pkl matthew@cahl.berkeley.edu:~/askoski/data`
-	- `ssh -A -t matthew@cahl.berkeley.edu scp /home/matthew/askoski/data/course_subject_long_to_short.csv matthew@askoski.berkeley.edu:/home/matthew/data`
 
-1. Transfer file locally `scp matthew@askoski.berkeley.edu:/home/matthew/Data-AskOski/env.json /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/service`
+1. Transfer file from server to local 
+	- `scp matthew@askoski.berkeley.edu:/home/matthew/Data-AskOski/env.json /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/service`
+	- `scp matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2020-02-12-09-13/model/askoski /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/dummy_data/model`
 
-`scp matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2019-11-19-14-37/model/idx2major.json /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/dummy_data/flat`
-
-scp /Users/mdong/Desktop/mdong.jpg matthew@askoski.berkeley.edu:/home/matthew/
-
-zip singlefile.zip original_file
+1. transfer from local to server
+	- `scp /Users/mdong/Desktop/mdong.jpg matthew@askoski.berkeley.edu:/home/matthew/`
 
 1. Use ipython env
 
