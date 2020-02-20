@@ -27,17 +27,6 @@
 		- `control + d` just terminates screen
 	- `lsof -i :1371`, `kill PID` if necessary
 
-
-1. To transfer between servers: `ssh -A -t user1@remote1 scp srcpath user2@remote2:destpath` 
-	- `ssh -A -t matthew@askoski.berkeley.edu scp /home/matthew/data/course_shortname_title.pkl matthew@cahl.berkeley.edu:~/askoski/data`
-
-1. Transfer file from server to local 
-	- `scp matthew@askoski.berkeley.edu:/home/matthew/Data-AskOski/env.json /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/service`
-	- `scp matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2020-02-12-09-13/model/askoski /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/dummy_data/model`
-
-1. transfer from local to server
-	- `scp /Users/mdong/Desktop/mdong.jpg matthew@askoski.berkeley.edu:/home/matthew/`
-
 1. Use ipython env
 
 	```

@@ -13,7 +13,7 @@
 1. Currently fixed / hardcoded folders needed for pipeline to run
     - `hashed`, `encypted`, `decrypted` folders in UCBDATA
     - `/research/UCBD2/classAPI` for RNN `add_new_courses.py`
-    - some static files in Jeff's local directory?
+    - some static files copied from Jeff's local directory through `data_to_dest`
 1. Sandbox testing environment 
     - To test changes just clone the repo to your directory & replace `/home/askoski/Models-AskOski` pathways with local version `/home/matthew/Models-AskOski` and change back before creating PR
     - Change output pathways? No just delete the timestamped output 

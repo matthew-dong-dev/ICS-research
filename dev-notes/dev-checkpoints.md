@@ -1,4 +1,16 @@
 
+2/19/20
+
+- Good job making your first design decision when figuring out how to implement instructor search w/ Max. by choosing to a parent component instead of hacking the data.  Can copy functions over bc we don't want premature optimization but we do want clean design.  
+
+Reasons for a pay raise
+
+1. search feature - top level nav feature
+1. publication - first author
+1. whole system familiarity - done work on FE, BE, Models, Data
+1. currently sharing admin resposibilities on Data so jeff isn't single point of failure for everything
+1. mentoring URAPs - instructor search
+
 1/28/20
 
 With greater context you're realizing yes this is a cool project and yes you're in a little over your head.  No way you should be in this role you're in where you're basically the admin of the data pipeline, good thing you took it seriously and taught yourself what you needed.  Working on askoski is really organic, you're doing a job a full time swe should be doing and you should embrace it and learn as much as you can.  
