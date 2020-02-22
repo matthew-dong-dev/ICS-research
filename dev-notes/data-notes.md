@@ -34,6 +34,7 @@ v3: What Data-AskOski should be / should have?
     - what about hashed data?  Yes but gitignored
     - Ingested data = from data dumps, Collected data = from APIs
     - Collected data streams should also be incorporated in the data pipeline  
+    - Ingested data pipeline should be run 3x a semester and collected data should be run more frequently during enrollment periods
 > what it actually is: timestamped directories and all run at once
 
 v2: Raw EDW data --> run `refresh.py`, which generates the master lookup_dict & generates a timestamped directory in UCBD2/edw_data with

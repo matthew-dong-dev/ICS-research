@@ -1,6 +1,24 @@
 # START FROM TRELLO AND PUT THEM HERE ONCE YOU NEED TO EXPAND
 
-### Questions: 
+## Action Item backlog
+
+1. get familiar with how to do a semester changeover
+1. update master file spreadsheet
+    - look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
+    -  RNN model weights are in a binary file called "askoski", the topology of the model is in "askoski.json" and "askoski.desc" just describes the hyper parameters that were used. The dictionary file "course2idx.json" can be used to translate between "Subject CourseNum" and the one-hot index for the model and "major2idx.json" can be used to translate the major to major one-hot index. Jenny's word2vec model is called "w2v_300_15_20_3.model" and uses the same indices as course2idx
+    - clean ucbd2-archive & update spreadsheet, check what each file does and where it already exists in the system before deleting
+        - start with hashed-archive
+        - edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
+        - edw_2018.tsv --> hashed grades old file
+        - data.dict --> meta data
+1. look at imported functions in refresh.py - what is refresh user, enrollments, grade_info, etc. doing
+1. Creating a new filter in AskOski that will filter a user's suggested courses based on whether their majors fall within the class reservations. This filter will be applied automatically to the already existing Open Seats filter. This task is a two-step process:
+    1)  Modify Data-AskOski to include reserve capacity information with each class, which involves querying the reserved seats API and augmenting the next_sem_dict to include reserve capacity data.
+    2)  Modify Service-AskOski to filter classes shown based on the reserve capacity data and the student's own majors. This involves creating a mapping between majors as represented in AskOski to the requirement groups in the API, and then creating a filter with it.
+
+------------------------------------------------------------
+
+## Questions: 
 
 1. what is the purpose of the copy files section? 
     cp $rootDir/outputs/course2nb.json $outDir
@@ -28,30 +46,6 @@
     raise KeyError(key) from None
 KeyError: 'courseAppKey'
 
----------------------------------------------
-
-## Action Item backlog
-
-1. get familiar with how to do a semester changeover
-1. update master file spreadsheet
-    - look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
-    -  RNN model weights are in a binary file called "askoski", the topology of the model is in "askoski.json" and "askoski.desc" just describes the hyper parameters that were used. The dictionary file "course2idx.json" can be used to translate between "Subject CourseNum" and the one-hot index for the model and "major2idx.json" can be used to translate the major to major one-hot index. Jenny's word2vec model is called "w2v_300_15_20_3.model" and uses the same indices as course2idx
-    - clean ucbd2-archive & update spreadsheet, check what each file does and where it already exists in the system before deleting
-        - start with hashed-archive
-        - edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
-        - edw_2018.tsv --> hashed grades old file
-        - data.dict --> meta data
-
-1. look at imported functions in refresh.py - what is refresh user, enrollments, grade_info, etc. doing
-1. Ingested data pipeline should be run 3x a semester and collected data should be run more frequently during enrollment periods
-
-- Course API - keep credit restriction and prerequisite course information when querying Course API - save to two tsvs and make available to researchers via data repo 
-- Explore re-training is broken - currently uses old research data. Update the models code to use pipeline Classes data instead of Classes_2011_2018 data
-- Revisit open seats daily poll of classes api in thread
-- Creating a new filter in AskOski that will filter a user's suggested courses based on whether their majors fall within the class reservations. This filter will be applied automatically to the already existing Open Seats filter. This task is a two-step process:
-1)  Modify Data-AskOski to include reserve capacity information with each class, which involves querying the reserved seats API and augmenting the next_sem_dict to include reserve capacity data.
-2)  Modify Service-AskOski to filter classes shown based on the reserve capacity data and the student's own majors. This involves creating a mapping between majors as represented in AskOski to the requirement groups in the API, and then creating a filter with it.
-
 ------------------------------------------------------------
 
 ## Completed 
@@ -60,6 +54,8 @@ KeyError: 'courseAppKey'
 - Run completed this
 
 ### Task: Incorporate Courses / Classes API, Salt & Plan into Data pipeline 
+
+- Explore re-training is broken - currently uses old research data. Update the models code to use pipeline Classes data instead of Classes_2011_2018 data
 
 1. where does `hashed path` get defined? in env.sh vs env.json?  
     - actually from `makeJson` which takes dirName (timestamp) as an argument and then creates `env.json`
