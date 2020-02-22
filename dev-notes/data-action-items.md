@@ -26,15 +26,20 @@
     raise KeyError(key) from None
 KeyError: 'courseAppKey'
 
----
+---------------------------------------------
 
 ## Action Item backlog
 
 1. get familiar with how to do a semester changeover
-1. Reconcile Data-AskOski API scripts & Models-AskOski API scripts.  What's the difference between Models API scripts and Data API scripts?  
-    - dumped into pickle folders, etc..
-    - refresh.sh (from Models) is dumping outputs into timestamped `salt` - why? SAlt stands for serendipitous alternatives
-1. 1. look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
+1. update master file spreadsheet
+    - look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
+    -  RNN model weights are in a binary file called "askoski", the topology of the model is in "askoski.json" and "askoski.desc" just describes the hyper parameters that were used. The dictionary file "course2idx.json" can be used to translate between "Subject CourseNum" and the one-hot index for the model and "major2idx.json" can be used to translate the major to major one-hot index. Jenny's word2vec model is called "w2v_300_15_20_3.model" and uses the same indices as course2idx
+    - clean ucbd2-archive & update spreadsheet, check what each file does and where it already exists in the system before deleting
+        - start with hashed-archive
+        - edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
+        - edw_2018.tsv --> hashed grades old file
+        - data.dict --> meta data
+
 1. look at imported functions in refresh.py - what is refresh user, enrollments, grade_info, etc. doing
 1. Ingested data pipeline should be run 3x a semester and collected data should be run more frequently during enrollment periods
 
@@ -48,6 +53,9 @@ KeyError: 'courseAppKey'
 ------------------------------------------------------------
 
 ## Completed 
+
+### Task: Reconcile Data-AskOski API scripts & Models-AskOski API scripts.  What's the difference between Models API scripts and Data API scripts?  
+- Run completed this
 
 ### Task: Incorporate Courses / Classes API, Salt & Plan into Data pipeline 
 
@@ -158,6 +166,7 @@ ValueError: Error when checking input: expected inputCourseMultihot to have shap
 
 [x] **writing courseDescriptionFinalFile to env.json should be a .tsv file** 
 [x] what's the way to test if env.json works not just env.test.json? - we can assume if np mode works with the dummy_data files then production will work bc they are the same files.  What about the files that were diffed by github?  well if they were actually changed then Run took them from the latest pipeline run so np and p mode should still be the same
+- refresh.sh (from Models) is dumping outputs into timestamped `salt` - why? SAlt stands for serendipitous alternatives
 
 ### Task: SQL DB Transition instead of pandas
 

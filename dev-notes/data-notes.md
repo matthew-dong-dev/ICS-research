@@ -11,21 +11,13 @@ Export course, class, class section API credentials.
 1. `chmod -R 777` Data-AskOski & Models-AskOski if necessary
 1. *Don't delete the encrypted UCBDATA files o/w you have to wait for the next data dump*
 
----
+---------------------------------
 
-## Data-AskOski Deep dive
+## Data-AskOski Deep dive - START FROM TRELLO AND PUT THEM HERE ONCE YOU NEED TO EXPAND
 
-1. update master file spreadsheet
-    - look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
-    - clean ucbd2-archive & update spreadsheet, check what each file does and where it already exists in the system before deleting
-        - start with hashed-archive
-        - edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
-        - edw_2018.tsv --> hashed grades old file
-        - data.dict --> meta data
-1. look at imported functions in refresh.py - what is refresh user, enrollments, grade_info, etc... doing
-1. incorporate Zihao's updated dictionaries and RNN model (found in /research/UCBD2) into staging. His RNN model weights are in a binary file called "askoski", the topology of the model is in "askoski.json" and "askoski.desc" just describes the hyper parameters that were used. The dictionary file "course2idx.json" can be used to translate between "Subject CourseNum" and the one-hot index for the model and "major2idx.json" can be used to translate the major to major one-hot index. Jenny's word2vec model is called "w2v_300_15_20_3.model" and uses the same indices as course2idx.
 
----
+
+------------------------------------------------
 
 ## Data pipeline overview
 
