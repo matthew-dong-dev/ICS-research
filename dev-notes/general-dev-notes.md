@@ -47,6 +47,7 @@
     - Copy mode only works in screen, you can scroll normally otherwise
 1. `control + d` terminates screen
 1. If you feel that the program is hanging, YOU HAVE TO ESCAPE OUT OF COPY MODE TO SEE LIVE OUTPUT
+1. `screen -XS [session # you want to quit] quit` to kill a screen (case matters)
 
 ## Remote Backend
 

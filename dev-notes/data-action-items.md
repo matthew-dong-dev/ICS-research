@@ -26,6 +26,12 @@
 .sort_values(by=...)
     courses = courses.sort_index(by=['idx'])
 1. `Loaded Next Semester Courses HTTP Error 404: Not Found` - is this an actual error or did it just run out of pages to read and it's actually fine?  the class files look the same (from Data-AskOski refresh api script)
+1. Traceback (most recent call last):
+  File "course_api.py", line 35, in <module>
+    headers['app_key'] = os.environ['courseAppKey']
+  File "/usr/lib/python3.5/os.py", line 725, in __getitem__
+    raise KeyError(key) from None
+KeyError: 'courseAppKey'
 
 ---
 

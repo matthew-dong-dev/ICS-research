@@ -19,8 +19,9 @@
     - Change output pathways? No just delete the timestamped output 
     - can you run pipeline parts in isolation?  Yes, just run the individual retrain scripts but should not do this during full run through even if RNN retraining is completed because all the models all need to write their outputs referencing the same timestamped directory 
 
-## Possible error resolution
+## Important notes
 
+1. When changing file names update Service (load.py, env.test.json) and Data (refresh_env.py --> env.json)
 1. `chmod -R 777` Data-AskOski & Models-AskOski if necessary - what is this command doing? 
 1. NLTK Dependencies
     >>> import nltk
@@ -40,7 +41,7 @@
 
 ## Data-Pipeline Deep dive
 
-1. look into refresh.md & env.sh - these files are outdated, but tells a lot about how things work
+1. look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
 1. look into how the hashing works
     - "The lookup table will be stored in /research/UCBD2/edw_data/TIMESTAMP"
     - what is sidHashBin file?  what are .bin files?
@@ -115,6 +116,20 @@ REQUIREMENT|EFFDT|ACAD_PLAN|ACAD_SUB_PLAN|SAA_DESCR80_MAIN_TBL|RQ_LINE_NBR|SAA_D
 1. Runs Models-Askoski `retrain.sh` which create all lookup pickles for enrollments, requirements, offered classes, etc.
 1. Run Models-AskOski `refresh.sh` which does... (removed)
 1. Move all files outputted from Models into timestamped directory
+
+How the pipeline should work in your head
+
+1. generate class & course API data
+1. Retrain models
+
+How does RNN already have course data?  from the data dumps... This is what Data-AskOski refresh_classes_from_api.py and Model's add_new_courses.sh is building on. So really it's: 
+
+1. train RNN --> get course2idx
+1. add_new_courses.sh = augment model and course2idx from pulled class & course API data
+1. refresh_classes_from_api.py should be augment classes with CCN data. There is model's class_api.py - do we ever use its output class_info.tsv?   We should replace this script with the data scripts
+
+1. Why do we need next_sem_classes, it seems to have the same information as next_sem_dict + idx2course? 
+
 
 *Where things live*
 
