@@ -1,9 +1,3 @@
-# Current action item
-
-1. Incorporate fixed /research/UCBD2/classAPI/ into pipeline that gets next semester's classes --> this is produced from refresh_classes_from_api.py?
-
----
-
 ### Questions: 
 
 1. How long does each part of retraining take?
@@ -50,7 +44,7 @@ KeyError: 'courseAppKey'
 1)  Modify Data-AskOski to include reserve capacity information with each class, which involves querying the reserved seats API and augmenting the next_sem_dict to include reserve capacity data.
 2)  Modify Service-AskOski to filter classes shown based on the reserve capacity data and the student's own majors. This involves creating a mapping between majors as represented in AskOski to the requirement groups in the API, and then creating a filter with it.
 
----
+------------------------------------------------------------
 
 ## Completed 
 
@@ -162,22 +156,7 @@ ValueError: Error when checking input: expected inputCourseMultihot to have shap
     - what is the difference between np and password mode where if all the files are the same between them, you get the same results and errors.  no you don't get the same results, bc of fake data but you do get the same error like you did above
 
 [x] **writing courseDescriptionFinalFile to env.json should be a .tsv file** 
-
-### Task: Indexing error that broke the system for entirety of F19 during the data-askoski transition:
-
-- Service reads from the hashed majors, grades, etc. files which are in the top level of /research/UCBD2/edw_data 
-
-These are older files from the end of summer. It’s decoding the student ids with /research/askoski_common/bins/sidHash_new.bin, which is being overwritten by the data pipeline with mappings calculated from newer data. (are all these things being mapped?)
-
-- Service using old grade, majors, requirements tables + new sid lookup table -> indexing errors
-- A really quick fix would be to run the pipeline on old data, which would revert the lookup table and fix the indexing errors on Service.
-- I am in the process of pointing the data pipeline to write the lookups to a separate folder that wouldn’t mess with the current Service.
-
-The problem was a combination of a couple issues:
-
-1. some of the file names for campus data dumps were incorrect. not sure who was responsible for this but we should verify file names next time when writing stuff like this.
-2. we were loading the ENV json and then rewriting it to disk, but it wasn't being reloaded in memory. we should have sanity checks next time in between stages of the pipeline to check things like this, or better yet, separate out each stage of the pipeline entirely.
-3. importing modules caused the ENV json in each one to load at the start meaning it was stale after new json was created. again we should be using sanity checks at each stage to verify that assumptions made in the code are actually true.
+[x] what's the way to test if env.json works not just env.test.json? - we can assume if np mode works with the dummy_data files then production will work bc they are the same files.  What about the files that were diffed by github?  well if they were actually changed then Run took them from the latest pipeline run so np and p mode should still be the same
 
 ### Task: SQL DB Transition instead of pandas
 
