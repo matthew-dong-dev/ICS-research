@@ -14,6 +14,8 @@ Reasons for a pay raise
 1/28/20
 
 With greater context you're realizing yes this is a cool project and yes you're in a little over your head.  No way you should be in this role you're in where you're basically the admin of the data pipeline, good thing you took it seriously and taught yourself what you needed.  Working on askoski is really organic, you're doing a job a full time swe should be doing and you should embrace it and learn as much as you can.  
+    - what is the size of the data being used - see the research paper
+    - 100K students, 2M enrollment records since 2008, ~10k courses? 
 
 If people ask what you do for the project - you do whatever work is necessary: FE, BE work, data pipeline, ml modeling, but no system architecture or devops (yet).
 

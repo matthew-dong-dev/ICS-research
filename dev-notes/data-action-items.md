@@ -1,6 +1,5 @@
 ### Questions: 
 
-1. How long does each part of retraining take?
 1. what is the purpose of the copy files section? 
     cp $rootDir/outputs/course2nb.json $outDir
     cp $rootDir/outputs/askoski $outDir
@@ -35,6 +34,8 @@ KeyError: 'courseAppKey'
 1. Reconcile Data-AskOski API scripts & Models-AskOski API scripts.  What's the difference between Models API scripts and Data API scripts?  
     - dumped into pickle folders, etc..
     - refresh.sh (from Models) is dumping outputs into timestamped `salt` - why? SAlt stands for serendipitous alternatives
+1. 1. look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
+1. look at imported functions in refresh.py - what is refresh user, enrollments, grade_info, etc. doing
 1. Ingested data pipeline should be run 3x a semester and collected data should be run more frequently during enrollment periods
 
 - Course API - keep credit restriction and prerequisite course information when querying Course API - save to two tsvs and make available to researchers via data repo 
