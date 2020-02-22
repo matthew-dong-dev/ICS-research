@@ -1,3 +1,5 @@
+# START FROM TRELLO AND PUT THEM HERE ONCE YOU NEED TO EXPAND
+
 ### Questions: 
 
 1. what is the purpose of the copy files section? 
