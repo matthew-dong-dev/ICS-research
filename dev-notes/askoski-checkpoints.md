@@ -17,6 +17,8 @@ With greater context you're realizing yes this is a cool project and yes you're 
     - what is the size of the data being used - see the research paper
     - 100K students, 2M enrollment records since 2008, ~10k courses? 
 
+What is the scale of the funding being granted? 
+
 If people ask what you do for the project - you do whatever work is necessary: FE, BE work, data pipeline, ml modeling, but no system architecture or devops (yet).
 
 There's a tradeoff, prod keeps breaking now (e.g. data pipeline broke prod for entire F19 semester and you broke prod twice by removing files it was using and changing some RNN scripts) but that's bc we're developing up the pipelines and cleaning up tech debt to make sure we're forward compatible to things like multi campus and more stable moving forward (closer to CI/CD)
