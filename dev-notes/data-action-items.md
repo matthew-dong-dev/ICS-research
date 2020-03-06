@@ -2,17 +2,11 @@
 
 ## Action Item backlog
 
-1. put API keys in wiki entry
 1. get familiar with how to do a semester changeover
-    - refresh_env.py - this updates the Be
-        env_dict["getData"] = 'false'  # true or false
-        env_dict["testID"] = '24397735' # get from classes.berkeley.edu
-        env_dict["termID"] = '2202'
-        env_dict["semCode"] = '3A865'
-        env_dict["currentYear"] = 'Spring 20'
-        env_dict["enrolledSem"] = 'Spring'
-        env_dict["enrolledYear"] = '2020'
-    - change eval semester in RNN - this updates the model
+    - what is the purpose of eval semester?  eval semester is the last semester in the data or the target semester?
+        - last semester in the data, it's used to validate somehow by calculating recall
+        - is eval_semester is held out of the data training the RNN?
+    - Do we need to get classAPI data before running the entire pipeline?  Yes, our order is incorrect
 1. update master file spreadsheet
     - look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
     -  RNN model weights are in a binary file called "askoski", the topology of the model is in "askoski.json" and "askoski.desc" just describes the hyper parameters that were used. The dictionary file "course2idx.json" can be used to translate between "Subject CourseNum" and the one-hot index for the model and "major2idx.json" can be used to translate the major to major one-hot index. Jenny's word2vec model is called "w2v_300_15_20_3.model" and uses the same indices as course2idx
