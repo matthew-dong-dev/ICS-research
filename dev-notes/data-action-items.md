@@ -20,6 +20,19 @@
     1)  Modify Data-AskOski to include reserve capacity information with each class, which involves querying the reserved seats API and augmenting the next_sem_dict to include reserve capacity data.
     2)  Modify Service-AskOski to filter classes shown based on the reserve capacity data and the student's own majors. This involves creating a mapping between majors as represented in AskOski to the requirement groups in the API, and then creating a filter with it.
 
+1. how to does anon2id lookup (anon2enrollPick.p) work?  this is different from `dummy_lookup_dict`
+ which is the dummy_data version of the lookup
+ 
+`lookup_dict`: This is the mapping between SID and anonID, which allows user to grab anonymized info for that student.  Mapping stored in sidHashBin
+
+In load.py
+```
+lookup = aes_decrypt(keyword, data_got[0], data_got[1], data_got[2]).decode("utf-8")
+lookup_dict = json.loads(lookup)
+```
+
+
+
 ------------------------------------------------------------
 
 ## Questions: 
