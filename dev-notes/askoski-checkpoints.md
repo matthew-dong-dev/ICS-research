@@ -1,3 +1,6 @@
+3/30/20
+
+You're right to create all these logs because you can see your progress.  You created a list of potential tasks related to Data-AskOski like the major reservation filters, reconciling data API scripts and models API scripts, learning about how the hashing works, etc... and you've come across all of these tasks and either finished these tasks or built off of them as you've worked in this role over the past few months. 
 
 2/19/20
 

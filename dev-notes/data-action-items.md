@@ -2,11 +2,12 @@
 
 ## Action Item backlog
 
-1. get familiar with how to do a semester changeover
-    - what is the purpose of eval semester?  eval semester is the last semester in the data or the target semester?
-        - last semester in the data, it's used to validate somehow by calculating recall
-        - is eval_semester is held out of the data training the RNN?
-    - Do we need to get classAPI data before running the entire pipeline?  Yes, our order is incorrect
+Traceback (most recent call last):
+  File "calculate_course_coverage.py", line 23, in <module>
+    courses_new = pickle.load(open(courses_new_file, "rb"))
+FileNotFoundError: [Errno 2] No such file or directory: '/research/UCBD2/edw_data/2020-03-07-15-33/pickle/courses_new.p'
+
+1. Models is doing most of the heavy lifting - what are the other imported functions in refresh.py doing?  e.g. refresh user, enrollments, grade_info, etc.
 1. update master file spreadsheet
     - look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
     -  RNN model weights are in a binary file called "askoski", the topology of the model is in "askoski.json" and "askoski.desc" just describes the hyper parameters that were used. The dictionary file "course2idx.json" can be used to translate between "Subject CourseNum" and the one-hot index for the model and "major2idx.json" can be used to translate the major to major one-hot index. Jenny's word2vec model is called "w2v_300_15_20_3.model" and uses the same indices as course2idx
@@ -15,11 +16,6 @@
         - edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
         - edw_2018.tsv --> hashed grades old file
         - data.dict --> meta data
-1. look at imported functions in refresh.py - what is refresh user, enrollments, grade_info, etc. doing
-1. Creating a new filter in AskOski that will filter a user's suggested courses based on whether their majors fall within the class reservations. This filter will be applied automatically to the already existing Open Seats filter. This task is a two-step process:
-    1)  Modify Data-AskOski to include reserve capacity information with each class, which involves querying the reserved seats API and augmenting the next_sem_dict to include reserve capacity data.
-    2)  Modify Service-AskOski to filter classes shown based on the reserve capacity data and the student's own majors. This involves creating a mapping between majors as represented in AskOski to the requirement groups in the API, and then creating a filter with it.
-
 1. how to does anon2id lookup (anon2enrollPick.p) work?  this is different from `dummy_lookup_dict`
  which is the dummy_data version of the lookup
  
@@ -30,8 +26,6 @@ In load.py
 lookup = aes_decrypt(keyword, data_got[0], data_got[1], data_got[2]).decode("utf-8")
 lookup_dict = json.loads(lookup)
 ```
-
-
 
 ------------------------------------------------------------
 
@@ -66,6 +60,20 @@ KeyError: 'courseAppKey'
 ------------------------------------------------------------
 
 ## Completed 
+
+## Major seats reservation filter
+
+Creating a new filter in AskOski that will filter a user's suggested courses based on whether their majors fall within the class reservations. This filter will be applied automatically to the already existing Open Seats filter. This task is a two-step process:
+    1)  Modify Data-AskOski to include reserve capacity information with each class, which involves querying the reserved seats API and augmenting the next_sem_dict to include reserve capacity data.
+    2)  Modify Service-AskOski to filter classes shown based on the reserve capacity data and the student's own majors. This involves creating a mapping between majors as represented in AskOski to the requirement groups in the API, and then creating a filter with it.
+
+## get familiar with how to do a semester changeover
+
+- what is the purpose of eval semester?  eval semester is the last semester in the data or the target semester?
+    - last semester in the data, it's used to validate somehow by calculating recall
+    - "Recall@10 measures out of the top 10 courses predicted for each semester for each student, what percentage of the actual taken courses were in the top 10? num_predicted_correct / num_taken.  MRR is the average of 1/rank of the top ranked predicted course (out of the top 10) that was actually taken, where if none of the top 10 was taken MRR is 0. Ie, if the the highest ranked course I actually took is rank 2, MRR for my example is 0.5." 
+    - is eval_semester is held out of the data training the RNN?  Yes
+- Do we need to get classAPI data before running the entire pipeline?  Yes, our order is incorrect - Run resolved by generating course2idx first, then running API scripts, then retraining Models
 
 ### Task: Reconcile Data-AskOski API scripts & Models-AskOski API scripts.  What's the difference between Models API scripts and Data API scripts?  
 - Run completed this
