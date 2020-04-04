@@ -2,11 +2,6 @@
 
 ## Action Item backlog
 
-Traceback (most recent call last):
-  File "calculate_course_coverage.py", line 23, in <module>
-    courses_new = pickle.load(open(courses_new_file, "rb"))
-FileNotFoundError: [Errno 2] No such file or directory: '/research/UCBD2/edw_data/2020-03-07-15-33/pickle/courses_new.p'
-
 1. Models is doing most of the heavy lifting - what are the other imported functions in refresh.py doing?  e.g. refresh user, enrollments, grade_info, etc.
 1. update master file spreadsheet
     - look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
