@@ -2,7 +2,6 @@
 
 ## Action Item backlog
 
-1. Models is doing most of the heavy lifting - what are the other imported functions in refresh.py doing?  e.g. refresh user, enrollments, grade_info, etc.
 1. update master file spreadsheet
     - look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
     -  RNN model weights are in a binary file called "askoski", the topology of the model is in "askoski.json" and "askoski.desc" just describes the hyper parameters that were used. The dictionary file "course2idx.json" can be used to translate between "Subject CourseNum" and the one-hot index for the model and "major2idx.json" can be used to translate the major to major one-hot index. Jenny's word2vec model is called "w2v_300_15_20_3.model" and uses the same indices as course2idx
@@ -24,7 +23,7 @@ lookup_dict = json.loads(lookup)
 
 ------------------------------------------------------------
 
-## Questions: 
+## Questions / Errors
 
 1. what is the purpose of the copy files section? 
     cp $rootDir/outputs/course2nb.json $outDir
@@ -32,37 +31,23 @@ lookup_dict = json.loads(lookup)
     cp $rootDir/outputs/askoski.json $outDir
     cp $rootDir/outputs/course2vec.npy $outDir
     cp $rootDir/outputs/search_keywords.pkl $outDir
-1. does it make sense that match_course_to_idx2course and joining course & class descriptions comes after all the retraining?  what's the point in that?  
-    - difference between course_description_init vs course_description_final? 
-
-## Errors? 
-
-1. Is this error a problem in data refresh?  `invalid literal for int() with base 10: 'STUDENT_ID' STUDENT_ID`? 
-1. Models c2v retraining message
-    - refresh_serendipitous_c2v.py:74: RuntimeWarning: invalid value encountered in true_divide
-  bow_weight_for_equi /= bow_weight0[:, np.newaxis]
-    - refresh_serendipitous_bow.py:29: FutureWarning: by argument to sort_index is deprecated, please use 
-.sort_values(by=...)
-    courses = courses.sort_index(by=['idx'])
-1. `Loaded Next Semester Courses HTTP Error 404: Not Found` - is this an actual error or did it just run out of pages to read and it's actually fine?  the class files look the same (from Data-AskOski refresh api script)
-1. Traceback (most recent call last):
-  File "course_api.py", line 35, in <module>
-    headers['app_key'] = os.environ['courseAppKey']
-  File "/usr/lib/python3.5/os.py", line 725, in __getitem__
-    raise KeyError(key) from None
-KeyError: 'courseAppKey'
 
 ------------------------------------------------------------
 
 ## Completed 
 
-## Major seats reservation filter
+## Task: Major seats reservation filter
 
 Creating a new filter in AskOski that will filter a user's suggested courses based on whether their majors fall within the class reservations. This filter will be applied automatically to the already existing Open Seats filter. This task is a two-step process:
     1)  Modify Data-AskOski to include reserve capacity information with each class, which involves querying the reserved seats API and augmenting the next_sem_dict to include reserve capacity data.
     2)  Modify Service-AskOski to filter classes shown based on the reserve capacity data and the student's own majors. This involves creating a mapping between majors as represented in AskOski to the requirement groups in the API, and then creating a filter with it.
 
-## get familiar with how to do a semester changeover
+
+## Question: does it make sense that match_course_to_idx2course and joining course & class descriptions comes after all the retraining?  what's the point in that?  difference between course_description_init vs course_description_final? 
+
+- fixed, we do API tasks first then retraining
+
+## Task: get familiar with how to do a semester changeover
 
 - what is the purpose of eval semester?  eval semester is the last semester in the data or the target semester?
     - last semester in the data, it's used to validate somehow by calculating recall
@@ -71,7 +56,10 @@ Creating a new filter in AskOski that will filter a user's suggested courses bas
 - Do we need to get classAPI data before running the entire pipeline?  Yes, our order is incorrect - Run resolved by generating course2idx first, then running API scripts, then retraining Models
 
 ### Task: Reconcile Data-AskOski API scripts & Models-AskOski API scripts.  What's the difference between Models API scripts and Data API scripts?  
+
 - Run completed this
+- Also resolves: 
+ `Loaded Next Semester Courses HTTP Error 404: Not Found` - is this an actual error or did it just run out of pages to read and it's actually fine?  the class files look the same (from Data-AskOski refresh api script)
 
 ### Task: Incorporate Courses / Classes API, Salt & Plan into Data pipeline 
 

@@ -114,3 +114,4 @@ How to get browser to forget user login data?  i.e. how to delete cache / locall
 
 1. transfer from local to server
 	- `scp /Users/mdong/Desktop/mdong.jpg matthew@askoski.berkeley.edu:/research/AskOski-CMS/people/img`
+    - `scp /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/dummy_data/flat/major_to_res_group_mapping.txt matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2020-03-31-00-05/flat`
