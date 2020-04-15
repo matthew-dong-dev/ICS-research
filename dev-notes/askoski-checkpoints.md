@@ -4,7 +4,7 @@
 1. search feature - top level navbar feature
     - enhancing the search model to include bigrams in the inferred topics.  
 1. data admin - running and debugging the pipeline with campus data refreshes every semester
-    - stabilizing the models retrain process and semester changeover
+    - stabilizing the models retrain process and semester changeover (which includes BE & FE updates)
     - pipeline development integrating the API refresh process into the pipeline, incorporating files and folders scattered through UCBD2, askoski-common, and even local directories into the pipeline
     - helping the data unification by cleaning up tech debt and consolidating / removing redundant files or processes (service used to use ~110 environment variables now down to ~80)
     - reorganizing data files by feature and updating naming convention
