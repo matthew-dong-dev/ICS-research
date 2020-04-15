@@ -1,3 +1,18 @@
+4/15/20 System Contributions
+
+1. whole system familiarity - done work on FE, BE, API, Models, Data
+1. search feature - top level navbar feature
+    - enhancing the search model to include bigrams in the inferred topics.  
+1. data admin - running and debugging the pipeline with campus data refreshes every semester
+    - stabilizing the models retrain process and semester changeover
+    - pipeline development integrating the API refresh process into the pipeline, incorporating files and folders scattered through UCBD2, askoski-common, and even local directories into the pipeline
+    - helping the data unification by cleaning up tech debt and consolidating / removing redundant files or processes (service used to use ~110 environment variables now down to ~80)
+    - reorganizing data files by feature and updating naming convention
+1. publication - first author
+1. BE / API: fixing open seats / major reservation filter
+1. mentoring URAPs - getting instructor search off the ground
+1. various system QA feedback that improves usability including uniform data presentation, feature formatting, wording, loading speed, etc.
+
 3/30/20
 
 You're right to create all these logs because you can see your progress.  You created a list of potential tasks related to Data-AskOski like the major reservation filters, reconciling data API scripts and models API scripts, learning about how the hashing works, etc... and you've come across all of these tasks and either finished these tasks or built off of them as you've worked in this role over the past few months. 

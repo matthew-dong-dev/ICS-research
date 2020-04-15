@@ -110,7 +110,7 @@ How to get browser to forget user login data?  i.e. how to delete cache / locall
 
 1. Transfer file from server to local 
 	- `scp matthew@askoski.berkeley.edu:/home/matthew/Data-AskOski/env.json /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/service`
-	- `scp matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2020-03-31-00-05/classAPI/next_sem_classes_new.p /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/dummy_data/classAPI`
+	- `scp matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2020-04-05-16-20/model/course2nb.json /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/dummy_data/model`
 
 1. transfer from local to server
 	- `scp /Users/mdong/Desktop/mdong.jpg matthew@askoski.berkeley.edu:/research/AskOski-CMS/people/img`
