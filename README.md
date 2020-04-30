@@ -4,7 +4,7 @@
 > 
 > [Deployed feature](https://askoski.berkeley.edu/search)
 
-*Disclaimer: data redacted for privacy purposes.*
+*Disclaimer: data files redacted as per campus data sharing agreement.*
 
 ## `retrain.sh`
 
