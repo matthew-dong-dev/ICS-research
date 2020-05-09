@@ -9,9 +9,10 @@
     - pipeline development integrating the API refresh process into the pipeline, consolidated files and folders scattered through UCBD2, askoski-common, and even local directories into just X folders
     - helping the data unification by cleaning up tech debt and consolidating / removing redundant files or processes (service used to use ~110 environment variables now down to ~80)
     - reorganizing data files by feature and updating naming convention, grouping service loading by feature
-    - identified error in course coverage calculation
-1. BE / API: fixing open seats / major reservation filter
+1. BE / API: fixing open seats / major reservation filter, fixing missing prereqs data
 1. mentoring URAPs - getting instructor search off the ground
+1. helping other devs with various tasks, helping Jeff and Run address survey problems
+1. identify misc errors like course calculation coverage, requirements error due to NaNs
 1. various system QA feedback that improves usability including uniform data presentation, feature formatting, wording, loading speed, etc.
 
 3/30/20
