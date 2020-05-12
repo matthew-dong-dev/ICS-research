@@ -10,16 +10,6 @@
         - edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
         - edw_2018.tsv --> hashed grades old file
         - data.dict --> meta data
-1. how to does anon2id lookup (anon2enrollPick.p) work?  this is different from `dummy_lookup_dict`
- which is the dummy_data version of the lookup
- 
-`lookup_dict`: This is the mapping between SID and anonID, which allows user to grab anonymized info for that student.  Mapping stored in sidHashBin
-
-In load.py
-```
-lookup = aes_decrypt(keyword, data_got[0], data_got[1], data_got[2]).decode("utf-8")
-lookup_dict = json.loads(lookup)
-```
 
 ------------------------------------------------------------
 
