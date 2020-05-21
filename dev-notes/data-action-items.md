@@ -19,9 +19,9 @@
     - [ ] TODO: test if you can make persistent env variables work and if you update them from a script that they stay changed (https://stackoverflow.com/questions/13046624/how-to-permanently-export-a-variable-in-linux, https://help.ubuntu.com/community/EnvironmentVariables)
 - how to pass in passwords needed to run pipeline? 
     - make sure that the password is not passed as argument to any command in the script as that would then make it visible to anybody in the output of ps.  so it needs to be stored in an external file.
-    - only root can run cron jobs?  looks like you are able to run cron jobss
+    - only root can run cron jobs?  looks like you are able to have your own crontab file on the server without being root usr
 
-1. update master file spreadsheet
+## Task: update master file spreadsheet
     - look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
     -  RNN model weights are in a binary file called "askoski", the topology of the model is in "askoski.json" and "askoski.desc" just describes the hyper parameters that were used. The dictionary file "course2idx.json" can be used to translate between "Subject CourseNum" and the one-hot index for the model and "major2idx.json" can be used to translate the major to major one-hot index. Jenny's word2vec model is called "w2v_300_15_20_3.model" and uses the same indices as course2idx
     - clean ucbd2-archive & update spreadsheet, check what each file does and where it already exists in the system before deleting

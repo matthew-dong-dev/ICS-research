@@ -1,6 +1,8 @@
 
  ### look into how the SID anonymization works
 
+Look at this old branch that changes test_hash and then delete it. https://github.com/CAHLR/Data-AskOski/compare/update_tests
+
 `lookup_dict`: This is the mapping between SID and anonID, which allows user to grab anonymized info for that student.  The lookup table will be stored in /research/UCBD2/edw_data/TIMESTAMP" in the sidHashBin file
 
 In load.py
