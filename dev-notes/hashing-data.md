@@ -3,6 +3,8 @@
 
 Look at this old branch that changes test_hash and then delete it. https://github.com/CAHLR/Data-AskOski/compare/update_tests
 
+You accidentally overwrote sidHashBin for a particular timestamp, if Jeff were to restart prod using that timestamp would there be a problem with course histories being incorrect?  probably because I think the anonymization is dependent on some level of randomization... but the seed password is fixed so it shouldn't be random?  yeah it's not random because of `random.seed(seed_pw)` so if prod were to be restarted, there would be no lookup errors with the new sidHashBin
+
 `lookup_dict`: This is the mapping between SID and anonID, which allows user to grab anonymized info for that student.  The lookup table will be stored in /research/UCBD2/edw_data/TIMESTAMP" in the sidHashBin file
 
 In load.py
