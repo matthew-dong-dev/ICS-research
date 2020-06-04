@@ -25,7 +25,7 @@
     - how is curr_semester currently being used in Models?  it is used to keep current semester enrollments when generating course dictionaries, but the current semester should not be used in training. `if semester < eval_semester: sequence_list.append(tuple(courses))`
     - [ ] TODO: need to change config.json variable to be sourced from environment
 - how to persist target and current semester data?  either persistent env variables or just some text file.  
-    - [ ] TODO: make it work with an external dict first, then use env variables
+    - [ ] TODO: make it work with an external dict first (https://stackoverflow.com/questions/2167868/getting-next-element-while-cycling-through-a-list), then use env variables
     - [ ] TODO: test if you can make persistent env variables work and if you update them from a script that they stay changed (https://stackoverflow.com/questions/13046624/how-to-permanently-export-a-variable-in-linux, https://help.ubuntu.com/community/EnvironmentVariables)
     - we have a problem in that env_dict is fixed when the script is running but needs to be updated with new EDW or API data. We can have a separate semester.json for Models but Service still sources curr and targetSem from env.json.  Remove the dependency on env.json from hashed_files and pass as arg instead.  Then make sure env.json is updated before we call all the functions in refresh_data.
 - why do we choose to load env_dict in every script instead of passing it as an argument?  Maybe it makes for cleaner code but then we have this weird requirement that the new env.json be generated before any refresh or hash imports can happen because we load that env.json at the top of each script.
@@ -38,6 +38,12 @@
         - edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
         - edw_2018.tsv --> hashed grades old file
         - data.dict --> meta data
+    Update file naming convention to correspond to major features 
+        - timestamp/model --> timestamp/reqs
+        - timestamp/salt --> timestamp/explore
+        - timestamp/plan stays the same
+        - new folder timestamp/search
+        - rename targetDir to timeStampDir, rename rootDir to modelDir
 
 ------------------------------------------------------------
 
