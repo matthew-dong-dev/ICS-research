@@ -10,14 +10,14 @@
 
 ## Low level implementation
 
-There's a lot of tech debt in the askoski system that slows development down the line because we have to go back and reconsider design / implementation choices.  
+There's a lot of tech debt in the askoski system that slows development down the line because we have to go back and reconsider design / implementation choices so we should take more time in the beginning to put more thought into design decisions.
 
-1. Internal workflow: What would be the appropriate abstraction level for a school?  UCI would have its own pipeline (Airflow DAG) using our ML algorithms, and separate FE & BE repo?  Right just have to worry about FE / BE
-    - Separate BE service with separate endpoints.  still use Flask?
+1. Internal workflow: What would be the appropriate abstraction level for a school?  UCI would have its own pipeline (Airflow DAG) using our ML algorithms, and separate FE & BE repo?  Right now just have to worry about FE / BE
+    - Service - Separate BE with its own endpoints.  still use Flask?
     - Storage - SQL DB? touch base w/ Jeff.  
     - UI - We can probably just have a separate branch off askoski-anglular for the UCI FE for now.  how to customize FE theme / colors (sass) for each institution? touch base w/ Sher
 1. Cleaner code
--  there should be a course obj that's well defined between all the features.  we should have at least a unique course id, a table for course information (id, subject, title, description, credits), a department level table (sbj, abbreviation, division), credit restriction table?, etc.
+-  there should be a course representation that's well defined between all the features.  we should have at least a unique course id, a table for course information (id, subject, title, description, credits), a department level table (sbj, abbreviation, division), credit restriction table?, etc.
 - decide on next steps...
 
 ---

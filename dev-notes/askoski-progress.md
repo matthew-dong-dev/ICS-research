@@ -1,3 +1,21 @@
+6/18/20 System contributions
+
+1. whole system familiarity
+    - full stack development: FE, BE
+    - data pipeline: worked with API, did a lot of Data-askoski development
+    - ML: built the search model, familiar with the other models RNN / C2V to work with them
+    - useful for UCI dev
+1. built the search feature - top level navbar feature + first author publication for the lab
+1. data pipeline admin
+    - consolidated the various files, scripts, folders scattered throughout the server into the pipeline - now everything is accounted for and versioned
+    - automated the pipeline: integrated API retrieval, stabilized the models retraining process, added checks for edw / api data to trigger pipeline, compliant with data sharing agreement
+    - upgrade to airflow
+1. various other contributions
+    - updating the open seats / major restriction filter
+    - catching bugs: RNN wasn't using major to make predictions, NaNs in data was causing requirements to error, errors after upgrading ml packages
+    - various system feedback, mentoring URAPs
+    - catching a lot of plan mysql errors, plan data error?
+
 4/15/20 System Contributions
 
 1. whole system familiarity - done work on FE, BE, API, Models, Data
