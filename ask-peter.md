@@ -1,4 +1,4 @@
-## High level
+## High level guidelines
 
 1. Do the UCI people want their own UI or just our ML algo predictions like access to an API?  
 1. If they want a UI, have the UCI contacts seen the universal search mockups?
@@ -10,8 +10,10 @@
 
 ## Low level implementation
 
-1. SQL DB
-1. how to customize FE theme / colors for each institution
+1. What would be the appropriate abstraction level for school?  UCI would have its own pipeline (using our algorithms), separate FE & BE repo?  But right now we don't have to worry about the pipeline or models - just FE / BE
+    - definitely need a separate BE repo with its own endpoints.  still use Flask?
+    - SQL DB - touch base w/ Jeff 
+    - we can just have a separate branch for the FE for now.  how to customize FE theme / colors for each institution - touch base w/ Sher
 
 ---
 
