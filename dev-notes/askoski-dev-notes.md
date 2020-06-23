@@ -31,8 +31,9 @@ Misc:
 - `lsof -i :1371`, `kill PID` if necessary
 - what does screen do? https://www.rackaid.com/blog/linux-screen-tutorial-and-how-to/ 
 
-### using ipython env
+### Server commands
 
+Ipython env
 ```
 ssh matthew@askoski.berkeley.edu
 jupyter notebook --generate-config
