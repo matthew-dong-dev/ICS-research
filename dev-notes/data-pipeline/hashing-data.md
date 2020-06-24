@@ -24,7 +24,13 @@ lookup_dict = json.loads(lookup)
 
 - hashed vs encrypted data - which one is the anonymized data using the lookup dict?  Hashed is anonymizing the SID, encrypted data is for the overall files
 
----
+-----------------------------------------------------
+
+## Seed password - what is it used for?
+
+You need to choose one for the pipeline.  The first seed password was to decrypt the salt information to unlock the password dict.  The second seed password in the password dict is used to set the random state when generating anon IDs in the hash_files function.  You no longer need the first seed password (or master password) because you're no longer unlocking a password dict.
+
+------------------------------------------------------
 
 ### Task: Indexing error that broke the system for entirety of F19 during the data-askoski transition:
 
