@@ -57,7 +57,8 @@ netstat -tlnpe | awk '{print $7 " " $4}' | sed s/:/\ /g | grep -E '0.0.0.0|169.2
 
 ### Transfer model files from timestamped to local dummy_data
 
-1. To transfer between servers: `ssh -A -t user1@remote1 scp srcpath user2@remote2:destpath` 
+1. To transfer between servers: 
+    - `ssh -A -t user1@remote1 scp srcpath user2@remote2:destpath` 
 	- `ssh -A -t matthew@askoski.berkeley.edu scp /home/matthew/data/course_shortname_title.pkl matthew@cahl.berkeley.edu:~/askoski/data`
 
 1. Transfer file from server to local 
@@ -65,23 +66,7 @@ netstat -tlnpe | awk '{print $7 " " $4}' | sed s/:/\ /g | grep -E '0.0.0.0|169.2
 	- `scp matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2020-05-29-14-43/search/search_keywords.pkl /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/dummy_data/search`
 
 1. transfer from local to server
-
-## Using CAHL Server / Data Science
-
-1. `jupyter notebook --certfile=/etc/jupn-cert.pem --keyfile /etc/jupn-key.key --ip cahl.berkeley.edu --port 1338`
-1. Go to https://cahl.berkeley.edu:1338/
-    - issue with server persistently running, port is always open?: https://stackoverflow.com/questions/38511673/cannot-quit-jupyter-notebook-server-running 
-1. `qsub` 
-	- **Need to use absolute paths**
-	- `qstat` to view status and `qdel` to kill jobs
-	- `cat` output files to read
-	- `top` to view jobs
-1. GPU memory issues
-	- `export CUDA_VISIBLE_DEVICES=""` to only use CPUs (`env` to check env variables)
-	- export is a command that you give directly to the shell (e.g. bash), to tell it to add or modify one of its environment variables. You can't change your shell's environment from a child process (such as Python), it's just not possible.  Therefore you can't set which GPU using `os.environ["CUDA_VISIBLE_DEVICES"]="1,2,3"`
-	- use `export CUDA_VISIBLE_DEVICES=1` instead
-	- If encounter `ResourceExhaustedError` or `Allocator (GPU_0_bfc) ran out of memory` run `gpu_who` and kill your existing jobs, but make sure you don't accidentally kill the backend OR reduce batch size
-
+    - `scp /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/dummy_data/search/search_keywords.pkl matthew@askoski.berkeley.edu:/research/AskOski/system_versions/2020-05-29-14-43/search`
 
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
