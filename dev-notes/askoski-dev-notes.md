@@ -7,29 +7,9 @@
     - `jupyter notebook --ip maxwell.ischool.berkeley.edu --port 1382`
 1. When you use screen you need to detach with `CTRL+A+D` before you exit ssh. 
 1. `screen -xS name-to-resume`
-1. [scroll in screen](https://unix.stackexchange.com/questions/40242/scroll-inside-screen-or-pause-output)
-    - Hit your screen prefix combination (C-a / control+A by default), then hit Escape.
-    - Copy mode only works in screen, you can scroll normally otherwise
 1. `control + d` terminates screen
 1. If you feel that the program is hanging, YOU HAVE TO ESCAPE OUT OF COPY MODE TO SEE LIVE OUTPUT
 1. `screen -XS [session # you want to quit] quit` to kill a screen (case matters)
-
-### using `screen`
-	
-- run `screen -S name` 
-- run the script / start up the backend / open jupyter notebook
-- When you use screen you need to detach with `CTRL+A+D` before you exit ssh.
-Misc:
-    - `screen -r` will resume the current screen or return a list to resume
-    - `screen -xS name-to-resume` 
-    - `screen -ls` will list all current screens (ls = list)
-    - `screen -d` will detach you from the screen and back into original session
-    - `screen -d -r`? 
-    - screen must be detached for you to go back into original terminal session
-    - run `echo $STY` to check if you are in a screen which is a variable set by the screen command
-    - `control + d` just terminates screen
-- `lsof -i :1371`, `kill PID` if necessary
-- what does screen do? https://www.rackaid.com/blog/linux-screen-tutorial-and-how-to/ 
 
 ### Server commands
 
