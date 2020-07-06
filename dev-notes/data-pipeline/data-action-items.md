@@ -1,6 +1,50 @@
 # START FROM TRELLO AND PUT THEM HERE ONCE YOU NEED TO EXPAND
 
-## Action Item backlog
+## install airflow
+
+- use virtual env or just add ~/.local/bin/airflow to bash path variable after installing airflow locally since you don't have sudo access?
+    -  you need to use a virtualenv anyways to specify the python version anyways
+    -  "Best way to is install virtualenv and not require the --user confusion. You will get more flexibility and not worry about clobbering the different python versions and projects everytime you pip install a package."
+
+```
+curl https://pyenv.run | bash
+
+# Load pyenv automatically by adding
+# the following to ~/.bashrc:
+
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+exec "$SHELL" # or source bashrc?
+
+pyenv install -v 3.7.0
+pyenv virtualenv 3.7.0 airflow_virtualenv
+pyenv local airflow_virtualenv
+python -V # should be python3.7
+export AIRFLOW_HOME=~/airflow
+pip install apache-airflow
+
+```
+
+## Task: update master file spreadsheet
+    - look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
+    -  RNN model weights are in a binary file called "askoski", the topology of the model is in "askoski.json" and "askoski.desc" just describes the hyper parameters that were used. The dictionary file "course2idx.json" can be used to translate between "Subject CourseNum" and the one-hot index for the model and "major2idx.json" can be used to translate the major to major one-hot index. Jenny's word2vec model is called "w2v_300_15_20_3.model" and uses the same indices as course2idx
+    - clean ucbd2-archive & update spreadsheet, check what each file does and where it already exists in the system before deleting
+        - start with hashed-archive
+        - edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
+        - edw_2018.tsv --> hashed grades old file
+        - data.dict --> meta data
+    Update file naming convention to correspond to major features 
+        - timestamp/model --> timestamp/reqs
+        - timestamp/salt --> timestamp/explore
+        - timestamp/plan stays the same
+        - new folder timestamp/search
+        - rename targetDir to timeStampDir, rename rootDir to modelDir
+
+------------------------------------------------------------
+
+## Completed 
 
 ## Task: convert pipeline to Airflow
 
@@ -36,34 +80,18 @@ new_edw_data -|
 new_api_data -| 
 
 #### how to pass in passwords needed to run pipeline? 
-- use airflow secret variables
+- use airflow variables
 
 #### how to persist target and current semester data? 
+- use airflow variables
 
-## Task: update master file spreadsheet
-    - look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
-    -  RNN model weights are in a binary file called "askoski", the topology of the model is in "askoski.json" and "askoski.desc" just describes the hyper parameters that were used. The dictionary file "course2idx.json" can be used to translate between "Subject CourseNum" and the one-hot index for the model and "major2idx.json" can be used to translate the major to major one-hot index. Jenny's word2vec model is called "w2v_300_15_20_3.model" and uses the same indices as course2idx
-    - clean ucbd2-archive & update spreadsheet, check what each file does and where it already exists in the system before deleting
-        - start with hashed-archive
-        - edw_askoski_apr_supplementary_course_lists --> exists inside APR folder of timestamped directory
-        - edw_2018.tsv --> hashed grades old file
-        - data.dict --> meta data
-    Update file naming convention to correspond to major features 
-        - timestamp/model --> timestamp/reqs
-        - timestamp/salt --> timestamp/explore
-        - timestamp/plan stays the same
-        - new folder timestamp/search
-        - rename targetDir to timeStampDir, rename rootDir to modelDir
+----------------------------------------------------------------------
 
-------------------------------------------------------------
-
-## Completed 
-
-## Task: automate pipeline to support daily cron job for new edw files or new class schedule is released.
+## Task: refactor / automate pipeline to support daily cron job for new edw files or new class schedule is released.
 
 - why do we choose to load env_dict in every script instead of passing it as an argument?  Maybe it makes for cleaner code but then we have this weird requirement that the new env.json be generated before any refresh or hash imports can happen because we load that env.json at the top of each script.
 - [x] what is the timing of edw data refreshes? - no timing
-- [x]should only encrypted data exist on server - encrypted or hashed data
+- [x] should only encrypted data exist on server - encrypted or hashed data
 - [x] figure out what the request response would be for the API and test it with Spring 2021
 - how to reconcile having to increment the semester?  you could either run an infinite loop (forever package) and cycle through the seasons list and not use cron OR use cron and write the current season to an external log.  
     - but that introduces another problem, if we increment the season then we have to manually run it to get new api data the class enrollments get updated throughout the semester.  actually the cron job and daily classes updates can just be independent processes in the future
