@@ -1,32 +1,5 @@
 # START FROM TRELLO AND PUT THEM HERE ONCE YOU NEED TO EXPAND
 
-## install airflow
-
-- use virtual env or just add ~/.local/bin/airflow to bash path variable after installing airflow locally since you don't have sudo access?
-    -  you need to use a virtualenv anyways to specify the python version anyways
-    -  "Best way to is install virtualenv and not require the --user confusion. You will get more flexibility and not worry about clobbering the different python versions and projects everytime you pip install a package."
-
-```
-curl https://pyenv.run | bash
-
-# Load pyenv automatically by adding
-# the following to ~/.bashrc:
-
-export PATH="$HOME/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-
-exec "$SHELL" # or source bashrc?
-
-pyenv install -v 3.7.0
-pyenv virtualenv 3.7.0 airflow_virtualenv
-pyenv local airflow_virtualenv
-python -V # should be python3.7
-export AIRFLOW_HOME=~/airflow
-pip install apache-airflow
-
-```
-
 ## Task: update master file spreadsheet
     - look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
     -  RNN model weights are in a binary file called "askoski", the topology of the model is in "askoski.json" and "askoski.desc" just describes the hyper parameters that were used. The dictionary file "course2idx.json" can be used to translate between "Subject CourseNum" and the one-hot index for the model and "major2idx.json" can be used to translate the major to major one-hot index. Jenny's word2vec model is called "w2v_300_15_20_3.model" and uses the same indices as course2idx
@@ -42,9 +15,41 @@ pip install apache-airflow
         - new folder timestamp/search
         - rename targetDir to timeStampDir, rename rootDir to modelDir
 
-------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 
 ## Completed 
+
+## install airflow on new askoski-pipeline user
+
+- use virtual env or just add ~/.local/bin/airflow to bash path variable after installing airflow locally since you don't have sudo access?
+    -  you need to use a virtualenv anyways to specify the python version anyways
+    -  "Best way to is install virtualenv and not require the --user confusion. You will get more flexibility and not worry about clobbering the different python versions and projects everytime you pip install a package."
+
+Commands to setup airflow on ubuntu server
+```
+curl https://pyenv.run | bash
+
+# Load pyenv automatically by adding
+# the following to ~/.bashrc:
+
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+exec "$SHELL" # or source bashrc?
+
+pyenv install -v 3.7.0 # installs python3.7
+pyenv versions # to see which python is being used right now
+pyenv virtualenv 3.7.0 airflow_virtualenv # pyenv uninstall my-virtual-env
+pyenv local airflow_virtualenv # auto-sets the python version for a particular directory
+export AIRFLOW_HOME=~/airflow
+pip install apache-airflow
+python -V # should be python3.7
+```
+
+need to run `source ~/.bashrc` sometimes to see which virtual env is active
+
+-------------------------------------------------------------------------------------
 
 ## Task: convert pipeline to Airflow
 
