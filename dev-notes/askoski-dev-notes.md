@@ -37,10 +37,6 @@ netstat -tlnpe | awk '{print $7 " " $4}' | sed s/:/\ /g | grep -E '0.0.0.0|169.2
 
 ### Transfer model files from timestamped to local dummy_data
 
-1. To transfer between servers: 
-    - `ssh -A -t user1@remote1 scp srcpath user2@remote2:destpath` 
-	- `ssh -A -t matthew@askoski.berkeley.edu scp /home/matthew/data/course_shortname_title.pkl matthew@cahl.berkeley.edu:~/askoski/data`
-
 1. Transfer file from server to local 
 	- `scp matthew@askoski.berkeley.edu:/home/matthew/Data-AskOski/env.json /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/service`
 	- `scp matthew@askoski.berkeley.edu:/research/UCBD2/edw_data/2020-05-29-14-43/search/search_keywords.pkl /Users/mdong/dataScience/cahlr/askoski/Service-AskOski/dummy_data/search`
