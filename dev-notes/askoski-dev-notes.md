@@ -18,7 +18,9 @@ Ipython env
 ssh matthew@askoski.berkeley.edu
 jupyter notebook --generate-config
 jupyter notebook password
-jupyter notebook --ip 169.229.192.179 --port 1332 / jupyter notebook --ip maxwell.ischool.berkeley.edu --port 1332
+# [NotebookPasswordApp] Wrote hashed password to /research/home/askoski-pipeline/.jupyter/jupyter_notebook_config.json
+jupyter notebook --ip 169.229.192.179 --port 1332 
+# or jupyter notebook --ip maxwell.ischool.berkeley.edu --port 1332
 Go to http://maxwell.ischool.berkeley.edu:1332/ 
 ```
 VS

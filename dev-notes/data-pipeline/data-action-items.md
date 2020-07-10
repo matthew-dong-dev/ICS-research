@@ -1,5 +1,18 @@
 # START FROM TRELLO AND PUT THEM HERE ONCE YOU NEED TO EXPAND
 
+## Debug airflow errors
+
+[2020-07-10 11:14:44,022] {logging_mixin.py:112} INFO - Currently hashing:  /research/UCBDATA/decrypted/edw_askoski_student_majors_decrypted.txt
+[2020-07-10 11:14:52,927] {logging_mixin.py:112} INFO - students currently in lookup: 0
+[2020-07-10 11:14:53,059] {logging_mixin.py:112} INFO - students now in lookup: 179784
+[2020-07-10 11:14:53,059] {logging_mixin.py:112} INFO - students added to lookup: 179784
+[2020-07-10 11:14:53,059] {logging_mixin.py:112} INFO - 
+[2020-07-10 11:14:54,465] {taskinstance.py:1145} ERROR - [Errno 13] Permission denied: '/research/UCBDATA/hashed/edw_askoski_student_majors_hashed.txt'
+
+You checked the permissions of the directory, as UCBDATA member you should have read and write access to these files in the /hashed directory.  You tried to remove on of these files manually and the problem is THE FILES ARE WRITE-PROTECTED.  But the permissions don't look write protected? 
+-rw-rw-r-- 1 matthew          matthew          1079342536 Jul  7 09:59 edw_askoski_apr_student_requirements_hashed.txt
+When you recreate the file through askoski-pipeline user and then delete it again, there's no more write-protected error.  Maybe it was because some configs were carried over when the files were created by a different account.  Try deleting all the files in this folder, seeing if the pipeline runs, then try running the pipeline again to see if the files somehow become write protected.
+
 ## Task: update master file spreadsheet
     - look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
     -  RNN model weights are in a binary file called "askoski", the topology of the model is in "askoski.json" and "askoski.desc" just describes the hyper parameters that were used. The dictionary file "course2idx.json" can be used to translate between "Subject CourseNum" and the one-hot index for the model and "major2idx.json" can be used to translate the major to major one-hot index. Jenny's word2vec model is called "w2v_300_15_20_3.model" and uses the same indices as course2idx
