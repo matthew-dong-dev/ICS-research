@@ -1,17 +1,15 @@
 # START FROM TRELLO AND PUT THEM HERE ONCE YOU NEED TO EXPAND
 
-## Debug airflow errors
+## Task: Debug airflow error
 
-[2020-07-10 11:14:44,022] {logging_mixin.py:112} INFO - Currently hashing:  /research/UCBDATA/decrypted/edw_askoski_student_majors_decrypted.txt
-[2020-07-10 11:14:52,927] {logging_mixin.py:112} INFO - students currently in lookup: 0
-[2020-07-10 11:14:53,059] {logging_mixin.py:112} INFO - students now in lookup: 179784
-[2020-07-10 11:14:53,059] {logging_mixin.py:112} INFO - students added to lookup: 179784
-[2020-07-10 11:14:53,059] {logging_mixin.py:112} INFO - 
-[2020-07-10 11:14:54,465] {taskinstance.py:1145} ERROR - [Errno 13] Permission denied: '/research/UCBDATA/hashed/edw_askoski_student_majors_hashed.txt'
+### MetaDB errors
 
-You checked the permissions of the directory, as UCBDATA member you should have read and write access to these files in the /hashed directory.  You tried to remove on of these files manually and the problem is THE FILES ARE WRITE-PROTECTED.  But the permissions don't look write protected? 
--rw-rw-r-- 1 matthew          matthew          1079342536 Jul  7 09:59 edw_askoski_apr_student_requirements_hashed.txt
-When you recreate the file through askoski-pipeline user and then delete it again, there's no more write-protected error.  Maybe it was because some configs were carried over when the files were created by a different account.  Try deleting all the files in this folder, seeing if the pipeline runs, then try running the pipeline again to see if the files somehow become write protected.
+Sometimes it appears as (1) a sqlite database locked error or (2) the message "The scheduler does not appear to be running. Last heartbeat was received 35 seconds ago.  The DAGs list may not update, and new tasks will not be scheduled."
+
+- (1) SQLite is meant to be a lightweight database, and thus can't support a high level of concurrency. OperationalError: database is locked errors indicate that your application is experiencing more concurrency than sqlite can handle in default configuration. This error means that one thread or process has an exclusive lock on the database connection and another thread timed out waiting for the lock the be released.
+- (2) "I think it is expected for Sequential Executor. Sequential Executor runs one thing at a time so it cannot run heartbeat and task at the same time.  Why do you need to use Sequential Executor / Sqlite? The advice to switch to other DB/Executor make perfect sense."
+
+Actually this doesn't change functionality, but the webserver UI crashes intermittently
 
 ## Task: update master file spreadsheet
     - look into refresh.md & env.sh & inputs.md - these files are outdated, but tells a lot about how things work
@@ -30,9 +28,31 @@ When you recreate the file through askoski-pipeline user and then delete it agai
 
 --------------------------------------------------------------------------------------------------
 
-## Completed 
+# Completed 
 
-## install airflow on new askoski-pipeline user
+## Task: Debug airflow error
+
+### DAG not being updated properly
+
+you're unable to test changes because the python functions you're importing in your DAG are not updating even after you pull the latest changes.  You keep getting the same error where the hash files function cannot find the gradesFile variable but even when you updated the arguments and refresh the webserver, you keep getting the same error. The question is if this problem is independent of your the airflow DB issues. 
+- yes it is, it was because you had the wrong filepath and so the webserver and scheduler was reading the DAG from askoski-pipeline but reading the imported functions from asksoki  
+
+#### Permission error
+
+[2020-07-10 11:14:44,022] {logging_mixin.py:112} INFO - Currently hashing:  /research/UCBDATA/decrypted/edw_askoski_student_majors_decrypted.txt
+[2020-07-10 11:14:52,927] {logging_mixin.py:112} INFO - students currently in lookup: 0
+[2020-07-10 11:14:53,059] {logging_mixin.py:112} INFO - students now in lookup: 179784
+[2020-07-10 11:14:53,059] {logging_mixin.py:112} INFO - students added to lookup: 179784
+[2020-07-10 11:14:53,059] {logging_mixin.py:112} INFO - 
+[2020-07-10 11:14:54,465] {taskinstance.py:1145} ERROR - [Errno 13] Permission denied: '/research/UCBDATA/hashed/edw_askoski_student_majors_hashed.txt'
+
+You checked the permissions of the directory, as UCBDATA member you should have read and write access to these files in the /hashed directory.  You tried to remove on of these files manually and the problem is THE FILES ARE WRITE-PROTECTED.  But the permissions don't look write protected? 
+-rw-rw-r-- 1 matthew          matthew          1079342536 Jul  7 09:59 edw_askoski_apr_student_requirements_hashed.txt
+When you recreate the file through askoski-pipeline user and then delete it again, there's no more write-protected error.  Maybe it was because some configs were carried over when the files were created by a different account.  Try deleting all the files in this folder, seeing if the pipeline runs, then try running the pipeline again to see if the files somehow become write protected.
+
+-------------------------------------------------------------------------------------
+
+## Task: install airflow on new askoski-pipeline user
 
 - use virtual env or just add ~/.local/bin/airflow to bash path variable after installing airflow locally since you don't have sudo access?
     -  you need to use a virtualenv anyways to specify the python version anyways
