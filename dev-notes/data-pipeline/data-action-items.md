@@ -2,6 +2,18 @@
 
 ## Task: Debug airflow error
 
+### missing dependencies
+
+Traceback (most recent call last):
+  File "nearest_course.py", line 8, in <module>
+    import spacy
+ModuleNotFoundError: No module named 'spacy'
+
+Traceback (most recent call last):
+  File "../C2V/course_ins_sub_torch.py", line 2, in <module>
+    import torch
+ModuleNotFoundError: No module named 'torch'
+
 ### MetaDB errors
 
 Sometimes it appears as (1) a sqlite database locked error or (2) the message "The scheduler does not appear to be running. Last heartbeat was received 35 seconds ago.  The DAGs list may not update, and new tasks will not be scheduled."
