@@ -103,7 +103,7 @@ def remove_generic_descriptions(descript_df):
 
     return descript_df
 
-sif __name__ == '__main__':
+if __name__ == '__main__':
 
     vect_df = generate_vec_df(vectors_path, vec2course_path)
     print('[INFO] Transforming vectors done.')

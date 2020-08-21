@@ -112,67 +112,6 @@ def logistic_regression(X, Y, X_val, Y_val, validation_vocab, use_hidden_layer=F
         df_with_keywords['predicted_word_' + str(i+1)] = new_col.values
         
     return df_with_keywords
-    
-#     sorted_frame = np.argsort(softmax_frame,axis=1).iloc[:,-num_words_per_course:]
-
-#     print('[INFO] Predicting top k inferred keywords for each course...')
-#     df_with_keywords = filtered_info_frame.copy() # filtered_info_frame is global
-    
-#     for i in range(num_words_per_course): # vocab_frame also global
-#         new_col = vocab_frame.iloc[sorted_frame.iloc[:,i],0] # get the ith top vocab word for each entry
-#         df_with_keywords['predicted_word_' + str(num_words_per_course-i)] = new_col.values
-        
-#     return df_with_keywords
-
-# def logistic_regression(X, Y, use_hidden_layer=False, hidden_layer_size=200, num_epochs=5):
-#     """Perform multinomial logistic regression from BOW vector space (Y) onto course vector space (X). 
-#     Args: 
-#         Matrix of course vectors and corresponding BOW description encodings and number of epochs. 
-#         Hidden_layer_size must be greater than the max_description_len trying to predict (181)
-#     Returns:
-#         Tuple of weights and bias dataframes to use in prediction.
-#     """
-#     print('[INFO] Performing logistic regression...')
-
-#     inputs = Input(shape=(X.shape[1],)) # course vec
-#     if use_hidden_layer:
-#         hidden_layer = Dense(hidden_layer_size, activation='sigmoid')(inputs)
-#         predictions = Dense(vocabsize, activation='softmax')(hidden_layer)
-#     else:
-#         predictions = Dense(vocabsize, activation='softmax')(inputs)
-#     model = Model(inputs=inputs, outputs=predictions)
-#     model.compile(optimizer='rmsprop',
-#               loss='categorical_crossentropy',
-#               metrics=['accuracy'])
-#     model.fit(X, Y, epochs=num_epochs, batch_size=16)
-#     weights = model.layers[1].get_weights()[0]
-#     biases = model.layers[1].get_weights()[1]
-#     weights_frame = pd.DataFrame(weights)
-#     biases_frame = pd.DataFrame(biases)
-#     return(weights_frame, biases)
-
-# def predict(course_vecs, course_descripts, trained_weights, trained_biases, vocab_frame, num_words_per_course=10):
-#     """Predict inferred keywords for each course using train the vectorspace coeffs to predict the BOW of a point.
-#     Args:
-#         Course vectors, course description, weights and biases
-#         num_words_per_course (int): Number of words to predict per course
-#     Returns:
-#         Course description dataframe with a new column for every predicted word 
-#     """
-#     df_with_keywords = course_descripts.copy()
-#     # Obtain the softmax predictions for all instances
-#     softmax_frame = course_vecs.iloc[:,1:].dot(trained_weights.values) + trained_biases 
-
-#     # From the softmax predictions, save the top 10 predicted words for each data point
-#     print('[INFO] Sorting classification results...')
-#     sorted_frame = np.argsort(softmax_frame,axis=1).iloc[:,-num_words_per_course:]
-
-#     print('[INFO] Predicting top k inferred keywords for each course...')
-#     for i in range(num_words_per_course):
-#         new_col = vocab_frame.iloc[sorted_frame.iloc[:,i],0] # get the ith top vocab word for each entry
-#         df_with_keywords['predicted_word_' + str(num_words_per_course-i)] = new_col.values
-        
-#     return df_with_keywords
 
 def calculate_metric(df_with_keywords, metric):
     """Calculate metric evaluating quality of inferred keywords with respect to its true course description
@@ -261,89 +200,89 @@ def calculate_metric(df_with_keywords, metric):
         print('[INFO] Most common keywords by document frequencies: ', Counter(doc_freq_dict).most_common(10)) 
         average_document_frequency_score = np.mean(list(doc_freq_dict.values()))
         return average_document_frequency_score
-        
-vec_frame = pd.read_csv(vectorfile, sep = '\t') # Vector space representation of each user, all numeric
-info_frame = pd.read_csv(infofile, sep = '\t') # Course information
 
-nonempty_indices = np.where(info_frame[textcolumn].notnull())[0]
-filtered_vec_frame = vec_frame.iloc[nonempty_indices,:].reset_index(drop = True)
-filtered_info_frame = info_frame.iloc[nonempty_indices,:].reset_index(drop = True)
-max_descript_len = max(filtered_info_frame.course_description.str.split().str.len())
-num_top_words = 10
+if __name__== "__main__":
+    vec_frame = pd.read_csv(vectorfile, sep = '\t') # Vector space representation of each user, all numeric
+    info_frame = pd.read_csv(infofile, sep = '\t') # Course information
 
-hyperparams_cols = ['use_idf', 'max_df','tf-bias', 'use_hidden_layer', 'num_epochs', 'recall@max_len', 'precision@10', 'distribution_diff', 'document_frequency']
+    nonempty_indices = np.where(info_frame[textcolumn].notnull())[0]
+    filtered_vec_frame = vec_frame.iloc[nonempty_indices,:].reset_index(drop = True)
+    filtered_info_frame = info_frame.iloc[nonempty_indices,:].reset_index(drop = True)
+    max_descript_len = max(filtered_info_frame.course_description.str.split().str.len())
+    num_top_words = 10
 
-param_grid = {'use_idf': [True, False],
-              'max_df': np.arange(.02, .06, .01),
-              'tf_bias': np.append(np.arange(0, 2, .5), -999),
-              'num_epochs': [10], 
-              'use_hidden_layer': [False, True]} 
+    hyperparams_cols = ['use_idf', 'max_df','tf-bias', 'use_hidden_layer', 'num_epochs', 'recall@max_len', 'precision@10', 'distribution_diff', 'document_frequency']
 
-grid = ParameterGrid(param_grid)
+    param_grid = {'use_idf': [True, False],
+                'max_df': np.arange(.02, .06, .01),
+                'tf_bias': np.append(np.arange(0, 2, .5), -999),
+                'num_epochs': [10], 
+                'use_hidden_layer': [False, True]} 
 
-recall_validation_scores = []
-precision_validation_scores = []
-distribution_validation_scores = []
-document_frequency_validation_scores = []
-grid_search_data = []
+    grid = ParameterGrid(param_grid)
 
-for params in grid:
-    print("***[INFO] Evaluating cross-validated model with hyperparams use_idf: %r, max_df: %f, tf_bias: %f, use_hidden_layer: %r, num_epochs: %d***" % 
-          (params['use_idf'], params['max_df'], params['tf_bias'], params['use_hidden_layer'], params['num_epochs']))
+    recall_validation_scores = []
+    precision_validation_scores = []
+    distribution_validation_scores = []
+    document_frequency_validation_scores = []
+    grid_search_data = []
 
-    fold_num = 1
-    kf = KFold(n_splits=4, random_state=42) # DO NOT FIX RANDOM STATE WHEN RUNNING THE ACTUAL EXPERIMENT - NVM, should be fixed for reproducibility
-    for train_idx, valid_idx in kf.split(filtered_vec_frame):
-        print('======== [INFO] Fold %d' % (fold_num))
-        # X = vectors, Y = descriptions
-        split_X_train, split_X_valid = filtered_vec_frame.iloc[train_idx], filtered_vec_frame.iloc[valid_idx]
-        split_Y_train, split_Y_valid = filtered_info_frame.iloc[train_idx], filtered_info_frame.iloc[valid_idx]
+    for params in grid:
+        print("***[INFO] Evaluating cross-validated model with hyperparams use_idf: %r, max_df: %f, tf_bias: %f, use_hidden_layer: %r, num_epochs: %d***" % 
+            (params['use_idf'], params['max_df'], params['tf_bias'], params['use_hidden_layer'], params['num_epochs']))
 
-        vocab = get_vocab(split_Y_train, textcolumn, max_df=params['max_df'], use_idf=params['use_idf']) 
-        vocab_frame = pd.DataFrame(vocab)
-        vocabsize = len(vocab)
+        fold_num = 1
+        kf = KFold(n_splits=4, random_state=42) # DO NOT FIX RANDOM STATE WHEN RUNNING THE ACTUAL EXPERIMENT - NVM, should be fixed for reproducibility
+        for train_idx, valid_idx in kf.split(filtered_vec_frame):
+            print('======== [INFO] Fold %d' % (fold_num))
+            # X = vectors, Y = descriptions
+            split_X_train, split_X_valid = filtered_vec_frame.iloc[train_idx], filtered_vec_frame.iloc[valid_idx]
+            split_Y_train, split_Y_valid = filtered_info_frame.iloc[train_idx], filtered_info_frame.iloc[valid_idx]
 
-        # Convert the textcolumn of the raw dataframe into bag of words representation
-        split_Y_train_BOW = to_bag_of_words(split_Y_train, textcolumn, vocab, tf_bias=params['tf_bias'], use_idf=params['use_idf'])
-        split_Y_train_BOW = split_Y_train_BOW.toarray()
+            vocab = get_vocab(split_Y_train, textcolumn, max_df=params['max_df'], use_idf=params['use_idf']) 
+            vocab_frame = pd.DataFrame(vocab)
+            vocabsize = len(vocab)
 
-#         (weights_frame, biases) = logistic_regression(split_X_train.iloc[:,1:], split_Y_train_BOW, 
-#                                                       use_hidden_layer=params['use_hidden_layer'], num_epochs=params['num_epochs'])
+            # Convert the textcolumn of the raw dataframe into bag of words representation
+            split_Y_train_BOW = to_bag_of_words(split_Y_train, textcolumn, vocab, tf_bias=params['tf_bias'], use_idf=params['use_idf'])
+            split_Y_train_BOW = split_Y_train_BOW.toarray()
 
-        print('[INFO] Calculating recall@max_length...')
-        df_with_keywords = logistic_regression(split_X_train.iloc[:,1:], split_Y_train_BOW, split_X_valid.iloc[:,1:], split_Y_valid, validation_vocab=vocab_frame, use_hidden_layer=params['use_hidden_layer'], num_epochs=params['num_epochs'], num_words_per_course=max_descript_len)
-#         df_with_keywords = predict(split_X_valid, split_Y_valid, weights_frame, biases, vocab_frame, max_descript_len)
-        fold_i_average_recall = calculate_metric(df_with_keywords, 'r')
-        recall_validation_scores.append(fold_i_average_recall)
-        print('[INFO] Fold %d recall: %f.' % (fold_num, fold_i_average_recall))
-        
-        print('[INFO] Predicting on validation set for precision...')
-        df_with_keywords = logistic_regression(split_X_train.iloc[:,1:], split_Y_train_BOW,  split_X_valid.iloc[:,1:], split_Y_valid, validation_vocab=vocab_frame, use_hidden_layer=params['use_hidden_layer'], num_epochs=params['num_epochs'], num_words_per_course=num_top_words)
-#         df_with_keywords = predict(split_X_valid, split_Y_valid, weights_frame, biases, vocab_frame, num_top_words)
-        fold_i_average_precision = calculate_metric(df_with_keywords, 'p')
-        precision_validation_scores.append(fold_i_average_precision)
-        print('[INFO] Fold %d precision: %f.' % (fold_num, fold_i_average_precision))
-        
-        fold_i_distribution_diff = calculate_metric(df_with_keywords, 'c')
-        distribution_validation_scores.append(fold_i_distribution_diff)
-        print('[INFO] Fold %d cosine similarity: %f.' % (fold_num, fold_i_distribution_diff))
-        
-        fold_i_document_frequency = calculate_metric(df_with_keywords, 'df')
-        document_frequency_validation_scores.append(fold_i_document_frequency)
-        print('[INFO] Fold %d document frequency: %f.' % (fold_num, fold_i_document_frequency))
+    #         (weights_frame, biases) = logistic_regression(split_X_train.iloc[:,1:], split_Y_train_BOW, 
+    #                                                       use_hidden_layer=params['use_hidden_layer'], num_epochs=params['num_epochs'])
 
-        fold_num += 1
+            print('[INFO] Calculating recall@max_length...')
+            df_with_keywords = logistic_regression(split_X_train.iloc[:,1:], split_Y_train_BOW, split_X_valid.iloc[:,1:], split_Y_valid, validation_vocab=vocab_frame, use_hidden_layer=params['use_hidden_layer'], num_epochs=params['num_epochs'], num_words_per_course=max_descript_len)
+    #         df_with_keywords = predict(split_X_valid, split_Y_valid, weights_frame, biases, vocab_frame, max_descript_len)
+            fold_i_average_recall = calculate_metric(df_with_keywords, 'r')
+            recall_validation_scores.append(fold_i_average_recall)
+            print('[INFO] Fold %d recall: %f.' % (fold_num, fold_i_average_recall))
+            
+            print('[INFO] Predicting on validation set for precision...')
+            df_with_keywords = logistic_regression(split_X_train.iloc[:,1:], split_Y_train_BOW,  split_X_valid.iloc[:,1:], split_Y_valid, validation_vocab=vocab_frame, use_hidden_layer=params['use_hidden_layer'], num_epochs=params['num_epochs'], num_words_per_course=num_top_words)
+    #         df_with_keywords = predict(split_X_valid, split_Y_valid, weights_frame, biases, vocab_frame, num_top_words)
+            fold_i_average_precision = calculate_metric(df_with_keywords, 'p')
+            precision_validation_scores.append(fold_i_average_precision)
+            print('[INFO] Fold %d precision: %f.' % (fold_num, fold_i_average_precision))
+            
+            fold_i_distribution_diff = calculate_metric(df_with_keywords, 'c')
+            distribution_validation_scores.append(fold_i_distribution_diff)
+            print('[INFO] Fold %d cosine similarity: %f.' % (fold_num, fold_i_distribution_diff))
+            
+            fold_i_document_frequency = calculate_metric(df_with_keywords, 'df')
+            document_frequency_validation_scores.append(fold_i_document_frequency)
+            print('[INFO] Fold %d document frequency: %f.' % (fold_num, fold_i_document_frequency))
 
-    recall_i = np.mean(recall_validation_scores)
-    precision_i = np.mean(precision_validation_scores)
-    distribution_diff_i = np.mean(distribution_validation_scores)
-    document_frequency_i = np.mean(document_frequency_validation_scores)
+            fold_num += 1
 
-    model_i_params = [params['use_idf'], params['max_df'], params['tf_bias'], params['use_hidden_layer'],
-                      params['num_epochs'], recall_i, precision_i, distribution_diff_i, document_frequency_i]
+        recall_i = np.mean(recall_validation_scores)
+        precision_i = np.mean(precision_validation_scores)
+        distribution_diff_i = np.mean(distribution_validation_scores)
+        document_frequency_i = np.mean(document_frequency_validation_scores)
 
-    grid_search_data.append(dict(zip(hyperparams_cols, model_i_params)))
-    grid_search_df = pd.DataFrame(grid_search_data, columns=hyperparams_cols) 
-    print(grid_search_df)
-    grid_search_df.to_csv(scorefile_path, sep='\t', index=False)
-    
+        model_i_params = [params['use_idf'], params['max_df'], params['tf_bias'], params['use_hidden_layer'],
+                        params['num_epochs'], recall_i, precision_i, distribution_diff_i, document_frequency_i]
+
+        grid_search_data.append(dict(zip(hyperparams_cols, model_i_params)))
+        grid_search_df = pd.DataFrame(grid_search_data, columns=hyperparams_cols) 
+        print(grid_search_df)
+        grid_search_df.to_csv(scorefile_path, sep='\t', index=False)
