@@ -60,3 +60,5 @@ Performs a 5-fold cross validation grid search across the following hyperparamet
     - use_idf: True to use tf-idf scores, false to only use tf in BOW representation
 	- tf_bias: term-frequency bias, controls specificity of words in BOW representation
     - max_df: control for corpus specific words
+
+Score results using different metrics located at `/results`.
