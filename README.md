@@ -61,4 +61,4 @@ Performs a 5-fold cross validation grid search across the following hyperparamet
 	- tf_bias: term-frequency bias, controls specificity of words in BOW representation
     - max_df: control for corpus specific words
 
-Score results using different metrics located at `/results`.
+Score results using different metrics including recall, precision, and several custom metrics located at `/results`.
