@@ -1,10 +1,9 @@
-# ICS (Intelligent Course Search) Research
+# ICS (Intelligent Course Search) Model
 
 > [Research paper](https://link.springer.com/chapter/10.1007%2F978-3-030-29736-7_36)
 > 
 > [Deployed feature](https://askoski.berkeley.edu/search)
 
-*Disclaimer: data files redacted as per campus data sharing agreement.*
 
 ## `retrain.sh`
 
